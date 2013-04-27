@@ -1,0 +1,101 @@
+THIS SOFTWARE IS NOT READY FOR USE!
+
+Lightweight and flexible cryptographic library written in ISO C99.
+
+Block ciphers:
+ - AES (Rijndael 128)
+ - Serpent*
+ - Twofish
+ - RC6
+ - Camellia*
+ - Threefish
+ - Noekeon
+ - Anubis
+ - Rijndael 256*
+ - SEED
+ - Blowfish*
+ - GOST*
+ - DES*
+ - 3DES*
+ - Skipjack*
+ - IDEA*
+ - RC5*
+ - CAST5*
+ - CAST6*
+ - SAFER*
+ - SAFER+*
+ - SAFER++*
+ - TEA*
+ - XTEA*
+ - MARS*
+
+Modes:
+ - CTR
+ - CBC*
+ - CFB*
+ - OFB*
+ - ECB*
+ - KFB*
+ - TBC*
+
+
+Stream ciphers:
+ - Salsa20
+ - ChaCha
+ - RC4
+ - XSalsa20
+ - XChaCha
+ - Keccak1600*
+ - Keccak800*
+ - Skein*
+ - SEAL*
+ - Scream*
+ - SOSEMANUK*
+ - Rabbit*
+ - HC-256*
+ - ISAAC*
+ - MUGI*
+ - Phelix*
+
+Hash functions:
+ - SHA2
+ - SHA3 (Keccak1600)
+ - Keccak800
+ - Skein*
+ - Blake*
+ - Blake2*
+ - WHIRPOOL*
+ - Tiger*
+ - MD5*
+ - SHA1*
+ - SHA*
+ - RIPEMD*
+ - BMW*
+ - CubeHash*
+ - HAVAL*
+ - JH*
+ - Grostl*
+ - MD6*
+ - Fugue*
+ - Luffa*
+ - SIMD*
+
+MAC's:
+ - HMAC
+ - OMAC*
+ - Keccak*
+ - Skein*
+ - CMAC*
+ - UMAC*
+ - VMAC*
+ - PMAC*
+ - Poly1305*
+ - CBC-MAC*
+
+Run build.sh to compile.
+
+TODO
+ - error messages
+ - tests
+ - perf tests
+ - parallelization (multi threaded ctr mode)?

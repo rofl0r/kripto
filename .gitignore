@@ -1,0 +1,6 @@
+*.dll
+*.exe
+*.o
+*.so
+kriptz
+kriptz_gtk
