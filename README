@@ -38,7 +38,6 @@ Modes:
  - KFB*
  - TBC*
 
-
 Stream ciphers:
  - Salsa20
  - ChaCha
@@ -62,8 +61,8 @@ Hash functions:
  - SHA3 (Keccak1600)
  - Keccak800
  - Skein*
- - Blake*
- - Blake2*
+ - Blake
+ - Blake2
  - WHIRPOOL*
  - Tiger*
  - MD5*
@@ -91,6 +90,8 @@ MAC's:
  - PMAC*
  - Poly1305*
  - CBC-MAC*
+
+* not supported (yet)
 
 Run build.sh to compile.
 
