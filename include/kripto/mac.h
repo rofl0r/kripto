@@ -33,7 +33,21 @@ extern int kripto_mac_finish(kripto_mac s, void *out, const size_t len);
 
 extern void kripto_mac_destroy(kripto_mac s);
 
+extern int kripto_mac_all
+(
+	kripto_mac_desc desc,
+	void *f,
+	const void *key,
+	const unsigned int key_len,
+	const void *in,
+	const unsigned int in_len,
+	void *out,
+	const unsigned int out_len
+);
+
 extern kripto_mac_desc kripto_mac_get_desc(const kripto_mac s);
+
+extern unsigned int kripto_mac_max(kripto_mac_desc s, const void *f);
 
 #ifdef __cplusplus
 }

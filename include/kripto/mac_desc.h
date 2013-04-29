@@ -21,6 +21,7 @@ struct kripto_mac_desc
 	int (*update)(kripto_mac, const void *, const size_t);
 	int (*finish)(kripto_mac, void *, const size_t);
 	void (*destroy)(kripto_mac);
+	unsigned int (*max)(const void *);
 };
 
 #endif

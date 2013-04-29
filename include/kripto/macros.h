@@ -43,7 +43,7 @@
 #define CS64(x) ((const int64_t *)(x))
 
 #define PTR_ADD(x, i) (CU8(x) + (i))
-#define PTR_INC(x, i) (x = PTR_ADD((x), (i)))
+#define PTR_INC(x, i) (x = U8(x) + (i))
 
 /* U16 */
 #define U8TO16_LE(x)						\

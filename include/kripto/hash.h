@@ -38,11 +38,11 @@ extern int kripto_hash_all
 	const size_t out_len
 );
 
-extern kripto_hash_desc kripto_hash_get_desc(kripto_hash s);
+extern kripto_hash_desc kripto_hash_get_desc(const kripto_hash s);
 
-extern unsigned int kripto_hash_max(const kripto_hash_desc s);
+extern unsigned int kripto_hash_max(kripto_hash_desc s);
 
-extern unsigned int kripto_hash_blocksize(const kripto_hash_desc s);
+extern unsigned int kripto_hash_blocksize(kripto_hash_desc s);
 
 #ifdef __cplusplus
 }

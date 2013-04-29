@@ -69,7 +69,7 @@ int kripto_hash_all
 	return hash->hash_all(r, in, in_len, out, out_len);
 }
 
-kripto_hash_desc kripto_hash_get_desc(kripto_hash s)
+kripto_hash_desc kripto_hash_get_desc(const kripto_hash s)
 {
 	return s->hash;
 }

@@ -58,7 +58,40 @@ void kripto_mac_destroy(kripto_mac s)
 	s->desc->destroy(s);
 }
 
+int kripto_mac_all
+(
+	kripto_mac_desc desc,
+	void *f,
+	const void *key,
+	const unsigned int key_len,
+	const void *in,
+	const unsigned int in_len,
+	void *out,
+	const unsigned int out_len
+)
+{
+	kripto_mac s;
+
+	s = kripto_mac_create(desc, f, key, key_len);
+	if(!s) return -1;
+
+	if(kripto_mac_update(s, in, in_len)) goto err;
+	if(kripto_mac_finish(s, out, out_len)) goto err;
+
+	kripto_mac_destroy(s);
+	return 0;
+
+err:
+	kripto_mac_destroy(s);
+	return -1;
+}
+
 kripto_mac_desc kripto_mac_get_desc(const kripto_mac s)
 {
 	return s->desc;
+}
+
+unsigned int kripto_mac_max(kripto_mac_desc mac, const void *f)
+{
+	return mac->max(f);
 }

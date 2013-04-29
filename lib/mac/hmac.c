@@ -126,6 +126,11 @@ static int hmac_finish(kripto_mac s, void *out, const size_t len)
 	return 0;
 }
 
+static unsigned int hmac_max(const void *hash)
+{
+	return kripto_hash_max(kripto_hash_get_desc(hash));
+}
+
 static const struct kripto_mac_desc hmac =
 {
 	&hmac_init,
@@ -133,6 +138,7 @@ static const struct kripto_mac_desc hmac =
 	&hmac_update,
 	&hmac_finish,
 	&hmac_destroy,
+	&hmac_max
 };
 
 kripto_mac_desc const kripto_mac_hmac = &hmac;
