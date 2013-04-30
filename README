@@ -2,6 +2,8 @@ THIS SOFTWARE IS NOT READY FOR USE!
 
 Lightweight and flexible cryptographic library written in ISO C99.
 
+* not supported (yet)
+
 Block ciphers:
  - AES (Rijndael 128)
  - Serpent*
@@ -35,7 +37,6 @@ Modes:
  - CFB*
  - OFB*
  - ECB*
- - KFB*
  - TBC*
 
 Stream ciphers:
@@ -54,7 +55,6 @@ Stream ciphers:
  - HC-256*
  - ISAAC*
  - MUGI*
- - Phelix*
 
 Hash functions:
  - SHA2
@@ -91,12 +91,7 @@ MAC's:
  - Poly1305*
  - CBC-MAC*
 
-* not supported (yet)
+Authenticated stream ciphers:
+ - Phelix*
 
 Run build.sh to compile.
-
-TODO
- - error messages
- - tests
- - perf tests
- - parallelization (multi threaded ctr mode)?
