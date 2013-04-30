@@ -20,11 +20,21 @@ extern kripto_hash kripto_hash_create
 
 extern void kripto_hash_init(kripto_hash s, const size_t len);
 
-extern int kripto_hash_input(kripto_hash s, const void *in, const size_t len);
+extern int kripto_hash_input
+(
+	kripto_hash s,
+	const void *in,
+	const size_t len
+);
 
 extern void kripto_hash_finish(kripto_hash s);
 
-extern int kripto_hash_output(kripto_hash s, void *out, const size_t len);
+extern int kripto_hash_output
+(
+	kripto_hash s,
+	void *out,
+	const size_t len
+);
 
 extern void kripto_hash_destroy(kripto_hash s);
 

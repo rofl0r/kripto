@@ -32,7 +32,12 @@ extern size_t kripto_stream_decrypt
 	const size_t len
 );
 
-extern size_t kripto_stream_prng(kripto_stream s, void *out, const size_t len);
+extern size_t kripto_stream_prng
+(
+	kripto_stream s,
+	void *out,
+	const size_t len
+);
 
 extern void kripto_stream_destroy(kripto_stream s);
 

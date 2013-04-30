@@ -7,9 +7,24 @@
 
 struct kripto_stream_desc
 {
-	size_t (*encrypt)(const kripto_stream, const void *, void *, const size_t);
-	size_t (*decrypt)(const kripto_stream, const void *, void *, const size_t);
+	size_t (*encrypt)
+	(
+		const kripto_stream,
+		const void *,
+		void *,
+		const size_t
+	);
+
+	size_t (*decrypt)
+	(
+		const kripto_stream,
+		const void *,
+		void *,
+		const size_t
+	);
+
 	size_t (*prng)(const kripto_stream, void *, const size_t);
+
 	kripto_stream (*create)
 	(
 		const void *,
@@ -18,7 +33,9 @@ struct kripto_stream_desc
 		const unsigned int,
 		const unsigned int
 	);
+
 	void (*destroy)(kripto_stream);
+
 	unsigned int max_key;
 	unsigned int max_iv;
 	unsigned int max_rounds;

@@ -18,7 +18,13 @@
 
 #include <kripto/pkcs7.h>
 
-size_t kripto_pkcs7_add(void *buf, const size_t len, unsigned int pad, const size_t maxlen)
+size_t kripto_pkcs7_add
+(
+	void *buf,
+	const size_t len,
+	unsigned int pad,
+	const size_t maxlen
+)
 {
 	unsigned int i;
 

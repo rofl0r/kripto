@@ -29,7 +29,11 @@ kripto_stream kripto_mode_create
 	return mode->create(block, iv, iv_len);
 }
 
-unsigned int kripto_mode_max_iv(kripto_mode_desc mode, kripto_block_desc block)
+unsigned int kripto_mode_max_iv
+(
+	kripto_mode_desc mode,
+	kripto_block_desc block
+)
 {
 	return mode->max_iv(block);
 }

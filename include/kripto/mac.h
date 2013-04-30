@@ -27,9 +27,19 @@ extern int kripto_mac_init
 	const unsigned int key_len
 );
 
-extern int kripto_mac_update(kripto_mac s, const void *in, const size_t len);
+extern int kripto_mac_update
+(
+	kripto_mac s,
+	const void *in,
+	const size_t len
+);
 
-extern int kripto_mac_finish(kripto_mac s, void *out, const size_t len);
+extern int kripto_mac_finish
+(
+	kripto_mac s,
+	void *out,
+	const size_t len
+);
 
 extern void kripto_mac_destroy(kripto_mac s);
 

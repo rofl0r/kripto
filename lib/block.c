@@ -32,12 +32,22 @@ kripto_block kripto_block_create
 	return desc->create(key, key_len, r);
 }
 
-void kripto_block_encrypt(const kripto_block s, const void *pt, void *ct)
+void kripto_block_encrypt
+(
+	const kripto_block s,
+	const void *pt,
+	void *ct
+)
 {
 	s->desc->encrypt(s, pt, ct);
 }
 
-void kripto_block_decrypt(const kripto_block s, const void *ct, void *pt)
+void kripto_block_decrypt
+(
+	const kripto_block s,
+	const void *ct,
+	void *pt
+)
 {
 	s->desc->decrypt(s, ct, pt);
 }
