@@ -6,7 +6,7 @@
 #include <kripto/block.h>
 #include <kripto/stream.h>
 
-struct kripto_mode
+struct kripto_mode_desc
 {
 	kripto_stream (*create)
 	(

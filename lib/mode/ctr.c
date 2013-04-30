@@ -95,7 +95,10 @@ static size_t ctr_prng(kripto_stream s, void *out, const size_t len)
 
 static void ctr_destroy(kripto_stream s)
 {
-	kripto_memwipe(s, sizeof(struct kripto_stream) + (s->block_size << 1));
+	kripto_memwipe(s, sizeof(struct kripto_stream)
+		+ (s->block_size << 1)
+		+ sizeof(struct kripto_stream_desc)
+	);
 	free(s);
 }
 
@@ -155,10 +158,10 @@ static kripto_stream ctr_create
 	return s;
 }
 
-static const struct kripto_mode ctr =
+static const struct kripto_mode_desc ctr =
 {
 	&ctr_create,
 	&ctr_max_iv
 };
 
-kripto_mode const kripto_mode_ctr = &ctr;
+kripto_mode_desc const kripto_mode_ctr = &ctr;

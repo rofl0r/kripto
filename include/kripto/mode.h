@@ -1,14 +1,14 @@
 #ifndef KRIPTO_MODE_H
 #define KRIPTO_MODE_H
 
-typedef const struct kripto_mode *kripto_mode;
+typedef const struct kripto_mode_desc *kripto_mode_desc;
 
 #include <kripto/block.h>
 #include <kripto/stream.h>
 
 extern kripto_stream kripto_mode_create
 (
-	kripto_mode mode,
+	kripto_mode_desc mode,
 	kripto_block block,
 	const void *iv,
 	const unsigned int iv_len
@@ -16,7 +16,7 @@ extern kripto_stream kripto_mode_create
 
 extern unsigned int kripto_mode_max_iv
 (
-	kripto_mode mode,
+	kripto_mode_desc mode,
 	kripto_block_desc block
 );
 
