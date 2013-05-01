@@ -18,10 +18,10 @@
 
 #include <kripto/mode.h>
 
-kripto_stream kripto_mode_create
+kripto_stream *kripto_mode_create
 (
-	kripto_mode_desc mode,
-	kripto_block block,
+	kripto_mode_desc *mode,
+	const kripto_block *block,
 	const void *iv,
 	const unsigned int iv_len
 )
@@ -31,8 +31,8 @@ kripto_stream kripto_mode_create
 
 unsigned int kripto_mode_max_iv
 (
-	kripto_mode_desc mode,
-	kripto_block_desc block
+	kripto_mode_desc *mode,
+	kripto_block_desc *block
 )
 {
 	return mode->max_iv(block);

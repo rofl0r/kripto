@@ -18,12 +18,12 @@
 
 struct kripto_block
 {
-	kripto_block_desc desc;
+	kripto_block_desc *desc;
 };
 
-kripto_block kripto_block_create
+kripto_block *kripto_block_create
 (
-	kripto_block_desc desc,
+	kripto_block_desc *desc,
 	const void *key,
 	const unsigned int key_len,
 	const unsigned int r
@@ -34,7 +34,7 @@ kripto_block kripto_block_create
 
 void kripto_block_encrypt
 (
-	const kripto_block s,
+	const kripto_block *s,
 	const void *pt,
 	void *ct
 )
@@ -44,7 +44,7 @@ void kripto_block_encrypt
 
 void kripto_block_decrypt
 (
-	const kripto_block s,
+	const kripto_block *s,
 	const void *ct,
 	void *pt
 )
@@ -52,32 +52,32 @@ void kripto_block_decrypt
 	s->desc->decrypt(s, ct, pt);
 }
 
-void kripto_block_destroy(kripto_block s)
+void kripto_block_destroy(kripto_block *s)
 {
 	s->desc->destroy(s);
 }
 
-kripto_block_desc kripto_block_get_desc(const kripto_block s)
+kripto_block_desc *kripto_block_get_desc(const kripto_block *s)
 {
 	return s->desc;
 }
 
-unsigned int kripto_block_size(kripto_block_desc desc)
+unsigned int kripto_block_size(kripto_block_desc *desc)
 {
 	return desc->block_size;
 }
 
-unsigned int kripto_block_max_key(kripto_block_desc desc)
+unsigned int kripto_block_max_key(kripto_block_desc *desc)
 {
 	return desc->max_key;
 }
 
-unsigned int kripto_block_max_rounds(kripto_block_desc desc)
+unsigned int kripto_block_max_rounds(kripto_block_desc *desc)
 {
 	return desc->max_rounds;
 }
 
-unsigned int kripto_block_default_rounds(kripto_block_desc desc)
+unsigned int kripto_block_default_rounds(kripto_block_desc *desc)
 {
 	return desc->default_rounds;
 }

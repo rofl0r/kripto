@@ -8,7 +8,7 @@ extern "C"
 {
 #endif
 
-extern kripto_mode_desc const kripto_mode_ctr;
+extern kripto_mode_desc *const kripto_mode_ctr;
 
 #ifdef __cplusplus
 }

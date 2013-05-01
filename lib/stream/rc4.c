@@ -26,7 +26,7 @@
 
 struct kripto_stream
 {
-	kripto_stream_desc desc;
+	kripto_stream_desc *desc;
 	uint8_t p[256];
 	uint8_t i;
 	uint8_t j;
@@ -39,7 +39,7 @@ struct kripto_stream
 
 static void improved_setup
 (
-	kripto_stream s,
+	kripto_stream *s,
 	const void *key,
 	const unsigned int key_len,
 	const void *iv,
@@ -109,7 +109,7 @@ static void improved_setup
 	s->i = s->j; /* original RC4: s->i = s->j = 0; */
 }
 
-static uint8_t rc4(kripto_stream s)
+static uint8_t rc4(kripto_stream *s)
 {
 	uint8_t t;
 
@@ -123,7 +123,13 @@ static uint8_t rc4(kripto_stream s)
 	return(s->p[(uint8_t)(s->p[s->i] + s->p[s->j])]);
 }
 
-static size_t rc4_crypt(kripto_stream s, const void *in, void *out, const size_t len)
+static size_t rc4_crypt
+(
+	kripto_stream *s,
+	const void *in,
+	void *out,
+	const size_t len
+)
 {
 	size_t i;
 
@@ -133,7 +139,12 @@ static size_t rc4_crypt(kripto_stream s, const void *in, void *out, const size_t
 	return i;
 }
 
-static size_t rc4_prng(kripto_stream s, void *out, const size_t len)
+static size_t rc4_prng
+(
+	kripto_stream *s,
+	void *out,
+	const size_t len
+)
 {
 	size_t i;
 
@@ -143,7 +154,7 @@ static size_t rc4_prng(kripto_stream s, void *out, const size_t len)
 	return i;
 }
 
-static kripto_stream rc4i_create
+static kripto_stream *rc4i_create
 (
 	const void *key,
 	const unsigned int key_len,
@@ -152,7 +163,7 @@ static kripto_stream rc4i_create
 	const unsigned int r
 )
 {
-	kripto_stream s;
+	kripto_stream *s;
 	unsigned int rounds = r;
 
 	if(key_len + iv_len > RC4I_MAX_KEY) return 0;
@@ -168,7 +179,7 @@ static kripto_stream rc4i_create
 	return s;
 }
 
-static kripto_stream rc4_create
+static kripto_stream *rc4_create
 (
 	const void *key,
 	const unsigned int key_len,
@@ -177,7 +188,7 @@ static kripto_stream rc4_create
 	const unsigned int r
 )
 {
-	kripto_stream s;
+	kripto_stream *s;
 	unsigned int i;
 
 	s = rc4i_create(key, key_len, iv, iv_len, 256);
@@ -193,7 +204,7 @@ static kripto_stream rc4_create
 	return s;
 }
 
-static void rc4_destroy(kripto_stream s)
+static void rc4_destroy(kripto_stream *s)
 {
 	kripto_memwipe(s, sizeof(struct kripto_stream));
 	free(s);
@@ -213,7 +224,7 @@ static const struct kripto_stream_desc rc4_desc =
 	0
 };
 
-kripto_stream_desc const kripto_stream_rc4 = &rc4_desc;
+kripto_stream_desc *const kripto_stream_rc4 = &rc4_desc;
 
 /* RC4i */
 static const struct kripto_stream_desc rc4i =
@@ -229,4 +240,4 @@ static const struct kripto_stream_desc rc4i =
 	512
 };
 
-kripto_stream_desc const kripto_stream_rc4i = &rc4i;
+kripto_stream_desc *const kripto_stream_rc4i = &rc4i;

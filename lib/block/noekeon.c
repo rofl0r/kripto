@@ -25,7 +25,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc desc;
+	kripto_block_desc *desc;
 	unsigned int r;
 	uint32_t k[4];
 	uint32_t dk[4];
@@ -83,7 +83,7 @@ static const uint8_t rc[34] =
 
 static void noekeon_encrypt
 (
-	const kripto_block s,
+	const kripto_block *s,
 	const void *pt,
 	void *ct
 )
@@ -119,7 +119,7 @@ static void noekeon_encrypt
 
 static void noekeon_decrypt
 (
-	const kripto_block s,
+	const kripto_block *s,
 	const void *ct,
 	void *pt
 )
@@ -155,7 +155,7 @@ static void noekeon_decrypt
 
 static void noekeon_setup
 (
-	kripto_block s,
+	kripto_block *s,
 	const uint8_t *key,
 	const unsigned int key_len
 )
@@ -206,14 +206,14 @@ static void noekeon_setup
 	THETA(s->dk[0], s->dk[1], s->dk[2], s->dk[3], 0, 0, 0, 0);
 }
 
-static kripto_block noekeon_create
+static kripto_block *noekeon_create
 (
 	const void *key,
 	unsigned int key_len,
 	unsigned int r
 )
 {
-	kripto_block s;
+	kripto_block *s;
 
 	if(r > NOEKEON_MAX_ROUNDS) return 0;
 	if(key_len > NOEKEON_MAX_KEY) return 0;
@@ -229,7 +229,7 @@ static kripto_block noekeon_create
 	return s;
 }
 
-static void noekeon_destroy(kripto_block s)
+static void noekeon_destroy(kripto_block *s)
 {
 	kripto_memwipe(s, sizeof(struct kripto_block));
 	free(s);
@@ -247,4 +247,4 @@ static const struct kripto_block_desc noekeon =
 	16
 };
 
-kripto_block_desc const kripto_block_noekeon = &noekeon;
+kripto_block_desc *const kripto_block_noekeon = &noekeon;

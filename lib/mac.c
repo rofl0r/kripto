@@ -18,12 +18,12 @@
 
 struct kripto_mac
 {
-	kripto_mac_desc desc;
+	kripto_mac_desc *desc;
 };
 
-kripto_mac kripto_mac_create
+kripto_mac *kripto_mac_create
 (
-	kripto_mac_desc desc,
+	kripto_mac_desc *desc,
 	void *f,
 	const void *key,
 	const unsigned int key_len
@@ -34,7 +34,7 @@ kripto_mac kripto_mac_create
 
 int kripto_mac_init
 (
-	kripto_mac s,
+	kripto_mac *s,
 	void *f,
 	const void *key,
 	const unsigned int key_len
@@ -43,24 +43,24 @@ int kripto_mac_init
 	return s->desc->init(s, f, key, key_len);
 }
 
-int kripto_mac_update(kripto_mac s, const void *in, const size_t len)
+int kripto_mac_update(kripto_mac *s, const void *in, const size_t len)
 {
 	return s->desc->update(s, in, len);
 }
 
-int kripto_mac_finish(kripto_mac s, void *out, const size_t len)
+int kripto_mac_finish(kripto_mac *s, void *out, const size_t len)
 {
 	return s->desc->finish(s, out, len);
 }
 
-void kripto_mac_destroy(kripto_mac s)
+void kripto_mac_destroy(kripto_mac *s)
 {
 	s->desc->destroy(s);
 }
 
 int kripto_mac_all
 (
-	kripto_mac_desc desc,
+	kripto_mac_desc *desc,
 	void *f,
 	const void *key,
 	const unsigned int key_len,
@@ -70,7 +70,7 @@ int kripto_mac_all
 	const unsigned int out_len
 )
 {
-	kripto_mac s;
+	kripto_mac *s;
 
 	s = kripto_mac_create(desc, f, key, key_len);
 	if(!s) return -1;
@@ -86,12 +86,12 @@ err:
 	return -1;
 }
 
-kripto_mac_desc kripto_mac_get_desc(const kripto_mac s)
+kripto_mac_desc *kripto_mac_get_desc(const kripto_mac *s)
 {
 	return s->desc;
 }
 
-unsigned int kripto_mac_max(kripto_mac_desc mac, const void *f)
+unsigned int kripto_mac_max(kripto_mac_desc *mac, const void *f)
 {
 	return mac->max(f);
 }

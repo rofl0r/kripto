@@ -8,7 +8,7 @@ extern "C"
 {
 #endif
 
-extern kripto_block_desc const kripto_block_seed;
+extern kripto_block_desc *const kripto_block_seed;
 
 #ifdef __cplusplus
 }

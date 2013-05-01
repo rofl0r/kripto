@@ -24,7 +24,7 @@
 
 int kripto_pbkdf2
 (
-	kripto_mac_desc mac_desc,
+	kripto_mac_desc *mac_desc,
 	void *f,
 	const unsigned int iter,
 	const void *pass,
@@ -40,7 +40,7 @@ int kripto_pbkdf2
 	unsigned int y;
 	uint32_t ctr = 1;
 	uint8_t *buf[2];
-	kripto_mac mac;
+	kripto_mac *mac;
 
 	x = kripto_mac_max(mac_desc, f);
 	if(out_len < x) x = out_len;

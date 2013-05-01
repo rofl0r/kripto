@@ -27,7 +27,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc desc;
+	kripto_block_desc *desc;
 	unsigned int r;
 	uint32_t s0[256];
 	uint32_t s1[256];
@@ -988,7 +988,7 @@ static uint32_t h
 
 static void twofish_setup
 (
-	kripto_block s,
+	kripto_block *s,
 	const uint8_t *key,
 	unsigned int key_len
 )
@@ -1076,7 +1076,7 @@ static void twofish_setup
 
 static void twofish_encrypt
 (
-	const kripto_block s,
+	const kripto_block *s,
 	const void *pt,
 	void *ct
 )
@@ -1125,7 +1125,7 @@ static void twofish_encrypt
 
 static void twofish_decrypt
 (
-	const kripto_block s,
+	const kripto_block *s,
 	const void *ct,
 	void *pt
 )
@@ -1172,14 +1172,14 @@ static void twofish_decrypt
 	U32TO8_LE(x3, U8(pt) + 12);
 }
 
-static kripto_block twofish_create
+static kripto_block *twofish_create
 (
 	const void *key,
 	unsigned int key_len,
 	unsigned int r
 )
 {
-	kripto_block s;
+	kripto_block *s;
 
 	if(key_len > 32) return 0;
 
@@ -1197,7 +1197,7 @@ static kripto_block twofish_create
 	return s;
 }
 
-static void twofish_destroy(kripto_block s)
+static void twofish_destroy(kripto_block *s)
 {
 	kripto_memwipe(s, sizeof(struct kripto_block)
 		+ (TWOFISH_K_LEN(s->r) << 2));
@@ -1217,4 +1217,4 @@ static const struct kripto_block_desc twofish =
 	16
 };
 
-kripto_block_desc const kripto_block_twofish = &twofish;
+kripto_block_desc *const kripto_block_twofish = &twofish;

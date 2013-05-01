@@ -25,7 +25,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc desc;
+	kripto_block_desc *desc;
 	unsigned int r;
 	uint32_t *k;
 };
@@ -37,7 +37,7 @@ struct kripto_block
 
 static int rc6_setup
 (
-	kripto_block s,
+	kripto_block *s,
 	const uint8_t *key,
 	const unsigned int key_len
 )
@@ -93,7 +93,7 @@ static int rc6_setup
 	return 0;
 }
 
-static void rc6_encrypt(const kripto_block s, const void *pt, void *ct)
+static void rc6_encrypt(const kripto_block *s, const void *pt, void *ct)
 {
 	uint32_t A;
 	uint32_t B;
@@ -133,7 +133,7 @@ static void rc6_encrypt(const kripto_block s, const void *pt, void *ct)
 	U32TO8_LE(D, U8(ct) + 12);
 }
 
-static void rc6_decrypt(const kripto_block s, const void *ct, void *pt)
+static void rc6_decrypt(const kripto_block *s, const void *ct, void *pt)
 {
 	uint32_t A;
 	uint32_t B;
@@ -175,14 +175,14 @@ static void rc6_decrypt(const kripto_block s, const void *ct, void *pt)
 	U32TO8_LE(D, U8(pt) + 12);
 }
 
-static kripto_block rc6_create
+static kripto_block *rc6_create
 (
 	const void *key,
 	unsigned int key_len,
 	unsigned int r
 )
 {
-	kripto_block s;
+	kripto_block *s;
 
 	if(r > INT_MAX) return 0;
 
@@ -206,7 +206,7 @@ static kripto_block rc6_create
 	return s;
 }
 
-static void rc6_destroy(kripto_block s)
+static void rc6_destroy(kripto_block *s)
 {
 	kripto_memwipe(s, sizeof(struct kripto_block)
 		+ (RC6_K_LEN(s->r) << 2));
@@ -226,4 +226,4 @@ static const struct kripto_block_desc rc6 =
 	20
 };
 
-kripto_block_desc const kripto_block_rc6 = &rc6;
+kripto_block_desc *const kripto_block_rc6 = &rc6;

@@ -25,7 +25,7 @@
 
 struct kripto_stream
 {
-	kripto_stream_desc desc;
+	kripto_stream_desc *desc;
 	unsigned int r;
 	uint32_t x[16];
 	uint8_t buf[64];
@@ -118,7 +118,7 @@ static void salsa20_core
 
 static size_t salsa20_crypt
 (
-	kripto_stream s,
+	kripto_stream *s,
 	const void *in,
 	void *out,
 	const size_t len
@@ -145,7 +145,7 @@ static size_t salsa20_crypt
 
 static size_t salsa20_prng
 (
-	kripto_stream s,
+	kripto_stream *s,
 	void *out,
 	const size_t len
 )
@@ -171,7 +171,7 @@ static size_t salsa20_prng
 
 static void salsa20_setup
 (
-	kripto_stream s,
+	kripto_stream *s,
 	const void *key,
 	const unsigned int key_len,
 	const void *iv,
@@ -272,7 +272,7 @@ static void salsa20_setup
 	s->used = 64;
 }
 
-static kripto_stream salsa20_create
+static kripto_stream *salsa20_create
 (
 	const void *key,
 	const unsigned int key_len,
@@ -281,7 +281,7 @@ static kripto_stream salsa20_create
 	const unsigned int r
 )
 {
-	kripto_stream s;
+	kripto_stream *s;
 
 	if(key_len > 32) return 0;
 	if(iv_len > 24) return 0;
@@ -296,7 +296,7 @@ static kripto_stream salsa20_create
 	return s;
 }
 
-static void salsa20_destroy(kripto_stream s)
+static void salsa20_destroy(kripto_stream *s)
 {
 	kripto_memwipe(s, sizeof(struct kripto_stream));
 	free(s);
@@ -315,4 +315,4 @@ static const struct kripto_stream_desc salsa20 =
 	20
 };
 
-kripto_stream_desc const kripto_stream_salsa20 = &salsa20;
+kripto_stream_desc *const kripto_stream_salsa20 = &salsa20;

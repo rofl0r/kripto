@@ -26,7 +26,7 @@
 
 struct kripto_hash
 {
-	kripto_hash_desc hash;
+	kripto_hash_desc *hash;
 	unsigned int r;
 	uint32_t h[8];
 	uint8_t buf[64];
@@ -79,7 +79,7 @@ static const uint32_t k[128] =
 	0xD740288C, 0xE21DBA7A, 0xEABBFF66, 0xF56A9E60
 };
 
-static void sha2_256_init(kripto_hash s, const size_t len)
+static void sha2_256_init(kripto_hash *s, const size_t len)
 {
 	s->len = s->n = 0;
 
@@ -109,7 +109,7 @@ static void sha2_256_init(kripto_hash s, const size_t len)
 	}
 }
 
-static void sha2_256_process(kripto_hash s, const uint8_t *data)
+static void sha2_256_process(kripto_hash *s, const uint8_t *data)
 {
 	uint32_t a = s->h[0];
 	uint32_t b = s->h[1];
@@ -172,7 +172,12 @@ static void sha2_256_process(kripto_hash s, const uint8_t *data)
 	s->h[7] += h;
 }
 
-static int sha2_256_input(kripto_hash s, const void *in, const size_t len) 
+static int sha2_256_input
+(
+	kripto_hash *s,
+	const void *in,
+	const size_t len
+) 
 {
 	size_t i;
 
@@ -193,7 +198,7 @@ static int sha2_256_input(kripto_hash s, const void *in, const size_t len)
 	return 0;
 }
 
-static void sha2_256_finish(kripto_hash s)
+static void sha2_256_finish(kripto_hash *s)
 {
 	s->buf[s->n++] = 0x80; /* pad */
 
@@ -212,7 +217,7 @@ static void sha2_256_finish(kripto_hash s)
 	sha2_256_process(s, s->buf);
 }
 
-static int sha2_256_output(kripto_hash s, void *out, const size_t len)
+static int sha2_256_output(kripto_hash *s, void *out, const size_t len)
 {
 	unsigned int i;
 
@@ -227,9 +232,13 @@ static int sha2_256_output(kripto_hash s, void *out, const size_t len)
 	return 0;
 }
 
-static kripto_hash sha2_256_create(const unsigned int r, const size_t len)
+static kripto_hash *sha2_256_create
+(
+	const unsigned int r,
+	const size_t len
+)
 {
-	kripto_hash s;
+	kripto_hash *s;
 
 	if(r > 128) return 0;
 
@@ -246,7 +255,7 @@ static kripto_hash sha2_256_create(const unsigned int r, const size_t len)
 	return s;
 }
 
-static void sha2_256_destroy(kripto_hash s)
+static void sha2_256_destroy(kripto_hash *s)
 {
 	kripto_memwipe(s, sizeof(struct kripto_hash));
 	free(s);
@@ -297,4 +306,4 @@ static const struct kripto_hash_desc sha2_256 =
 	64 /* default_rounds */
 };
 
-kripto_hash_desc const kripto_hash_sha2_256 = &sha2_256;
+kripto_hash_desc *const kripto_hash_sha2_256 = &sha2_256;

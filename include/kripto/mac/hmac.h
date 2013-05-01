@@ -3,6 +3,6 @@
 
 #include <kripto/mac.h>
 
-extern kripto_mac_desc const kripto_mac_hmac;
+extern kripto_mac_desc *const kripto_mac_hmac;
 
 #endif

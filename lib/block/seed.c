@@ -24,7 +24,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc desc;
+	kripto_block_desc *desc;
 	unsigned int r;
 	uint32_t *k;
 };
@@ -333,7 +333,7 @@ static const uint32_t s3[256] =
 
 static void seed_encrypt
 (
-	const kripto_block s,
+	const kripto_block *s,
 	const void *pt,
 	void *ct
 )
@@ -362,7 +362,7 @@ static void seed_encrypt
 
 static void seed_decrypt
 (
-	const kripto_block s,
+	const kripto_block *s,
 	const void *ct,
 	void *pt
 )
@@ -391,7 +391,7 @@ static void seed_decrypt
 
 static void seed_setup
 (
-	kripto_block s,
+	kripto_block *s,
 	const uint8_t *key,
 	unsigned int key_len
 )
@@ -434,14 +434,14 @@ static void seed_setup
 	kripto_memwipe(&T1, sizeof(uint32_t));
 }
 
-static kripto_block seed_create
+static kripto_block *seed_create
 (
 	const void *key,
 	unsigned int key_len,
 	unsigned int r
 )
 {
-	kripto_block s;
+	kripto_block *s;
 
 	if(key_len > SEED_MAX_KEY) return 0;
 
@@ -459,7 +459,7 @@ static kripto_block seed_create
 	return s;
 }
 
-static void seed_destroy(kripto_block s)
+static void seed_destroy(kripto_block *s)
 {
 	kripto_memwipe(s, sizeof(struct kripto_block)
 		+ (SEED_K_LEN(s->r) << 2));
@@ -479,4 +479,4 @@ static const struct kripto_block_desc seed =
 	16
 };
 
-kripto_block_desc const kripto_block_seed = &seed;
+kripto_block_desc *const kripto_block_seed = &seed;

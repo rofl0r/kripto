@@ -25,7 +25,7 @@
 
 struct kripto_stream
 {
-	kripto_stream_desc desc;
+	kripto_stream_desc *desc;
 	unsigned int r;
 	uint32_t x[16];
 	uint8_t buf[64];
@@ -40,7 +40,12 @@ struct kripto_stream
 	C += D; B = ROL32(B ^ C,  7);	\
 }
 
-static void chacha_core(const unsigned int r, const uint32_t *x, void *out)
+static void chacha_core
+(
+	const unsigned int r,
+	const uint32_t *x,
+	void *out
+)
 {
 	unsigned int i;
 
@@ -111,7 +116,13 @@ static void chacha_core(const unsigned int r, const uint32_t *x, void *out)
 	U32TO8_LE(x15, U8(out) + 60);
 }
 
-static size_t chacha_crypt(kripto_stream s, const void *in, void *out, const size_t len)
+static size_t chacha_crypt
+(
+	kripto_stream *s,
+	const void *in,
+	void *out,
+	const size_t len
+)
 {
 	size_t i;
 
@@ -132,7 +143,12 @@ static size_t chacha_crypt(kripto_stream s, const void *in, void *out, const siz
 	return i;
 }
 
-static size_t chacha_prng(kripto_stream s, void *out, const size_t len)
+static size_t chacha_prng
+(
+	kripto_stream *s,
+	void *out,
+	const size_t len
+)
 {
 	size_t i;
 
@@ -155,7 +171,7 @@ static size_t chacha_prng(kripto_stream s, void *out, const size_t len)
 
 static void chacha_setup
 (
-	kripto_stream s,
+	kripto_stream *s,
 	const void *key,
 	const unsigned int key_len,
 	const void *iv,
@@ -238,7 +254,7 @@ static void chacha_setup
 	s->used = 64;
 }
 
-static kripto_stream chacha_create
+static kripto_stream *chacha_create
 (
 	const void *key,
 	const unsigned int key_len,
@@ -247,7 +263,7 @@ static kripto_stream chacha_create
 	const unsigned int r
 )
 {
-	kripto_stream s;
+	kripto_stream *s;
 
 	if(key_len > 32) return 0;
 	if(iv_len > 24) return 0;
@@ -262,7 +278,7 @@ static kripto_stream chacha_create
 	return s;
 }
 
-static void chacha_destroy(kripto_stream s)
+static void chacha_destroy(kripto_stream *s)
 {
 	kripto_memwipe(s, sizeof(struct kripto_stream));
 	free(s);
@@ -281,4 +297,4 @@ static const struct kripto_stream_desc chacha =
 	20
 };
 
-kripto_stream_desc const kripto_stream_chacha = &chacha;
+kripto_stream_desc *const kripto_stream_chacha = &chacha;

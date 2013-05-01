@@ -20,7 +20,7 @@
 
 int main(void)
 {
-	kripto_stream s;
+	kripto_stream *s;
 	unsigned int i;
 	unsigned int n;
 	uint8_t t[128];

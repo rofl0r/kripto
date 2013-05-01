@@ -18,12 +18,12 @@
 
 struct kripto_hash
 {
-	kripto_hash_desc hash;
+	kripto_hash_desc *hash;
 };
 
-kripto_hash kripto_hash_create
+kripto_hash *kripto_hash_create
 (
-	kripto_hash_desc hash,
+	kripto_hash_desc *hash,
 	const unsigned int r,
 	const size_t len
 )
@@ -31,34 +31,34 @@ kripto_hash kripto_hash_create
 	return hash->create(r, len);
 }
 
-void kripto_hash_init(kripto_hash s, const size_t len)
+void kripto_hash_init(kripto_hash *s, const size_t len)
 {
 	s->hash->init(s, len);
 }
 
-int kripto_hash_input(kripto_hash s, const void *in, const size_t len)
+int kripto_hash_input(kripto_hash *s, const void *in, const size_t len)
 {
 	return s->hash->input(s, in, len);
 }
 
-void kripto_hash_finish(kripto_hash s)
+void kripto_hash_finish(kripto_hash *s)
 {
 	s->hash->finish(s);
 }
 
-int kripto_hash_output(kripto_hash s, void *out, const size_t len)
+int kripto_hash_output(kripto_hash *s, void *out, const size_t len)
 {
 	return s->hash->output(s, out, len);
 }
 
-void kripto_hash_destroy(kripto_hash s)
+void kripto_hash_destroy(kripto_hash *s)
 {
 	s->hash->destroy(s);
 }
 
 int kripto_hash_all
 (
-	kripto_hash_desc hash,
+	kripto_hash_desc *hash,
 	const unsigned int r,
 	const void *in,
 	const size_t in_len,
@@ -69,17 +69,17 @@ int kripto_hash_all
 	return hash->hash_all(r, in, in_len, out, out_len);
 }
 
-kripto_hash_desc kripto_hash_get_desc(const kripto_hash s)
+kripto_hash_desc *kripto_hash_get_desc(const kripto_hash *s)
 {
 	return s->hash;
 }
 
-unsigned int kripto_hash_max(kripto_hash_desc s)
+unsigned int kripto_hash_max(kripto_hash_desc *s)
 {
 	return s->max;
 }
 
-unsigned int kripto_hash_blocksize(kripto_hash_desc s)
+unsigned int kripto_hash_blocksize(kripto_hash_desc *s)
 {
 	return s->block_size;
 }

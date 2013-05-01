@@ -37,7 +37,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc desc;
+	kripto_block_desc *desc;
 	unsigned int r;
 	uint32_t *k;
 	uint32_t *dk;
@@ -749,7 +749,7 @@ static const uint32_t rcon[52] =
 
 static void rijndael128_setup
 (
-	kripto_block s,
+	kripto_block *s,
 	const uint8_t *key,
 	unsigned int key_len
 )
@@ -820,7 +820,7 @@ static void rijndael128_setup
 
 static void rijndael128_encrypt
 (
-	const kripto_block s,
+	const kripto_block *s,
 	const void *pt,
 	void *ct
 )
@@ -898,7 +898,7 @@ static void rijndael128_encrypt
 
 static void rijndael128_decrypt
 (
-	const kripto_block s,
+	const kripto_block *s,
 	const void *ct,
 	void *pt
 )
@@ -974,14 +974,14 @@ static void rijndael128_decrypt
 	U32TO8_BE(t3, U8(pt) + 12);
 }
 
-static kripto_block rijndael128_create
+static kripto_block *rijndael128_create
 (
 	const void *key,
 	unsigned int key_len,
 	unsigned int r
 )
 {
-	kripto_block s;
+	kripto_block *s;
 
 	if(key_len > AES_MAX_KEY) return 0;
 
@@ -1022,7 +1022,7 @@ static kripto_block rijndael128_create
 	return s;
 }
 
-static void rijndael128_destroy(kripto_block s)
+static void rijndael128_destroy(kripto_block *s)
 {
 	kripto_memwipe(s, sizeof(struct kripto_block)
 		+ (AES_K_LEN(s->r) << 3));
@@ -1042,6 +1042,6 @@ static const struct kripto_block_desc rijndael128 =
 	6
 };
 
-kripto_block_desc const kripto_block_rijndael128 = &rijndael128;
+kripto_block_desc *const kripto_block_rijndael128 = &rijndael128;
 
-kripto_block_desc const kripto_block_aes = &rijndael128;
+kripto_block_desc *const kripto_block_aes = &rijndael128;

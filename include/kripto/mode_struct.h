@@ -8,13 +8,13 @@
 
 struct kripto_mode_desc
 {
-	kripto_stream (*create)
+	kripto_stream *(*create)
 	(
-		kripto_block,
+		const kripto_block *,
 		const void *,
 		const unsigned int
 	);
-	unsigned int (*max_iv)(kripto_block_desc);
+	unsigned int (*max_iv)(kripto_block_desc *);
 };
 
 #endif

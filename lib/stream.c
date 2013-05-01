@@ -18,12 +18,12 @@
 
 struct kripto_stream
 {
-	kripto_stream_desc desc;
+	kripto_stream_desc *desc;
 };
 
-kripto_stream kripto_stream_create
+kripto_stream *kripto_stream_create
 (
-	kripto_stream_desc desc,
+	kripto_stream_desc *desc,
 	const void *key,
 	const unsigned int key_len,
 	const void *iv,
@@ -36,7 +36,7 @@ kripto_stream kripto_stream_create
 
 size_t kripto_stream_encrypt
 (
-	kripto_stream s,
+	kripto_stream *s,
 	const void *pt,
 	void *ct,
 	const size_t len
@@ -47,7 +47,7 @@ size_t kripto_stream_encrypt
 
 size_t kripto_stream_decrypt
 (
-	kripto_stream s,
+	kripto_stream *s,
 	const void *ct,
 	void *pt,
 	const size_t len
@@ -58,7 +58,7 @@ size_t kripto_stream_decrypt
 
 size_t kripto_stream_prng
 (
-	kripto_stream s,
+	kripto_stream *s,
 	void *out,
 	const size_t len
 )
@@ -66,27 +66,27 @@ size_t kripto_stream_prng
 	return s->desc->prng(s, out, len);
 }
 
-void kripto_stream_destroy(kripto_stream s)
+void kripto_stream_destroy(kripto_stream *s)
 {
 	s->desc->destroy(s);
 }
 
-unsigned int kripto_stream_max_key(kripto_stream_desc desc)
+unsigned int kripto_stream_max_key(kripto_stream_desc *desc)
 {
 	return desc->max_key;
 }
 
-unsigned int kripto_stream_max_iv(kripto_stream_desc desc)
+unsigned int kripto_stream_max_iv(kripto_stream_desc *desc)
 {
 	return desc->max_iv;
 }
 
-unsigned int kripto_stream_max_rounds(kripto_stream_desc desc)
+unsigned int kripto_stream_max_rounds(kripto_stream_desc *desc)
 {
 	return desc->max_rounds;
 }
 
-unsigned int kripto_stream_default_rounds(kripto_stream_desc desc)
+unsigned int kripto_stream_default_rounds(kripto_stream_desc *desc)
 {
 	return desc->default_rounds;
 }

@@ -53,7 +53,7 @@ struct kripto_random
 
 #endif
 
-kripto_random kripto_random_create(void)
+kripto_random *kripto_random_create(void)
 {
 	#if defined(KRIPTO_DEV_RANDOM)
 
@@ -62,11 +62,11 @@ kripto_random kripto_random_create(void)
 	dev_random = getenv("KRIPTO_RANDOM");
 	if(!dev_random) dev_random = KRIPTO_DEV_RANDOM;
 
-	return (kripto_random)fopen(dev_random, "rb");
+	return (kripto_random *)fopen(dev_random, "rb");
 
 	#elif defined(KRIPTO_RTLGENRANDOM)
 
-	kripto_random s;
+	kripto_random *s;
 
 	s = malloc(sizeof(struct kripto_random));
 	if(!s) return 0;
@@ -89,8 +89,8 @@ kripto_random kripto_random_create(void)
 	return s;
 
 	#elif defined(KRIPTO_CRYPTGENRANDOM)
-	#if sizeof(kripto_random) < sizeof(HCRYPTPROV)
-	#error sizeof(kripto_random) < sizeof(HCRYPTPROV)
+	#if sizeof(kripto_random *) < sizeof(HCRYPTPROV)
+	#error sizeof(kripto_random *) < sizeof(HCRYPTPROV)
 	#endif
 
 	HCRYPTPROV prov = 0;
@@ -98,11 +98,11 @@ kripto_random kripto_random_create(void)
 	if(!CryptAcquireContext(&prov, NULL, NULL, PROV_RSA_FULL,
 	CRYPT_VERIFYCONTEXT|CRYPT_SILENT)) return 0;
 
-	return (kripto_random)prov;
+	return (kripto_random *)prov;
 
 	#else
 
-	return (kripto_stream)kripto_stream_create
+	return (kripto_random *)kripto_stream_create
 	(
 		kripto_stream_chacha,
 		entropy,
@@ -113,7 +113,7 @@ kripto_random kripto_random_create(void)
 	#endif
 }
 
-size_t kripto_random_get(kripto_random s, void *out, const size_t len)
+size_t kripto_random_get(kripto_random *s, void *out, const size_t len)
 {
 	#if defined(KRIPTO_DEV_RANDOM)
 
@@ -131,12 +131,12 @@ size_t kripto_random_get(kripto_random s, void *out, const size_t len)
 
 	#else
 
-	return kripto_stream_prng((kripto_stream)s, out, size);
+	return kripto_stream_prng((kripto_stream *)s, out, size);
 
 	#endif
 }
 
-void kripto_random_destroy(kripto_random s)
+void kripto_random_destroy(kripto_random *s)
 {
 	#if defined(KRIPTO_DEV_RANDOM)
 
@@ -152,7 +152,7 @@ void kripto_random_destroy(kripto_random s)
 
 	#else
 
-	kripto_stream_destroy((kripto_stream)s);
+	kripto_stream_destroy((kripto_stream *)s);
 
 	#endif
 }

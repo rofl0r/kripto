@@ -29,7 +29,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc desc;
+	kripto_block_desc *desc;
 	unsigned int r;
 	uint32_t *k;
 	uint32_t *dk;
@@ -559,7 +559,7 @@ static void anubis_crypt
 
 static int anubis_setup
 (
-	kripto_block s,
+	kripto_block *s,
 	const uint8_t *key,
 	const unsigned int key_len
 )
@@ -691,7 +691,7 @@ static int anubis_setup
 
 static void anubis_encrypt
 (
-	const kripto_block s,
+	const kripto_block *s,
 	const void *pt,
 	void *ct
 )
@@ -701,7 +701,7 @@ static void anubis_encrypt
 
 static void anubis_decrypt
 (
-	const kripto_block s,
+	const kripto_block *s,
 	const void *ct,
 	void *pt
 )
@@ -709,14 +709,14 @@ static void anubis_decrypt
 	anubis_crypt(s->dk, s->r, ct, pt);
 }
 
-static kripto_block anubis_create
+static kripto_block *anubis_create
 (
 	const void *key,
 	unsigned int key_len,
 	unsigned int r
 )
 {
-	kripto_block s;
+	kripto_block *s;
 
 	if(!r) r = ANUBIS_DEFAULT_ROUNDS;
 
@@ -740,7 +740,7 @@ static kripto_block anubis_create
 	return s;
 }
 
-static void anubis_destroy(kripto_block s)
+static void anubis_destroy(kripto_block *s)
 {
 	kripto_memwipe(s, sizeof(struct kripto_block)
 		+ (ANUBIS_K_LEN(s->r) << 3));
@@ -760,4 +760,4 @@ static const struct kripto_block_desc anubis =
 	8
 };
 
-kripto_block_desc const kripto_block_anubis = &anubis;
+kripto_block_desc *const kripto_block_anubis = &anubis;

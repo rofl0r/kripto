@@ -40,6 +40,8 @@ size_t kripto_pkcs7_add
 
 size_t kripto_pkcs7_rem(void *buf, const size_t len)
 {
-	if(U8(buf)[len - 1] < len) return (len - U8(buf)[len - 1]);
-	else return len;
+	if(U8(buf)[len - 1] < len)
+		return (len - U8(buf)[len - 1]);
+	else
+		return len;
 }

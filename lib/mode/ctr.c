@@ -28,15 +28,21 @@
 
 struct kripto_stream
 {
-	kripto_stream_desc desc;
-	kripto_block block;
+	kripto_stream_desc *desc;
+	const kripto_block *block;
 	unsigned int block_size;
 	uint8_t *x;
 	uint8_t *buf;
 	unsigned int used;
 };
 
-static size_t ctr_crypt(kripto_stream s, const void *in, void *out, const size_t len)
+static size_t ctr_crypt
+(
+	kripto_stream *s,
+	const void *in,
+	void *out,
+	const size_t len
+)
 {
 	size_t i;
 	unsigned int n;
@@ -58,7 +64,12 @@ static size_t ctr_crypt(kripto_stream s, const void *in, void *out, const size_t
 	return i;
 }
 
-static size_t ctr_prng(kripto_stream s, void *out, const size_t len)
+static size_t ctr_prng
+(
+	kripto_stream *s,
+	void *out,
+	const size_t len
+)
 {
 	size_t i;
 	unsigned int n;
@@ -80,7 +91,7 @@ static size_t ctr_prng(kripto_stream s, void *out, const size_t len)
 	return i;
 }
 
-static void ctr_destroy(kripto_stream s)
+static void ctr_destroy(kripto_stream *s)
 {
 	kripto_memwipe(s, sizeof(struct kripto_stream)
 		+ (s->block_size << 1)
@@ -89,15 +100,15 @@ static void ctr_destroy(kripto_stream s)
 	free(s);
 }
 
-static kripto_stream ctr_create
+static kripto_stream *ctr_create
 (
-	kripto_block block,
+	const kripto_block *block,
 	const void *iv,
 	const unsigned int iv_len
 )
 {
-	kripto_stream s;
-	kripto_block_desc b;
+	kripto_stream *s;
+	kripto_block_desc *b;
 	struct kripto_stream_desc *stream;
 
 	if(!block) return 0;
@@ -145,4 +156,4 @@ static const struct kripto_mode_desc ctr =
 	&kripto_block_size
 };
 
-kripto_mode_desc const kripto_mode_ctr = &ctr;
+kripto_mode_desc *const kripto_mode_ctr = &ctr;

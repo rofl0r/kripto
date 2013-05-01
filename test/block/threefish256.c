@@ -19,7 +19,7 @@
 
 int main(void)
 {
-	kripto_block s;
+	kripto_block *s;
 	unsigned int i;
 	unsigned int n;
 	uint8_t t[32];

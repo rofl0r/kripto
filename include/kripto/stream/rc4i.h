@@ -8,7 +8,7 @@ extern "C"
 {
 #endif
 
-extern kripto_stream_desc const kripto_stream_rc4i;
+extern kripto_stream_desc *const kripto_stream_rc4i;
 
 #ifdef __cplusplus
 }

@@ -25,21 +25,21 @@
 
 struct kripto_mac
 {
-	kripto_mac_desc desc;
-	kripto_hash hash;
+	kripto_mac_desc *desc;
+	kripto_hash *hash;
 	uint8_t *key;
 };
 
 static int hmac_init
 (
-	kripto_mac s,
+	kripto_mac *s,
 	void *hash,
 	const void *key,
 	const unsigned int key_len
 )
 {
 	unsigned int i;
-	kripto_hash_desc hash_desc = kripto_hash_get_desc(hash);
+	kripto_hash_desc *hash_desc = kripto_hash_get_desc(hash);
 
 	s->desc = kripto_mac_hmac;
 	s->hash = hash;
@@ -74,7 +74,7 @@ static int hmac_init
 	return 0;
 }
 
-static void hmac_destroy(kripto_mac s)
+static void hmac_destroy(kripto_mac *s)
 {
 	kripto_memwipe(s,
 		kripto_hash_blocksize(kripto_hash_get_desc(s->hash))
@@ -83,14 +83,14 @@ static void hmac_destroy(kripto_mac s)
 	free(s);
 }
 
-static kripto_mac hmac_create
+static kripto_mac *hmac_create
 (
 	void *hash,
 	const void *key,
 	const unsigned int key_len
 )
 {
-	kripto_mac s;
+	kripto_mac *s;
 
 	s = malloc(sizeof(struct kripto_mac)
 		+ kripto_hash_blocksize(kripto_hash_get_desc(hash)));
@@ -107,12 +107,12 @@ static kripto_mac hmac_create
 	return s;
 }
 
-static int hmac_update(kripto_mac s, const void *in, const size_t len)
+static int hmac_update(kripto_mac *s, const void *in, const size_t len)
 {
 	return kripto_hash_input(s->hash, in, len);
 }
 
-static int hmac_finish(kripto_mac s, void *out, const size_t len)
+static int hmac_finish(kripto_mac *s, void *out, const size_t len)
 {
 	unsigned int i;
 
@@ -141,4 +141,4 @@ static const struct kripto_mac_desc hmac =
 	&hmac_max
 };
 
-kripto_mac_desc const kripto_mac_hmac = &hmac;
+kripto_mac_desc *const kripto_mac_hmac = &hmac;

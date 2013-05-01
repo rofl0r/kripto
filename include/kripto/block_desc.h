@@ -5,10 +5,10 @@
 
 struct kripto_block_desc
 {
-	void (*encrypt)(const kripto_block, const void *, void *);
-	void (*decrypt)(const kripto_block, const void *, void *);
-	kripto_block (*create)(const void *, unsigned int, unsigned int);
-	void (*destroy)(kripto_block);
+	void (*encrypt)(const kripto_block *, const void *, void *);
+	void (*decrypt)(const kripto_block *, const void *, void *);
+	kripto_block *(*create)(const void *, unsigned int, unsigned int);
+	void (*destroy)(kripto_block *);
 	unsigned int block_size;
 	unsigned int max_key;
 	unsigned int max_rounds;

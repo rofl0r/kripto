@@ -27,7 +27,7 @@
 
 struct kripto_hash
 {
-	kripto_hash_desc hash;
+	kripto_hash_desc *hash;
 	unsigned int r;
 	unsigned int rate;
 	unsigned int n;
@@ -48,7 +48,7 @@ static const uint32_t rc[40] =
 	0x00000080, 0x80008000, 0x00008001, 0x00000009
 };
 
-static void keccak800_F(kripto_hash s)
+static void keccak800_F(kripto_hash *s)
 {
 	uint32_t a0 = U8TO32_LE(s->s);
 	uint32_t a1 = U8TO32_LE(s->s + 8);
@@ -269,7 +269,7 @@ static void keccak800_F(kripto_hash s)
 	U32TO8_LE(a24, s->s + 192);
 }
 
-static void keccak800_init(kripto_hash s, const size_t len)
+static void keccak800_init(kripto_hash *s, const size_t len)
 {
 	/*s->r = r;
 	if(!s->r) s->r = 20;*/
@@ -282,7 +282,12 @@ static void keccak800_init(kripto_hash s, const size_t len)
 	memset(s->s, 0, 200);
 }
 
-static int keccak800_input(kripto_hash s, const void *in, const size_t len) 
+static int keccak800_input
+(
+	kripto_hash *s,
+	const void *in,
+	const size_t len
+) 
 {
 	size_t i;
 
@@ -300,7 +305,7 @@ static int keccak800_input(kripto_hash s, const void *in, const size_t len)
 	return 0;
 }
 
-static void keccak800_finish(kripto_hash s)
+static void keccak800_finish(kripto_hash *s)
 {
 	/* pad */
 	s->s[s->n] ^= 0x01;
@@ -311,7 +316,7 @@ static void keccak800_finish(kripto_hash s)
 	s->n = 0;
 }
 
-static int keccak800_output(kripto_hash s, void *out, const size_t len)
+static int keccak800_output(kripto_hash *s, void *out, const size_t len)
 {
 	size_t i;
 
@@ -329,9 +334,13 @@ static int keccak800_output(kripto_hash s, void *out, const size_t len)
 	return 0;
 }
 
-static kripto_hash keccak800_create(const unsigned int r, const size_t len)
+static kripto_hash *keccak800_create
+(
+	const unsigned int r,
+	const size_t len
+)
 {
-	kripto_hash s;
+	kripto_hash *s;
 
 	if(r > 40) return 0;
 
@@ -347,7 +356,7 @@ static kripto_hash keccak800_create(const unsigned int r, const size_t len)
 	return s;
 }
 
-static void keccak800_destroy(kripto_hash s) 
+static void keccak800_destroy(kripto_hash *s) 
 {
 	kripto_memwipe(s, sizeof(struct kripto_hash));
 	free(s);
@@ -394,4 +403,4 @@ static const struct kripto_hash_desc keccak800 =
 	20 /* default_rounds */
 };
 
-kripto_hash_desc const kripto_hash_keccak800 = &keccak800;
+kripto_hash_desc *const kripto_hash_keccak800 = &keccak800;

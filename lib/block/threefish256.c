@@ -28,13 +28,13 @@
 
 struct kripto_block
 {
-	kripto_block_desc desc;
+	kripto_block_desc *desc;
 	unsigned int r;
 	uint64_t t[3];
 	uint64_t k[5];
 };
 
-void kripto_block_threefish256_tweak(kripto_block s, const void *tweak)
+void kripto_block_threefish256_tweak(kripto_block *s, const void *tweak)
 {
 	s->t[0] = U8TO64_LE(CU8(tweak));
 	s->t[1] = U8TO64_LE(CU8(tweak) + 8);
@@ -43,7 +43,7 @@ void kripto_block_threefish256_tweak(kripto_block s, const void *tweak)
 
 static void threefish256_encrypt
 (
-	const kripto_block s,
+	const kripto_block *s,
 	const void *pt,
 	void *ct
 )
@@ -101,7 +101,7 @@ static void threefish256_encrypt
 
 static void threefish256_decrypt
 (
-	const kripto_block s,
+	const kripto_block *s,
 	const void *ct,
 	void *pt
 )
@@ -162,14 +162,14 @@ static void threefish256_decrypt
 	U64TO8_LE(x3, U8(pt) + 24);
 }
 
-static kripto_block threefish256_create
+static kripto_block *threefish256_create
 (
 	const void *key,
 	const unsigned int key_len,
 	const unsigned int r
 )
 {
-	kripto_block s;
+	kripto_block *s;
 	unsigned int i;
 
 	if(key_len > 32) return 0;
@@ -193,7 +193,7 @@ static kripto_block threefish256_create
 	return s;
 }
 
-static void threefish256_destroy(kripto_block s)
+static void threefish256_destroy(kripto_block *s)
 {
 	kripto_memwipe(s, sizeof(struct kripto_block));
 	free(s);
@@ -211,4 +211,4 @@ static const struct kripto_block_desc threefish256 =
 	72
 };
 
-kripto_block_desc const kripto_block_threefish256 = &threefish256;
+kripto_block_desc *const kripto_block_threefish256 = &threefish256;

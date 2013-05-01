@@ -8,7 +8,7 @@ extern "C"
 {
 #endif
 
-extern kripto_hash_desc const kripto_hash_blake512;
+extern kripto_hash_desc *const kripto_hash_blake512;
 
 #ifdef __cplusplus
 }

@@ -8,9 +8,9 @@ extern "C"
 {
 #endif
 
-extern kripto_block_desc const kripto_block_threefish512;
+extern kripto_block_desc *const kripto_block_threefish512;
 
-extern void kripto_block_threefish512_tweak(kripto_block s, const void *tweak);
+extern void kripto_block_threefish512_tweak(kripto_block *s, const void *tweak);
 
 #ifdef __cplusplus
 }

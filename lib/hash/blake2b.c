@@ -26,7 +26,7 @@
 
 struct kripto_hash
 {
-	kripto_hash_desc hash;
+	kripto_hash_desc *hash;
 	unsigned int r;
 	uint64_t h[8];
 	uint64_t len[2];
@@ -57,7 +57,7 @@ static const uint64_t iv[8] =
 	0x1F83D9ABFB41BD6B, 0x5BE0CD19137E2179
 };
 
-static void blake2b_init(kripto_hash s, const size_t len)
+static void blake2b_init(kripto_hash *s, const size_t len)
 {
 	s->f = s->len[0] = s->len[1] = s->n = 0;
 
@@ -85,7 +85,7 @@ static void blake2b_init(kripto_hash s, const size_t len)
 	B = ROR64(B ^ C, 63);		\
 }
 
-static void blake2b_process(kripto_hash s, const uint8_t *data)
+static void blake2b_process(kripto_hash *s, const uint8_t *data)
 {
 	uint64_t x0;
 	uint64_t x1;
@@ -168,7 +168,7 @@ static void blake2b_process(kripto_hash s, const uint8_t *data)
 	s->h[7] ^= x7 ^ x15;
 }
 
-static int blake2b_input(kripto_hash s, const void *in, const size_t len) 
+static int blake2b_input(kripto_hash *s, const void *in, const size_t len) 
 {
 	size_t i;
 
@@ -190,7 +190,7 @@ static int blake2b_input(kripto_hash s, const void *in, const size_t len)
 	return 0;
 }
 
-static void blake2b_finish(kripto_hash s)
+static void blake2b_finish(kripto_hash *s)
 {
 	s->len[0] += s->n;
 	if(s->len[0] < s->n) s->len[1]++;
@@ -202,7 +202,7 @@ static void blake2b_finish(kripto_hash s)
 	blake2b_process(s, s->buf);
 }
 
-static int blake2b_output(kripto_hash s, void *out, const size_t len)
+static int blake2b_output(kripto_hash *s, void *out, const size_t len)
 {
 	unsigned int i;
 
@@ -217,9 +217,9 @@ static int blake2b_output(kripto_hash s, void *out, const size_t len)
 	return 0;
 }
 
-static kripto_hash blake2b_create(const unsigned int r, const size_t len)
+static kripto_hash *blake2b_create(const unsigned int r, const size_t len)
 {
-	kripto_hash s;
+	kripto_hash *s;
 
 	if(len > 64) return 0;
 
@@ -236,7 +236,7 @@ static kripto_hash blake2b_create(const unsigned int r, const size_t len)
 	return s;
 }
 
-static void blake2b_destroy(kripto_hash s)
+static void blake2b_destroy(kripto_hash *s)
 {
 	kripto_memwipe(s, sizeof(struct kripto_hash));
 	free(s);
@@ -287,4 +287,4 @@ static const struct kripto_hash_desc blake2b =
 	12 /* default_rounds */
 };
 
-kripto_hash_desc const kripto_hash_blake2b = &blake2b;
+kripto_hash_desc *const kripto_hash_blake2b = &blake2b;
