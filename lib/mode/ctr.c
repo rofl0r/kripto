@@ -32,7 +32,6 @@ struct kripto_stream
 	kripto_block block;
 	unsigned int block_size;
 	uint8_t *x;
-	unsigned int iv_len;
 	uint8_t *buf;
 	unsigned int used;
 };
@@ -49,14 +48,8 @@ static size_t ctr_crypt(kripto_stream s, const void *in, void *out, const size_t
 			kripto_block_encrypt(s->block, s->x, s->buf);
 			s->used = 0;
 
-			for(n = s->block_size - 1; n >= s->iv_len; n--)
-			{
-				if(++s->x[n])
-				{
-					if(n == s->iv_len) return i;
-					break;
-				}
-			}
+			for(n = s->block_size - 1; n; n--)
+				if(++s->x[n]) break;
 		}
 
 		U8(out)[i] = CU8(in)[i] ^ s->buf[s->used++];
@@ -77,14 +70,8 @@ static size_t ctr_prng(kripto_stream s, void *out, const size_t len)
 			kripto_block_encrypt(s->block, s->x, s->buf);
 			s->used = 0;
 
-			for(n = s->block_size - 1; n >= s->iv_len; n--)
-			{
-				if(++U8(s->x)[n])
-				{
-					if(n == s->iv_len) return i;
-					break;
-				}
-			}
+			for(n = s->block_size - 1; n; n--)
+				if(++s->x[n]) break;
 		}
 
 		U8(out)[i] = s->buf[s->used++];
@@ -142,7 +129,7 @@ static kripto_stream ctr_create
 	stream->create = 0;
 	stream->destroy = &ctr_destroy;
 	stream->max_key = kripto_block_max_key(b);
-	stream->max_iv = s->block_size >> 1;
+	stream->max_iv = s->block_size;
 	stream->max_rounds = kripto_block_max_rounds(b);
 	stream->default_rounds = kripto_block_default_rounds(b);
 
@@ -151,7 +138,6 @@ static kripto_stream ctr_create
 	if(iv_len) memcpy(s->x, iv, iv_len);
 	memset(s->x + iv_len, 0, s->block_size - iv_len);
 
-	s->iv_len = iv_len;
 	s->used = s->block_size;
 	s->block = block;
 
