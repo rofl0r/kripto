@@ -89,11 +89,6 @@ static void ctr_destroy(kripto_stream s)
 	free(s);
 }
 
-static unsigned int ctr_max_iv(kripto_block_desc block)
-{
-	return (kripto_block_size(block) >> 1);
-}
-
 static kripto_stream ctr_create
 (
 	kripto_block block,
@@ -147,7 +142,7 @@ static kripto_stream ctr_create
 static const struct kripto_mode_desc ctr =
 {
 	&ctr_create,
-	&ctr_max_iv
+	&kripto_block_size
 };
 
 kripto_mode_desc const kripto_mode_ctr = &ctr;
