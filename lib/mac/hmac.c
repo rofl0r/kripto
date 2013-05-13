@@ -133,7 +133,6 @@ static unsigned int hmac_max(const void *hash)
 
 static const struct kripto_mac_desc hmac =
 {
-	&hmac_init,
 	&hmac_create,
 	&hmac_update,
 	&hmac_finish,

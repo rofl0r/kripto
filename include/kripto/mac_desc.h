@@ -5,14 +5,6 @@
 
 struct kripto_mac_desc
 {
-	int (*init)
-	(
-		kripto_mac *,
-		void *,
-		const void *,
-		const unsigned int
-	);
-
 	kripto_mac *(*create)
 	(
 		void *,

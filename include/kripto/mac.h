@@ -19,14 +19,6 @@ extern kripto_mac *kripto_mac_create
 	const unsigned int key_len
 );
 
-extern int kripto_mac_init
-(
-	kripto_mac *s,
-	void *f,
-	const void *key,
-	const unsigned int key_len
-);
-
 extern int kripto_mac_update
 (
 	kripto_mac *s,

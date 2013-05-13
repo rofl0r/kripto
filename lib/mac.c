@@ -32,17 +32,6 @@ kripto_mac *kripto_mac_create
 	return desc->create(f, key, key_len);
 }
 
-int kripto_mac_init
-(
-	kripto_mac *s,
-	void *f,
-	const void *key,
-	const unsigned int key_len
-)
-{
-	return s->desc->init(s, f, key, key_len);
-}
-
 int kripto_mac_update(kripto_mac *s, const void *in, const size_t len)
 {
 	return s->desc->update(s, in, len);
