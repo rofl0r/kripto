@@ -168,7 +168,12 @@ static void blake2b_process(kripto_hash *s, const uint8_t *data)
 	s->h[7] ^= x7 ^ x15;
 }
 
-static int blake2b_input(kripto_hash *s, const void *in, const size_t len) 
+static int blake2b_input
+(
+	kripto_hash *s,
+	const void *in,
+	const size_t len
+) 
 {
 	size_t i;
 
@@ -217,7 +222,11 @@ static int blake2b_output(kripto_hash *s, void *out, const size_t len)
 	return 0;
 }
 
-static kripto_hash *blake2b_create(const unsigned int r, const size_t len)
+static kripto_hash *blake2b_create
+(
+	const size_t len,
+	const unsigned int r
+)
 {
 	kripto_hash *s;
 

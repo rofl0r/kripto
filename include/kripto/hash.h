@@ -14,8 +14,8 @@ typedef struct kripto_hash kripto_hash;
 extern kripto_hash *kripto_hash_create
 (
 	kripto_hash_desc *hash,
-	const unsigned int r,
-	const size_t len
+	const size_t len,
+	const unsigned int r
 );
 
 extern void kripto_hash_init(kripto_hash *s, const size_t len);

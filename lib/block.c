@@ -12,6 +12,8 @@
  * issues arising in any way out of dealing in the work.
  */
 
+#include <assert.h>
+
 #include <kripto/block_desc.h>
 
 #include <kripto/block.h>
@@ -29,6 +31,9 @@ kripto_block *kripto_block_create
 	const unsigned int r
 )
 {
+	assert(desc);
+	assert(desc->create);
+
 	return desc->create(key, key_len, r);
 }
 
@@ -39,6 +44,12 @@ void kripto_block_encrypt
 	void *ct
 )
 {
+	assert(s);
+	assert(s->desc);
+	assert(s->desc->encrypt);
+	assert(pt);
+	assert(ct);
+
 	s->desc->encrypt(s, pt, ct);
 }
 
@@ -49,35 +60,60 @@ void kripto_block_decrypt
 	void *pt
 )
 {
+	assert(s);
+	assert(s->desc);
+	assert(s->desc->decrypt);
+	assert(ct);
+	assert(pt);
+
 	s->desc->decrypt(s, ct, pt);
 }
 
 void kripto_block_destroy(kripto_block *s)
 {
+	assert(s);
+	assert(s->desc);
+	assert(s->desc->destroy);
+
 	s->desc->destroy(s);
 }
 
 kripto_block_desc *kripto_block_get_desc(const kripto_block *s)
 {
+	assert(s);
+	assert(s->desc);
+
 	return s->desc;
 }
 
 unsigned int kripto_block_size(kripto_block_desc *desc)
 {
+	assert(desc);
+	assert(desc->block_size);
+
 	return desc->block_size;
 }
 
 unsigned int kripto_block_max_key(kripto_block_desc *desc)
 {
+	assert(desc);
+	assert(desc->max_key);
+
 	return desc->max_key;
 }
 
 unsigned int kripto_block_max_rounds(kripto_block_desc *desc)
 {
+	assert(desc);
+	assert(desc->max_rounds);
+
 	return desc->max_rounds;
 }
 
 unsigned int kripto_block_default_rounds(kripto_block_desc *desc)
 {
+	assert(desc);
+	assert(desc->default_rounds);
+
 	return desc->default_rounds;
 }

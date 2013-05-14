@@ -12,6 +12,8 @@
  * issues arising in any way out of dealing in the work.
  */
 
+#include <assert.h>
+
 #include <kripto/mac_desc.h>
 
 #include <kripto/mac.h>
@@ -29,21 +31,36 @@ kripto_mac *kripto_mac_create
 	const unsigned int key_len
 )
 {
+	assert(desc);
+	assert(desc->create);
+
 	return desc->create(f, key, key_len);
 }
 
 int kripto_mac_update(kripto_mac *s, const void *in, const size_t len)
 {
+	assert(s);
+	assert(s->desc);
+	assert(s->desc->update);
+
 	return s->desc->update(s, in, len);
 }
 
 int kripto_mac_finish(kripto_mac *s, void *out, const size_t len)
 {
+	assert(s);
+	assert(s->desc);
+	assert(s->desc->finish);
+
 	return s->desc->finish(s, out, len);
 }
 
 void kripto_mac_destroy(kripto_mac *s)
 {
+	assert(s);
+	assert(s->desc);
+	assert(s->desc->destroy);
+
 	s->desc->destroy(s);
 }
 
@@ -61,6 +78,8 @@ int kripto_mac_all
 {
 	kripto_mac *s;
 
+	assert(desc);
+
 	s = kripto_mac_create(desc, f, key, key_len);
 	if(!s) return -1;
 
@@ -77,10 +96,16 @@ err:
 
 kripto_mac_desc *kripto_mac_get_desc(const kripto_mac *s)
 {
+	assert(s);
+	assert(s->desc);
+
 	return s->desc;
 }
 
 unsigned int kripto_mac_max(kripto_mac_desc *mac, const void *f)
 {
+	assert(mac);
+	assert(mac->max);
+
 	return mac->max(f);
 }

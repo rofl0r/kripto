@@ -12,6 +12,8 @@
  * issues arising in any way out of dealing in the work.
  */
 
+#include <assert.h>
+
 #include <kripto/hash_desc.h>
 
 #include <kripto/hash.h>
@@ -24,35 +26,58 @@ struct kripto_hash
 kripto_hash *kripto_hash_create
 (
 	kripto_hash_desc *hash,
-	const unsigned int r,
-	const size_t len
+	const size_t len,
+	const unsigned int r
 )
 {
-	return hash->create(r, len);
+	assert(hash);
+	assert(hash->create);
+
+	return hash->create(len, r);
 }
 
 void kripto_hash_init(kripto_hash *s, const size_t len)
 {
+	assert(s);
+	assert(s->hash);
+	assert(s->hash->init);
+
 	s->hash->init(s, len);
 }
 
 int kripto_hash_input(kripto_hash *s, const void *in, const size_t len)
 {
+	assert(s);
+	assert(s->hash);
+	assert(s->hash->input);
+
 	return s->hash->input(s, in, len);
 }
 
 void kripto_hash_finish(kripto_hash *s)
 {
+	assert(s);
+	assert(s->hash);
+	assert(s->hash->finish);
+
 	s->hash->finish(s);
 }
 
 int kripto_hash_output(kripto_hash *s, void *out, const size_t len)
 {
+	assert(s);
+	assert(s->hash);
+	assert(s->hash->output);
+
 	return s->hash->output(s, out, len);
 }
 
 void kripto_hash_destroy(kripto_hash *s)
 {
+	assert(s);
+	assert(s->hash);
+	assert(s->hash->destroy);
+
 	s->hash->destroy(s);
 }
 
@@ -66,20 +91,32 @@ int kripto_hash_all
 	const size_t out_len
 )
 {
+	assert(hash);
+	assert(hash->hash_all);
+
 	return hash->hash_all(r, in, in_len, out, out_len);
 }
 
 kripto_hash_desc *kripto_hash_get_desc(const kripto_hash *s)
 {
+	assert(s);
+	assert(s->hash);
+
 	return s->hash;
 }
 
 unsigned int kripto_hash_max(kripto_hash_desc *s)
 {
+	assert(s);
+	assert(s->max);
+
 	return s->max;
 }
 
 unsigned int kripto_hash_blocksize(kripto_hash_desc *s)
 {
+	assert(s);
+	assert(s->block_size);
+
 	return s->block_size;
 }

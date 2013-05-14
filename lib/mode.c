@@ -12,6 +12,8 @@
  * issues arising in any way out of dealing in the work.
  */
 
+#include <assert.h>
+
 #include <kripto/stream.h>
 #include <kripto/block.h>
 #include <kripto/mode_struct.h>
@@ -26,6 +28,10 @@ kripto_stream *kripto_mode_create
 	const unsigned int iv_len
 )
 {
+	assert(mode);
+	assert(block);
+	assert(mode->create);
+
 	return mode->create(block, iv, iv_len);
 }
 
@@ -35,5 +41,9 @@ unsigned int kripto_mode_max_iv
 	kripto_block_desc *block
 )
 {
+	assert(mode);
+	assert(block);
+	assert(mode->max_iv);
+
 	return mode->max_iv(block);
 }

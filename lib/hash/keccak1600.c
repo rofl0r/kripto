@@ -355,8 +355,8 @@ static int keccak1600_output
 
 static kripto_hash *keccak1600_create
 (
-	const unsigned int r,
-	const size_t len
+	const size_t len,
+	const unsigned int r
 )
 {
 	kripto_hash *s;

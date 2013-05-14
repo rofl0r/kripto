@@ -53,6 +53,8 @@ struct kripto_random
 
 #endif
 
+#include <assert.h>
+
 kripto_random *kripto_random_create(void)
 {
 	#if defined(KRIPTO_DEV_RANDOM)
@@ -115,12 +117,15 @@ kripto_random *kripto_random_create(void)
 
 size_t kripto_random_get(kripto_random *s, void *out, const size_t len)
 {
+	assert(s);
+
 	#if defined(KRIPTO_DEV_RANDOM)
 
 	return fread(out, sizeof(char), len, (FILE *)s);
 
 	#elif defined(KRIPTO_RTLGENRANDOM)
 
+	assert(s->rtlgenrandom);
 	if(s->rtlgenrandom(out, len) == TRUE) return len;
 	return 0;
 	
@@ -138,12 +143,15 @@ size_t kripto_random_get(kripto_random *s, void *out, const size_t len)
 
 void kripto_random_destroy(kripto_random *s)
 {
+	assert(s);
+
 	#if defined(KRIPTO_DEV_RANDOM)
 
 	fclose((FILE *)s);
 
 	#elif defined(KRIPTO_RTLGENRANDOM)
 
+	assert(s->lib);
 	FreeLibrary(s->lib);
 
 	#elif defined(KRIPTO_CRYPTGENRANDOM)

@@ -9,7 +9,7 @@ struct kripto_hash_desc
 	int (*input)(kripto_hash *, const void *, const size_t);
 	void (*finish)(kripto_hash *);
 	int (*output)(kripto_hash *, void *, const size_t);
-	kripto_hash *(*create)(const unsigned int, const size_t);
+	kripto_hash *(*create)(const size_t, const unsigned int);
 	void (*destroy)(kripto_hash *);
 	int (*hash_all)
 	(

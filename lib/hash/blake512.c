@@ -261,7 +261,11 @@ static int blake512_output(kripto_hash *s, void *out, const size_t len)
 	return 0;
 }
 
-static kripto_hash *blake512_create(const unsigned int r, const size_t len)
+static kripto_hash *blake512_create
+(
+	const size_t len,
+	const unsigned int r
+)
 {
 	kripto_hash *s;
 

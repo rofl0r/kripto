@@ -220,7 +220,12 @@ static void sha2_512_process(kripto_hash *s, const uint8_t *in)
 	s->h[7] += h;
 }
 
-static int sha2_512_input(kripto_hash *s, const void *in, const size_t len) 
+static int sha2_512_input
+(
+	kripto_hash *s,
+	const void *in,
+	const size_t len
+) 
 {
 	size_t i;
 
@@ -279,8 +284,8 @@ static int sha2_512_output(kripto_hash *s, void *out, const size_t len)
 
 static kripto_hash *sha2_512_create
 (
-	const unsigned int r,
-	const size_t len
+	const size_t len,
+	const unsigned int r
 )
 {
 	kripto_hash *s;

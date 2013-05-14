@@ -17,7 +17,7 @@ AR=${AR:-"ar"}
 STRIP=${STRIP:-"strip"}
 CFLAGS="-std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wbad-function-cast -Wshadow -I include/ -fPIC -D_ANSI_SOURCE -D_ISOC99_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $CFLAGS"
 # -fstack-protector-all -fno-strict-aliasing -Werror  Wc++-compat -Wcast-align -DNDEBUG -fwhole-program -ffunction-sections -fdata-sections
-OPTIM="-O2 -D_FORTIFY_SOURCE=2 -flto $OPTIM"
+OPTIM="-O2 -D_FORTIFY_SOURCE=2 -flto -DNDEBUG $OPTIM"
 LDFLAGS="-Wall $LDFLAGS"
 # -Wl,--gc-sections -Wl,--print-gc-sections
 
