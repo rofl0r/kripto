@@ -95,7 +95,7 @@ void kripto_stream_destroy(kripto_stream *s)
 unsigned int kripto_stream_max_key(kripto_stream_desc *desc)
 {
 	assert(desc);
-	assert(s->max_key);
+	assert(desc->max_key);
 
 	return desc->max_key;
 }
@@ -103,7 +103,7 @@ unsigned int kripto_stream_max_key(kripto_stream_desc *desc)
 unsigned int kripto_stream_max_iv(kripto_stream_desc *desc)
 {
 	assert(desc);
-	assert(s->max_iv);
+	assert(desc->max_iv);
 
 	return desc->max_iv;
 }
@@ -111,7 +111,7 @@ unsigned int kripto_stream_max_iv(kripto_stream_desc *desc)
 unsigned int kripto_stream_max_rounds(kripto_stream_desc *desc)
 {
 	assert(desc);
-	assert(s->max_rounds);
+	assert(desc->max_rounds);
 
 	return desc->max_rounds;
 }
@@ -119,7 +119,7 @@ unsigned int kripto_stream_max_rounds(kripto_stream_desc *desc)
 unsigned int kripto_stream_default_rounds(kripto_stream_desc *desc)
 {
 	assert(desc);
-	assert(s->default_rounds);
+	assert(desc->default_rounds);
 
 	return desc->default_rounds;
 }
