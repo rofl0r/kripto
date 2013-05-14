@@ -1,6 +1,6 @@
+*.o
+*.a
+*.so
 *.dll
 *.exe
-*.o
-*.so
-kriptz
-kriptz_gtk
+*.com
