@@ -40,10 +40,10 @@ Modes:
  - TBC*
 
 Authenticated modes:
- - EAX
- - GCM
- - CCM
- - OCB
+ - EAX*
+ - GCM*
+ - CCM*
+ - OCB*
 
 Stream ciphers:
  - Salsa20
