@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
@@ -47,6 +48,9 @@ static size_t ctr_crypt
 	size_t i;
 	unsigned int n;
 
+	assert(in);
+	assert(out);
+
 	for(i = 0; i < len; i++)
 	{
 		if(s->used == s->block_size)
@@ -73,6 +77,8 @@ static size_t ctr_prng
 {
 	size_t i;
 	unsigned int n;
+
+	assert(out);
 
 	for(i = 0; i < len; i++)
 	{
@@ -111,15 +117,19 @@ static kripto_stream *ctr_create
 	kripto_block_desc *b;
 	struct kripto_stream_desc *stream;
 
-	if(!block) return 0;
+	assert(block);
+	assert(iv >= iv_len);
+	/* if iv_len is not null, iv must not be null */
 
 	b = kripto_block_get_desc(block);
-	if(!b) return 0;
+
+	assert(iv_len > kripto_block_size(b));
 
 	s = malloc(sizeof(struct kripto_stream)
 		+ (kripto_block_size(b) << 1)
 		+ sizeof(struct kripto_stream_desc)
 	);
+	if(!s) return 0;
 
 	s->block_size = kripto_block_size(b);
 
