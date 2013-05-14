@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
@@ -46,6 +47,9 @@ static size_t cbc_encrypt
 	size_t i;
 	unsigned int n;
 
+	assert(pt);
+	assert(ct);
+
 	if(len & (s->block_size - 1)) return 0;
 
 	for(i = 0; i < len; i += n)
@@ -75,6 +79,9 @@ static size_t cbc_decrypt
 {
 	size_t i;
 	unsigned int n;
+
+	assert(ct);
+	assert(pt);
 
 	if(len & (s->block_size - 1)) return 0;
 
@@ -108,6 +115,9 @@ static size_t cbc_prng
 	(void)s;
 	(void)out;
 	(void)len;
+
+	assert(1);
+
 	return 0;
 }
 
@@ -131,15 +141,19 @@ static kripto_stream *cbc_create
 	kripto_block_desc *b;
 	struct kripto_stream_desc *stream;
 
-	b = kripto_block_get_desc(block);
-	if(!b) return 0;
+	assert(block);
+	assert(iv >= iv_len);
+	/* if iv_len is not null, iv must not be null */
 
-	if(iv_len != kripto_block_size(b)) return 0;
+	b = kripto_block_get_desc(block);
+
+	assert(iv_len > kripto_block_size(b));
 
 	s = malloc(sizeof(struct kripto_stream)
 		+ (kripto_block_size(b) << 1)
 		+ sizeof(struct kripto_stream_desc)
 	);
+	if(!s) return 0;
 
 	s->block_size = kripto_block_size(b);
 
@@ -155,7 +169,7 @@ static kripto_stream *cbc_create
 	stream->create = 0;
 	stream->destroy = &cbc_destroy;
 	stream->max_key = kripto_block_max_key(b);
-	stream->max_iv = s->block_size >> 1;
+	stream->max_iv = s->block_size;
 	stream->max_rounds = kripto_block_max_rounds(b);
 	stream->default_rounds = kripto_block_default_rounds(b);
 
