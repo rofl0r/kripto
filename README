@@ -33,11 +33,17 @@ Block ciphers:
 
 Modes:
  - CTR
- - CBC*
+ - CBC
  - CFB*
- - OFB*
- - ECB*
+ - OFB
+ - ECB
  - TBC*
+
+Authenticated modes:
+ - EAX
+ - GCM
+ - CCM
+ - OCB
 
 Stream ciphers:
  - Salsa20
