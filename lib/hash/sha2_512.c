@@ -16,6 +16,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <assert.h>
 
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
@@ -220,7 +221,7 @@ static void sha2_512_process(kripto_hash *s, const uint8_t *in)
 	s->h[7] += h;
 }
 
-static int sha2_512_input
+static void sha2_512_input
 (
 	kripto_hash *s,
 	const void *in,
@@ -229,8 +230,9 @@ static int sha2_512_input
 {
 	size_t i;
 
-	s->len[0] += len;
-	if(s->len[0] < len) return -1;
+	s->len[0] += len << 3;
+	/* TODO: s->len[1] */
+	assert(s->len[0] >= len << 3);
 
 	for(i = 0; i < len; i++)
 	{
@@ -242,8 +244,6 @@ static int sha2_512_input
 			s->n = 0;
 		}
 	}
-
-	return 0;
 }
 
 static void sha2_512_finish(kripto_hash *s)
@@ -259,27 +259,22 @@ static void sha2_512_finish(kripto_hash *s)
 	while(s->n < 112) s->buf[s->n++] = 0;
 
 	/* add length */
-	//s->len[1] = (s->len[1] << 3) | (s->len[0] >> 61);
-	s->len[0] <<= 3;
 	U64TO8_BE(s->len[1], s->buf + 112);
 	U64TO8_BE(s->len[0], s->buf + 120);
 
 	sha2_512_process(s, s->buf);
 }
 
-static int sha2_512_output(kripto_hash *s, void *out, const size_t len)
+static void sha2_512_output(kripto_hash *s, void *out, const size_t len)
 {
 	unsigned int i;
 
-	if(len > 64) return -1;
-
+	/* big endian */
 	for(i = len; i != UINT_MAX; i--)
 	{
 		U8(out)[i] = s->h[i >> 3];
 		s->h[i >> 3] >>= 8;
 	}
-
-	return 0;
 }
 
 static kripto_hash *sha2_512_create
@@ -289,8 +284,6 @@ static kripto_hash *sha2_512_create
 )
 {
 	kripto_hash *s;
-
-	if(r > 160) return 0;
 
 	s = malloc(sizeof(struct kripto_hash));
 	if(!s) return 0;
@@ -322,23 +315,17 @@ static int sha2_512_hash
 {
 	struct kripto_hash s;
 
-	if(r > 160) return -1;
-
 	s.r = r;
 	if(!s.r) s.r = 80;
 
 	sha2_512_init(&s, out_len);
-	if(sha2_512_input(&s, in, in_len)) goto err;
+	sha2_512_input(&s, in, in_len);
 	sha2_512_finish(&s);
-	if(sha2_512_output(&s, out, out_len)) goto err;
+	sha2_512_output(&s, out, out_len);
 
 	kripto_memwipe(&s, sizeof(struct kripto_hash));
 
 	return 0;
-
-err:
-	kripto_memwipe(&s, sizeof(struct kripto_hash));
-	return -1;
 }
 
 static const struct kripto_hash_desc sha2_512 =

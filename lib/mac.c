@@ -37,22 +37,22 @@ kripto_mac *kripto_mac_create
 	return desc->create(f, key, key_len);
 }
 
-int kripto_mac_update(kripto_mac *s, const void *in, const size_t len)
+void kripto_mac_update(kripto_mac *s, const void *in, const size_t len)
 {
 	assert(s);
 	assert(s->desc);
 	assert(s->desc->update);
 
-	return s->desc->update(s, in, len);
+	s->desc->update(s, in, len);
 }
 
-int kripto_mac_finish(kripto_mac *s, void *out, const size_t len)
+void kripto_mac_finish(kripto_mac *s, void *out, const size_t len)
 {
 	assert(s);
 	assert(s->desc);
 	assert(s->desc->finish);
 
-	return s->desc->finish(s, out, len);
+	s->desc->finish(s, out, len);
 }
 
 void kripto_mac_destroy(kripto_mac *s)
@@ -83,15 +83,12 @@ int kripto_mac_all
 	s = kripto_mac_create(desc, f, key, key_len);
 	if(!s) return -1;
 
-	if(kripto_mac_update(s, in, in_len)) goto err;
-	if(kripto_mac_finish(s, out, out_len)) goto err;
+	kripto_mac_update(s, in, in_len);
+	kripto_mac_finish(s, out, out_len);
 
 	kripto_mac_destroy(s);
+
 	return 0;
-
-err:
-	kripto_mac_destroy(s);
-	return -1;
 }
 
 kripto_mac_desc *kripto_mac_get_desc(const kripto_mac *s)
@@ -102,10 +99,10 @@ kripto_mac_desc *kripto_mac_get_desc(const kripto_mac *s)
 	return s->desc;
 }
 
-unsigned int kripto_mac_max(kripto_mac_desc *mac, const void *f)
+unsigned int kripto_mac_max_output(kripto_mac_desc *mac, const void *f)
 {
 	assert(mac);
-	assert(mac->max);
+	assert(mac->max_output);
 
-	return mac->max(f);
+	return mac->max_output(f);
 }

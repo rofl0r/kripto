@@ -16,6 +16,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <assert.h>
 
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
@@ -166,7 +167,7 @@ static void blake2s_process(kripto_hash *s, const uint8_t *data)
 	s->h[7] ^= x7 ^ x15;
 }
 
-static int blake2s_input
+static void blake2s_input
 (
 	kripto_hash *s,
 	const void *in,
@@ -183,7 +184,7 @@ static int blake2s_input
 			if(!s->len[0])
 			{
 				s->len[1]++;
-				if(!s->len[1]) return -1;
+				assert(s->len[1]);
 			}
 
 			blake2s_process(s, s->buf);
@@ -192,8 +193,6 @@ static int blake2s_input
 
 		s->buf[s->n++] = CU8(in)[i];
 	}
-
-	return 0;
 }
 
 static void blake2s_finish(kripto_hash *s)
@@ -208,19 +207,16 @@ static void blake2s_finish(kripto_hash *s)
 	blake2s_process(s, s->buf);
 }
 
-static int blake2s_output(kripto_hash *s, void *out, const size_t len)
+static void blake2s_output(kripto_hash *s, void *out, const size_t len)
 {
 	unsigned int i;
 
-	if(len > 32) return -1;
-
+	/* little endian */
 	for(i = 0; i < len; i++)
 	{
 		U8(out)[i] = s->h[i >> 2];
 		s->h[i >> 2] >>= 8;
 	}
-
-	return 0;
 }
 
 static kripto_hash *blake2s_create
@@ -230,8 +226,6 @@ static kripto_hash *blake2s_create
 )
 {
 	kripto_hash *s;
-
-	if(len > 32) return 0;
 
 	s = malloc(sizeof(struct kripto_hash));
 	if(!s) return 0;
@@ -263,23 +257,17 @@ static int blake2s_hash
 {
 	struct kripto_hash s;
 
-	if(out_len > 32) return -1;
-
 	s.r = r;
 	if(!s.r) s.r = 10;
 
 	blake2s_init(&s, out_len);
-	if(blake2s_input(&s, in, in_len)) goto err;
+	blake2s_input(&s, in, in_len);
 	blake2s_finish(&s);
-	if(blake2s_output(&s, out, out_len)) goto err;
+	blake2s_output(&s, out, out_len);
 
 	kripto_memwipe(&s, sizeof(struct kripto_hash));
 
 	return 0;
-
-err:
-	kripto_memwipe(&s, sizeof(struct kripto_hash));
-	return -1;
 }
 
 static const struct kripto_hash_desc blake2s =

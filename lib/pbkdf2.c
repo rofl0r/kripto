@@ -42,7 +42,7 @@ int kripto_pbkdf2
 	uint8_t *buf[2];
 	kripto_mac *mac;
 
-	x = kripto_mac_max(mac_desc, f);
+	x = kripto_mac_max_output(mac_desc, f);
 	if(out_len < x) x = out_len;
 
 	buf[0] = malloc(x << 1);
@@ -58,14 +58,11 @@ int kripto_pbkdf2
 		mac = kripto_mac_create(mac_desc, f, pass, pass_len);
 		if(!mac) goto err;
 
-		if(kripto_mac_update(mac, salt, salt_len))
-			goto err;
+		kripto_mac_update(mac, salt, salt_len);
 
-		if(kripto_mac_update(mac, buf[1], 4))
-			goto err;
+		kripto_mac_update(mac, buf[1], 4);
 
-		if(kripto_mac_finish(mac, buf[0], x))
-			goto err;
+		kripto_mac_finish(mac, buf[0], x);
 
 		kripto_mac_destroy(mac);
 

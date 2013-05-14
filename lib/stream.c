@@ -13,6 +13,7 @@
  */
 
 #include <assert.h>
+#include <stdint.h>
 
 #include <kripto/stream_desc.h>
 
@@ -35,6 +36,9 @@ kripto_stream *kripto_stream_create
 {
 	assert(desc);
 	assert(desc->create);
+
+	/* if iv_len is not null, iv must not be null */
+	assert((uintptr_t)iv >= iv_len);
 
 	return desc->create(key, key_len, iv, iv_len, r);
 }

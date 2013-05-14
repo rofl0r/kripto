@@ -19,14 +19,14 @@ extern kripto_mac *kripto_mac_create
 	const unsigned int key_len
 );
 
-extern int kripto_mac_update
+extern void kripto_mac_update
 (
 	kripto_mac *s,
 	const void *in,
 	const size_t len
 );
 
-extern int kripto_mac_finish
+extern void kripto_mac_finish
 (
 	kripto_mac *s,
 	void *out,
@@ -49,7 +49,11 @@ extern int kripto_mac_all
 
 extern kripto_mac_desc *kripto_mac_get_desc(const kripto_mac *s);
 
-extern unsigned int kripto_mac_max(kripto_mac_desc *s, const void *f);
+extern unsigned int kripto_mac_max_output
+(
+	kripto_mac_desc *s,
+	const void *f
+);
 
 #ifdef __cplusplus
 }

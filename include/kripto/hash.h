@@ -20,7 +20,7 @@ extern kripto_hash *kripto_hash_create
 
 extern void kripto_hash_init(kripto_hash *s, const size_t len);
 
-extern int kripto_hash_input
+extern void kripto_hash_input
 (
 	kripto_hash *s,
 	const void *in,
@@ -29,7 +29,7 @@ extern int kripto_hash_input
 
 extern void kripto_hash_finish(kripto_hash *s);
 
-extern int kripto_hash_output
+extern void kripto_hash_output
 (
 	kripto_hash *s,
 	void *out,
@@ -50,9 +50,13 @@ extern int kripto_hash_all
 
 extern kripto_hash_desc *kripto_hash_get_desc(const kripto_hash *s);
 
-extern unsigned int kripto_hash_max(kripto_hash_desc *s);
+extern size_t kripto_hash_max_output(kripto_hash_desc *s);
 
 extern unsigned int kripto_hash_blocksize(kripto_hash_desc *s);
+
+extern unsigned int kripto_hash_max_rounds(kripto_hash_desc *s);
+
+extern unsigned int kripto_hash_default_rounds(kripto_hash_desc *s);
 
 #ifdef __cplusplus
 }

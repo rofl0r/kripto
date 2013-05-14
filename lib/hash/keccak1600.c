@@ -285,9 +285,6 @@ static void keccak1600_F(kripto_hash *s)
 
 static void keccak1600_init(kripto_hash *s, const size_t len)
 {
-	/*s->r = r;
-	if(!s->r) s->r = 24;*/
-
 	s->n = 0;
 
 	if(len > 64) s->rate = 72;
@@ -296,7 +293,7 @@ static void keccak1600_init(kripto_hash *s, const size_t len)
 	memset(s->s, 0, 200);
 }
 
-static int keccak1600_input
+static void keccak1600_input
 (
 	kripto_hash *s,
 	const void *in,
@@ -315,8 +312,6 @@ static int keccak1600_input
 			s->n = 0;
 		}
 	}
-
-	return 0;
 }
 
 static void keccak1600_finish(kripto_hash *s)
@@ -330,7 +325,7 @@ static void keccak1600_finish(kripto_hash *s)
 	s->n = 0;
 }
 
-static int keccak1600_output
+static void keccak1600_output
 (
 	kripto_hash *s,
 	void *out,
@@ -349,8 +344,6 @@ static int keccak1600_output
 
 		U8(out)[i] = s->s[s->n++];
 	}
-
-	return 0;
 }
 
 static kripto_hash *keccak1600_create
@@ -360,8 +353,6 @@ static kripto_hash *keccak1600_create
 )
 {
 	kripto_hash *s;
-
-	if(r > 48) return 0;
 
 	s = malloc(sizeof(struct kripto_hash));
 	if(!s) return 0;
@@ -392,15 +383,13 @@ static int keccak1600_hash
 {
 	struct kripto_hash s;
 
-	if(r > 48) return -1;
-
 	s.r = r;
 	if(!s.r) s.r = 24;
 
 	keccak1600_init(&s, out_len);
-	(void)keccak1600_input(&s, in, in_len);
+	keccak1600_input(&s, in, in_len);
 	keccak1600_finish(&s);
-	(void)keccak1600_output(&s, out, out_len);
+	keccak1600_output(&s, out, out_len);
 
 	kripto_memwipe(&s, sizeof(struct kripto_hash));
 

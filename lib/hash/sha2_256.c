@@ -16,6 +16,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <assert.h>
 
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
@@ -172,7 +173,7 @@ static void sha2_256_process(kripto_hash *s, const uint8_t *data)
 	s->h[7] += h;
 }
 
-static int sha2_256_input
+static void sha2_256_input
 (
 	kripto_hash *s,
 	const void *in,
@@ -182,7 +183,7 @@ static int sha2_256_input
 	size_t i;
 
 	s->len += len << 3;
-	if(s->len < len << 3) return -1;
+	assert(s->len >= len << 3);
 
 	for(i = 0; i < len; i++)
 	{
@@ -194,8 +195,6 @@ static int sha2_256_input
 			s->n = 0;
 		}
 	}
-
-	return 0;
 }
 
 static void sha2_256_finish(kripto_hash *s)
@@ -217,19 +216,16 @@ static void sha2_256_finish(kripto_hash *s)
 	sha2_256_process(s, s->buf);
 }
 
-static int sha2_256_output(kripto_hash *s, void *out, const size_t len)
+static void sha2_256_output(kripto_hash *s, void *out, const size_t len)
 {
 	unsigned int i;
 
-	if(len > 32) return -1;
-
+	/* big endian */
 	for(i = len; i != UINT_MAX; i--)
 	{
 		U8(out)[i] = s->h[i >> 2];
 		s->h[i >> 2] >>= 8;
 	}
-
-	return 0;
 }
 
 static kripto_hash *sha2_256_create
@@ -239,8 +235,6 @@ static kripto_hash *sha2_256_create
 )
 {
 	kripto_hash *s;
-
-	if(r > 128) return 0;
 
 	s = malloc(sizeof(struct kripto_hash));
 	if(!s) return 0;
@@ -272,23 +266,17 @@ static int sha2_256_hash
 {
 	struct kripto_hash s;
 
-	if(r > 128) return -1;
-
 	s.r = r;
 	if(!s.r) s.r = 64;
 
 	sha2_256_init(&s, out_len);
-	if(sha2_256_input(&s, in, in_len)) goto err;
+	sha2_256_input(&s, in, in_len);
 	sha2_256_finish(&s);
-	if(sha2_256_output(&s, out, out_len)) goto err;
+	sha2_256_output(&s, out, out_len);
 
 	kripto_memwipe(&s, sizeof(struct kripto_hash));
 
 	return 0;
-
-err:
-	kripto_memwipe(&s, sizeof(struct kripto_hash));
-	return -1;
 }
 
 static const struct kripto_hash_desc sha2_256 =
