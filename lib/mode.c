@@ -13,6 +13,7 @@
  */
 
 #include <assert.h>
+#include <stdint.h>
 
 #include <kripto/stream.h>
 #include <kripto/block.h>
@@ -31,6 +32,9 @@ kripto_stream *kripto_mode_create
 	assert(mode);
 	assert(block);
 	assert(mode->create);
+
+	/* if iv_len is not null, iv must not be null */
+	assert((uintptr_t)iv >= iv_len);
 
 	return mode->create(block, iv, iv_len);
 }

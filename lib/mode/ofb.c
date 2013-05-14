@@ -109,8 +109,6 @@ static kripto_stream *ofb_create
 	struct kripto_stream_desc *stream;
 
 	assert(block);
-	assert(iv >= iv_len);
-	/* if iv_len is not null, iv must not be null */
 
 	b = kripto_block_get_desc(block);
 

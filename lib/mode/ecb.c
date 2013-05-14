@@ -98,6 +98,7 @@ static kripto_stream *ecb_create
 	struct kripto_stream_desc *stream;
 
 	(void)iv;
+	(void)iv_len;
 	assert(block);
 	assert(!iv_len);
 
