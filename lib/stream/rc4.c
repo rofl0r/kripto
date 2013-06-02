@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <assert.h>
 
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
@@ -154,6 +155,50 @@ static size_t rc4_prng
 	return i;
 }
 
+static kripto_stream *rc4i_change
+(
+	kripto_stream *s,
+	const void *key,
+	const unsigned int key_len,
+	const void *iv,
+	const unsigned int iv_len,
+	const unsigned int r
+)
+{
+	unsigned int rounds = r;
+
+	assert(key_len + iv_len <= 256);
+	if(!rounds) rounds = 512;
+
+	improved_setup(s, key, key_len, iv, iv_len, r);
+
+	return s;
+}
+
+static kripto_stream *rc4_change
+(
+	kripto_stream *s,
+	const void *key,
+	const unsigned int key_len,
+	const void *iv,
+	const unsigned int iv_len,
+	const unsigned int r
+)
+{
+	unsigned int i;
+
+	assert(key_len + iv_len <= 256);
+
+	improved_setup(s, key, key_len, iv, iv_len, 256);
+
+	s->i = s->j = 0;
+
+	/* drop ? */
+	for(i = 0; i < r; i++) (void)rc4(s);
+
+	return s;
+}
+
 static kripto_stream *rc4i_create
 (
 	const void *key,
@@ -164,17 +209,12 @@ static kripto_stream *rc4i_create
 )
 {
 	kripto_stream *s;
-	unsigned int rounds = r;
 
-	if(key_len + iv_len > RC4I_MAX_KEY) return 0;
-	if(!rounds) rounds = 512;
-
-	s = malloc(sizeof(struct kripto_stream));
+	s = malloc(sizeof(kripto_stream));
 	if(!s) return 0;
 
 	s->desc = kripto_stream_rc4i;
-
-	improved_setup(s, key, key_len, iv, iv_len, r);
+	(void)rc4i_change(s, key, key_len, iv, iv_len, r);
 
 	return s;
 }
@@ -206,7 +246,7 @@ static kripto_stream *rc4_create
 
 static void rc4_destroy(kripto_stream *s)
 {
-	kripto_memwipe(s, sizeof(struct kripto_stream));
+	kripto_memwipe(s, sizeof(kripto_stream));
 	free(s);
 }
 
@@ -217,11 +257,12 @@ static const struct kripto_stream_desc rc4_desc =
 	&rc4_crypt,
 	&rc4_prng,
 	&rc4_create,
+	&rc4_change,
 	&rc4_destroy,
-	256,
-	256,
-	UINT_MAX,
-	0
+	256, /* max key */
+	256, /* max iv */
+	UINT_MAX, /* max rounds */
+	0 /* default rounds */
 };
 
 kripto_stream_desc *const kripto_stream_rc4 = &rc4_desc;
@@ -233,11 +274,12 @@ static const struct kripto_stream_desc rc4i =
 	&rc4_crypt,
 	&rc4_prng,
 	&rc4i_create,
+	&rc4i_change,
 	&rc4_destroy,
-	256,
-	256,
-	UINT_MAX,
-	512
+	256, /* max key */
+	256, /* max iv */
+	UINT_MAX, /* max rounds */
+	512 /* default rounds */
 };
 
 kripto_stream_desc *const kripto_stream_rc4i = &rc4i;

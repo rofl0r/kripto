@@ -265,10 +265,7 @@ static kripto_stream *chacha_create
 {
 	kripto_stream *s;
 
-	if(key_len > 32) return 0;
-	if(iv_len > 24) return 0;
-
-	s = malloc(sizeof(struct kripto_stream));
+	s = malloc(sizeof(kripto_stream));
 	if(!s) return 0;
 
 	s->desc = kripto_stream_chacha;
@@ -278,9 +275,24 @@ static kripto_stream *chacha_create
 	return s;
 }
 
+static kripto_stream *chacha_change
+(
+	kripto_stream *s,
+	const void *key,
+	const unsigned int key_len,
+	const void *iv,
+	const unsigned int iv_len,
+	const unsigned int r
+)
+{
+	chacha_setup(s, key, key_len, iv, iv_len, r);
+
+	return s;
+}
+
 static void chacha_destroy(kripto_stream *s)
 {
-	kripto_memwipe(s, sizeof(struct kripto_stream));
+	kripto_memwipe(s, sizeof(kripto_stream));
 	free(s);
 }
 
@@ -290,11 +302,12 @@ static const struct kripto_stream_desc chacha =
 	&chacha_crypt,
 	&chacha_prng,
 	&chacha_create,
+	&chacha_change,
 	&chacha_destroy,
-	32,
-	24,
-	UINT_MAX,
-	20
+	32, /* max key */
+	24, /* max iv */
+	UINT_MAX, /* max rounds */
+	20 /* default rounds */
 };
 
 kripto_stream_desc *const kripto_stream_chacha = &chacha;

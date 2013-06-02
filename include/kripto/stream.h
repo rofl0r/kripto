@@ -16,6 +16,16 @@ extern kripto_stream *kripto_stream_create
 	const unsigned int r
 );
 
+extern kripto_stream *kripto_stream_change
+(
+	kripto_stream *s,
+	const void *key,
+	const unsigned int key_len,
+	const void *iv,
+	const unsigned int iv_len,
+	const unsigned int r
+);
+
 extern size_t kripto_stream_encrypt
 (
 	kripto_stream *s,

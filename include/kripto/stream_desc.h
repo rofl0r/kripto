@@ -34,6 +34,16 @@ struct kripto_stream_desc
 		const unsigned int
 	);
 
+	kripto_stream *(*change)
+	(
+		kripto_stream *,
+		const void *,
+		const unsigned int,
+		const void *,
+		const unsigned int,
+		const unsigned int
+	);
+
 	void (*destroy)(kripto_stream *);
 
 	unsigned int max_key;

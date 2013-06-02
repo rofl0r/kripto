@@ -37,10 +37,38 @@ kripto_stream *kripto_stream_create
 	assert(desc);
 	assert(desc->create);
 
+	assert(key);
+	assert(key_len);
+	assert(key_len <= kripto_stream_max_key(desc));
 	/* if iv_len is not null, iv must not be null */
 	assert((uintptr_t)iv >= iv_len);
+	assert(r <= kripto_stream_max_rounds(desc));
 
 	return desc->create(key, key_len, iv, iv_len, r);
+}
+
+kripto_stream *kripto_stream_change
+(
+	kripto_stream *s,
+	const void *key,
+	const unsigned int key_len,
+	const void *iv,
+	const unsigned int iv_len,
+	const unsigned int r
+)
+{
+	assert(s);
+	assert(s->desc);
+	assert(s->desc->change);
+
+	assert(key);
+	assert(key_len);
+	assert(key_len <= kripto_stream_max_key(s->desc));
+	/* if iv_len is not null, iv must not be null */
+	assert((uintptr_t)iv >= iv_len);
+	assert(r <= kripto_stream_max_rounds(s->desc));
+
+	return s->desc->change(s, key, key_len, iv, iv_len, r);
 }
 
 size_t kripto_stream_encrypt
@@ -107,7 +135,6 @@ unsigned int kripto_stream_max_key(kripto_stream_desc *desc)
 unsigned int kripto_stream_max_iv(kripto_stream_desc *desc)
 {
 	assert(desc);
-	assert(desc->max_iv);
 
 	return desc->max_iv;
 }
@@ -115,7 +142,6 @@ unsigned int kripto_stream_max_iv(kripto_stream_desc *desc)
 unsigned int kripto_stream_max_rounds(kripto_stream_desc *desc)
 {
 	assert(desc);
-	assert(desc->max_rounds);
 
 	return desc->max_rounds;
 }
@@ -123,7 +149,6 @@ unsigned int kripto_stream_max_rounds(kripto_stream_desc *desc)
 unsigned int kripto_stream_default_rounds(kripto_stream_desc *desc)
 {
 	assert(desc);
-	assert(desc->default_rounds);
 
 	return desc->default_rounds;
 }
