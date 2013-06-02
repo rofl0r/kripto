@@ -26,6 +26,7 @@
 struct kripto_block
 {
 	kripto_block_desc *desc;
+	size_t size;
 	unsigned int r;
 	uint32_t *k;
 };
@@ -184,18 +185,15 @@ static kripto_block *rc6_create
 {
 	kripto_block *s;
 
-	if(r > INT_MAX) return 0;
-
 	if(!r) r = RC6_DEFAULT_ROUNDS;
 
-	if(key_len > RC6_MAX_KEY) return 0;
-
-	s = malloc(sizeof(struct kripto_block) + (RC6_K_LEN(r) << 2));
+	s = malloc(sizeof(kripto_block) + (RC6_K_LEN(r) << 2));
 	if(!s) return 0;
 
 	s->desc = kripto_block_rc6;
+	s->size = sizeof(kripto_block) + (RC6_K_LEN(r) << 2);
 	s->r = r;
-	s->k = (uint32_t *)((uint8_t *)s + sizeof(struct kripto_block));
+	s->k = (uint32_t *)((uint8_t *)s + sizeof(kripto_block));
 
 	if(rc6_setup(s, key, key_len))
 	{
@@ -208,10 +206,37 @@ static kripto_block *rc6_create
 
 static void rc6_destroy(kripto_block *s)
 {
-	kripto_memwipe(s, sizeof(struct kripto_block)
-		+ (RC6_K_LEN(s->r) << 2));
-
+	kripto_memwipe(s, s->size);
 	free(s);
+}
+
+static kripto_block *rc6_change
+(
+	kripto_block *s,
+	const void *key,
+	unsigned int key_len,
+	unsigned int r
+)
+{
+	if(!r) r = RC6_DEFAULT_ROUNDS;
+
+	if(sizeof(kripto_block) + (RC6_K_LEN(r) << 2) > s->size)
+	{
+		rc6_destroy(s);
+		s = rc6_create(key, key_len, r);
+	}
+	else
+	{
+		s->r = r;
+
+		if(rc6_setup(s, key, key_len))
+		{
+			free(s);
+			return 0;
+		}
+	}
+
+	return s;
 }
 
 static const struct kripto_block_desc rc6 =
@@ -219,11 +244,12 @@ static const struct kripto_block_desc rc6 =
 	&rc6_encrypt,
 	&rc6_decrypt,
 	&rc6_create,
+	&rc6_change,
 	&rc6_destroy,
-	16,
-	255,
-	INT_MAX,
-	20
+	16, /* block size */
+	255, /* max key */
+	INT_MAX, /* max rounds */
+	20 /* default rounds */
 };
 
 kripto_block_desc *const kripto_block_rc6 = &rc6;

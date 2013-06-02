@@ -37,6 +37,21 @@ kripto_block *kripto_block_create
 	return desc->create(key, key_len, r);
 }
 
+kripto_block *kripto_block_change
+(
+	kripto_block *s,
+	const void *key,
+	const unsigned int key_len,
+	const unsigned int r
+)
+{
+	assert(s);
+	assert(s->desc);
+	assert(s->desc->change);
+
+	return s->desc->change(s, key, key_len, r);
+}
+
 void kripto_block_encrypt
 (
 	const kripto_block *s,

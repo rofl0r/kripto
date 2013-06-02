@@ -366,22 +366,16 @@ static void threefish1024_decrypt
 	U64TO8_LE(x15, U8(pt) + 120);
 }
 
-static kripto_block *threefish1024_create
+static kripto_block *threefish1024_change
 (
+	kripto_block *s,
 	const void *key,
-	const unsigned int key_len,
-	const unsigned int r
+	unsigned int key_len,
+	unsigned int r
 )
 {
-	kripto_block *s;
 	unsigned int i;
 
-	if(key_len > 128) return 0;
-
-	s = malloc(sizeof(struct kripto_block));
-	if(!s) return 0;
-
-	s->desc = kripto_block_threefish1024;
 	s->r = ((r + 7) >> 3) << 1;
 	if(!s->r) s->r = 20; /* 80 / 4 */
 
@@ -400,9 +394,28 @@ static kripto_block *threefish1024_create
 	return s;
 }
 
+static kripto_block *threefish1024_create
+(
+	const void *key,
+	const unsigned int key_len,
+	const unsigned int r
+)
+{
+	kripto_block *s;
+
+	s = malloc(sizeof(kripto_block));
+	if(!s) return 0;
+
+	s->desc = kripto_block_threefish1024;
+
+	(void)threefish1024_change(s, key, key_len, r);
+
+	return s;
+}
+
 static void threefish1024_destroy(kripto_block *s)
 {
-	kripto_memwipe(s, sizeof(struct kripto_block));
+	kripto_memwipe(s, sizeof(kripto_block));
 	free(s);
 }
 
@@ -411,11 +424,12 @@ static const struct kripto_block_desc threefish1024 =
 	&threefish1024_encrypt,
 	&threefish1024_decrypt,
 	&threefish1024_create,
+	&threefish1024_change,
 	&threefish1024_destroy,
-	128,
-	128,
-	UINT_MAX,
-	80
+	128, /* block size */
+	128, /* max key */
+	UINT_MAX, /* max rounds */
+	80 /* default rounds */
 };
 
 kripto_block_desc *const kripto_block_threefish1024 = &threefish1024;

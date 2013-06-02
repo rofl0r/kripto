@@ -215,10 +215,7 @@ static kripto_block *noekeon_create
 {
 	kripto_block *s;
 
-	if(r > NOEKEON_MAX_ROUNDS) return 0;
-	if(key_len > NOEKEON_MAX_KEY) return 0;
-
-	s = malloc(sizeof(struct kripto_block));
+	s = malloc(sizeof(kripto_block));
 	if(!s) return 0;
 
 	s->desc = kripto_block_noekeon;
@@ -229,9 +226,23 @@ static kripto_block *noekeon_create
 	return s;
 }
 
+static kripto_block *noekeon_change
+(
+	kripto_block *s,
+	const void *key,
+	unsigned int key_len,
+	unsigned int r
+)
+{
+	s->r = r;
+	noekeon_setup(s, key, key_len);
+
+	return s;
+}
+
 static void noekeon_destroy(kripto_block *s)
 {
-	kripto_memwipe(s, sizeof(struct kripto_block));
+	kripto_memwipe(s, sizeof(kripto_block));
 	free(s);
 }
 
@@ -240,11 +251,12 @@ static const struct kripto_block_desc noekeon =
 	&noekeon_encrypt,
 	&noekeon_decrypt,
 	&noekeon_create,
+	&noekeon_change,
 	&noekeon_destroy,
-	16,
-	16,
-	32,
-	16
+	16, /* block size */
+	16, /* max key */
+	32, /* max rounds */
+	16 /* default rounds */
 };
 
 kripto_block_desc *const kripto_block_noekeon = &noekeon;

@@ -25,6 +25,7 @@
 struct kripto_block
 {
 	kripto_block_desc *desc;
+	size_t size;
 	unsigned int r;
 	uint32_t *k;
 };
@@ -443,16 +444,15 @@ static kripto_block *seed_create
 {
 	kripto_block *s;
 
-	if(key_len > SEED_MAX_KEY) return 0;
+	if(!r) r = SEED_DEFAULT_ROUNDS;
 
-	s = malloc(sizeof(struct kripto_block) + (SEED_K_LEN(r) << 2));
+	s = malloc(sizeof(kripto_block) + (SEED_K_LEN(r) << 2));
 	if(!s) return 0;
 
 	s->desc = kripto_block_seed;
+	s->size = sizeof(kripto_block) + (SEED_K_LEN(r) << 2);
 	s->r = r;
-	if(!s->r) s->r = SEED_DEFAULT_ROUNDS;
-
-	s->k = (uint32_t *)((uint8_t *)s + sizeof(struct kripto_block));
+	s->k = (uint32_t *)((uint8_t *)s + sizeof(kripto_block));
 
 	seed_setup(s, key, key_len);
 
@@ -461,10 +461,32 @@ static kripto_block *seed_create
 
 static void seed_destroy(kripto_block *s)
 {
-	kripto_memwipe(s, sizeof(struct kripto_block)
-		+ (SEED_K_LEN(s->r) << 2));
-
+	kripto_memwipe(s, s->size);
 	free(s);
+}
+
+static kripto_block *seed_change
+(
+	kripto_block *s,
+	const void *key,
+	unsigned int key_len,
+	unsigned int r
+)
+{
+	if(!r) r = SEED_DEFAULT_ROUNDS;
+
+	if(sizeof(kripto_block) + (SEED_K_LEN(r) << 2) > s->size)
+	{
+		seed_destroy(s);
+		s = seed_create(key, key_len, r);
+	}
+	else
+	{
+		s->r = r;
+		seed_setup(s, key, key_len);
+	}
+
+	return s;
 }
 
 static const struct kripto_block_desc seed =
@@ -472,11 +494,12 @@ static const struct kripto_block_desc seed =
 	&seed_encrypt,
 	&seed_decrypt,
 	&seed_create,
+	&seed_change,
 	&seed_destroy,
-	16,
-	16,
-	32, /* ? */
-	16
+	16, /* block size */
+	16, /* max key */
+	32, /* max rounds */
+	16 /* default rounds */
 };
 
 kripto_block_desc *const kripto_block_seed = &seed;
