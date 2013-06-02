@@ -10,6 +10,7 @@ Block ciphers:
  - Twofish
  - RC6
  - Camellia*
+ - ARIA*
  - Threefish
  - Noekeon
  - Anubis

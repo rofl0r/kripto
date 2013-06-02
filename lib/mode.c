@@ -47,7 +47,6 @@ unsigned int kripto_mode_max_iv
 {
 	assert(mode);
 	assert(block);
-	assert(mode->max_iv);
 
 	return mode->max_iv(block);
 }

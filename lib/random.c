@@ -37,6 +37,8 @@
 
 #else
 
+#error "Define OS (-DKRIPTO_UNIX or -DKRIPTO_WINDOWS)"
+
 #include <kripto/stream.h>
 
 #endif
@@ -70,7 +72,7 @@ kripto_random *kripto_random_create(void)
 
 	kripto_random *s;
 
-	s = malloc(sizeof(struct kripto_random));
+	s = malloc(sizeof(kripto_random));
 	if(!s) return 0;
 
 	s->lib = LoadLibrary("advapi32.dll");
