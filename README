@@ -18,9 +18,10 @@ Block ciphers:
  - SEED
  - Blowfish*
  - GOST*
+ - XTEA
+ - Skipjack*
  - DES*
  - 3DES*
- - Skipjack*
  - IDEA*
  - RC5*
  - CAST5*
@@ -28,8 +29,6 @@ Block ciphers:
  - SAFER*
  - SAFER+*
  - SAFER++*
- - TEA*
- - XTEA*
  - MARS*
 
 Modes:

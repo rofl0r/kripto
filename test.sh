@@ -6,14 +6,17 @@ CFLAGS="libkripto.a -std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wmissi
 #cc test/block/aes.c $CFLAGS -o t
 #./t
 
+cc test/block/xtea.c $CFLAGS -o t
+./t
+
 #cc test/block/threefish.c $CFLAGS -o t
 #./t
 
 #cc test/hash/sha2.c $CFLAGS -o t
 #./t
 
-cc test/hash/blake256.c $CFLAGS -o t
-./t
+#cc test/hash/blake256.c $CFLAGS -o t
+#./t
 
 #cc test/hash/blake2b.c $CFLAGS -o t
 #./t
