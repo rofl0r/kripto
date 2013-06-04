@@ -41,6 +41,8 @@ extern void kripto_block_decrypt
 
 extern void kripto_block_destroy(kripto_block *s);
 
+extern unsigned int kripto_block_rounds(const kripto_block *s);
+
 extern kripto_block_desc *kripto_block_get_desc(const kripto_block *s);
 
 extern unsigned int kripto_block_size(kripto_block_desc *desc);

@@ -38,8 +38,8 @@
 struct kripto_block
 {
 	kripto_block_desc *desc;
+	unsigned int rounds;
 	size_t size;
-	unsigned int r;
 	uint32_t *k;
 	uint32_t *dk;
 };
@@ -765,7 +765,7 @@ static void rijndael128_setup
 	for(i = 0; i < key_len; i++)
 		s->k[i >> 2] = (s->k[i >> 2] << 8) | key[i];
 
-	for(i = 0; (k - s->k + n) < AES_K_LEN(s->r); k += n)
+	for(i = 0; (k - s->k + n) < AES_K_LEN(s->rounds); k += n)
 	{
 		t = k[n - 1];
 		k[n] = k[0] ^
@@ -774,7 +774,7 @@ static void rijndael128_setup
 			(te4[t & 0xFF] & 0x0000FF00) ^
 			(te4[t >> 24] & 0x000000FF) ^ rcon[i++];
 
-		for(j = 1; j < n && (k - s->k + n + j) < AES_K_LEN(s->r); j++)
+		for(j = 1; j < n && (k - s->k + n + j) < AES_K_LEN(s->rounds); j++)
 		{
 			if(n >= 8 && j == 5)
 			{
@@ -790,7 +790,7 @@ static void rijndael128_setup
 	}
 
 	/* invert the order of the round keys */
-	for(i = 0, j = s->r << 2; i <= j; i += 4, j -= 4)
+	for(i = 0, j = s->rounds << 2; i <= j; i += 4, j -= 4)
 	{
 		s->dk[i] = s->k[j];
 		s->dk[j] = s->k[i];
@@ -807,7 +807,7 @@ static void rijndael128_setup
 
 	/* apply the inverse MixColumn transform to
 	all round keys,	except the first and the last */
-	for(i = 4; i < (s->r << 2); i++)
+	for(i = 4; i < (s->rounds << 2); i++)
 	{
 		s->dk[i] = td0[te4[s->dk[i] >> 24] & 0xFF] ^
 			td1[te4[(s->dk[i] >> 16) & 0xFF] & 0xFF] ^
@@ -842,7 +842,7 @@ static void rijndael128_encrypt
 	x3 = U8TO32_BE(CU8(pt) + 12) ^ s->k[3];
 
 	/* - 1 full rounds */
-	for(i = 4; i < (s->r << 2);)
+	for(i = 4; i < (s->rounds << 2);)
 	{
 		t0 = te0[x0 >> 24] ^
 			te1[(x1 >> 16) & 0xFF] ^
@@ -920,7 +920,7 @@ static void rijndael128_decrypt
 	x3 = U8TO32_BE(CU8(ct) + 12) ^ s->dk[3];
 
 	/* - 1 full rounds */
-	for(i = 4; i < (s->r << 2);)
+	for(i = 4; i < (s->rounds << 2);)
 	{
         t0 = td0[x0 >> 24] ^
 			td1[(x3 >> 16) & 0xFF] ^
@@ -1012,7 +1012,7 @@ static kripto_block *rijndael128_create
 
 	s->desc = kripto_block_rijndael128;
 	s->size = sizeof(kripto_block) + (AES_K_LEN(r) << 3);
-	s->r = r;
+	s->rounds = r;
 	s->k = (uint32_t *)((uint8_t *)s + sizeof(kripto_block));
 	s->dk = s->k + AES_K_LEN(r);
 
@@ -1044,7 +1044,7 @@ static kripto_block *rijndael128_change
 	}
 	else
 	{
-		s->r = r;
+		s->rounds = r;
 		rijndael128_setup(s, key, key_len);
 	}
 

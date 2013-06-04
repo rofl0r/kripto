@@ -28,8 +28,8 @@
 struct kripto_block
 {
 	kripto_block_desc *desc;
+	unsigned int rounds;
 	size_t size;
-	unsigned int r;
 	uint32_t *k;
 };
 
@@ -50,10 +50,10 @@ static void xtea_setup
 
 	key_len = (key_len + 3) >> 2;
 	i = 0;
-	while(i < s->r)
+	while(i < s->rounds)
 	{
 		s->k[i++] = c + k[c % key_len];
-		if(i == s->r) break;
+		if(i == s->rounds) break;
 		c += 0x9E3779B9;
 		s->k[i++] = c + k[(c >> 11) % key_len];
 	}
@@ -69,11 +69,11 @@ static void xtea_encrypt(const kripto_block *s, const void *pt, void *ct)
 	uint32_t x1 = U8TO32_BE(CU8(pt) + 4);
 	unsigned int i = 0;
 
-	while(i < s->r)
+	while(i < s->rounds)
 	{
 		x0 += F(x1) ^ s->k[i++];
 
-		if(i == s->r) break;
+		if(i == s->rounds) break;
 
 		x1 += F(x0) ^ s->k[i++];
 	}
@@ -86,7 +86,7 @@ static void xtea_decrypt(const kripto_block *s, const void *ct, void *pt)
 {
 	uint32_t x0 = U8TO32_BE(CU8(ct));
 	uint32_t x1 = U8TO32_BE(CU8(ct) + 4);
-	unsigned int i = s->r - 1;
+	unsigned int i = s->rounds - 1;
 
 	while(i != UINT_MAX)
 	{
@@ -117,7 +117,7 @@ static kripto_block *xtea_create
 
 	s->desc = kripto_block_xtea;
 	s->size = sizeof(kripto_block) + (r << 2);
-	s->r = r;
+	s->rounds = r;
 	s->k = (uint32_t *)((uint8_t *)s + sizeof(kripto_block));
 
 	xtea_setup(s, key, key_len);
@@ -148,7 +148,7 @@ static kripto_block *xtea_change
 	}
 	else
 	{
-		s->r = r;
+		s->rounds = r;
 
 		xtea_setup(s, key, key_len);
 	}

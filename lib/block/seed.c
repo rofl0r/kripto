@@ -25,8 +25,8 @@
 struct kripto_block
 {
 	kripto_block_desc *desc;
+	unsigned int rounds;
 	size_t size;
-	unsigned int r;
 	uint32_t *k;
 };
 
@@ -352,7 +352,7 @@ static void seed_encrypt
 	R0 = U8TO32_BE(CU8(pt) + 8);
 	R1 = U8TO32_BE(CU8(pt) + 12);
 
-	for(i = 0; i < SEED_K_LEN(s->r); i += 2)
+	for(i = 0; i < SEED_K_LEN(s->rounds); i += 2)
 		R(L0, L1, R0, R1, s->k + i);
 
 	U32TO8_BE(R0, U8(ct));
@@ -381,7 +381,7 @@ static void seed_decrypt
 	R0 = U8TO32_BE(CU8(ct) + 8);
 	R1 = U8TO32_BE(CU8(ct) + 12);
 
-	for(i = SEED_K_LEN(s->r) - 2; i + 2; i -= 2)
+	for(i = SEED_K_LEN(s->rounds) - 2; i + 2; i -= 2)
 		R(L0, L1, R0, R1, s->k + i);
 
 	U32TO8_BE(L0, U8(pt));
@@ -406,7 +406,7 @@ static void seed_setup
 	for(i = 0; i < key_len; i++)
 		K[i >> 2] = (K[i >> 2] << 8) | key[i];
 
-	for(i = 0; i < s->r; i++)
+	for(i = 0; i < s->rounds; i++)
 	{
 		T0 = K[0] + K[2] - kc;
 		T1 = K[1] - K[3] + kc;
@@ -451,7 +451,7 @@ static kripto_block *seed_create
 
 	s->desc = kripto_block_seed;
 	s->size = sizeof(kripto_block) + (SEED_K_LEN(r) << 2);
-	s->r = r;
+	s->rounds = r;
 	s->k = (uint32_t *)((uint8_t *)s + sizeof(kripto_block));
 
 	seed_setup(s, key, key_len);
@@ -482,7 +482,7 @@ static kripto_block *seed_change
 	}
 	else
 	{
-		s->r = r;
+		s->rounds = r;
 		seed_setup(s, key, key_len);
 	}
 

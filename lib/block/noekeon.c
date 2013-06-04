@@ -26,7 +26,7 @@
 struct kripto_block
 {
 	kripto_block_desc *desc;
-	unsigned int r;
+	unsigned int rounds;
 	uint32_t k[4];
 	uint32_t dk[4];
 };
@@ -100,7 +100,7 @@ static void noekeon_encrypt
 	x2 = U8TO32_BE(CU8(pt) + 8);
 	x3 = U8TO32_BE(CU8(pt) + 12);
 
-	for(r = 0; r < s->r; r++)
+	for(r = 0; r < s->rounds; r++)
 	{
 		x0 ^= rc[r];
 		THETA(x0, x1, x2, x3, s->k[0], s->k[1], s->k[2], s->k[3]);
@@ -136,7 +136,7 @@ static void noekeon_decrypt
 	x2 = U8TO32_BE(CU8(ct) + 8);
 	x3 = U8TO32_BE(CU8(ct) + 12);
 
-	for(r = s->r; r; r--)
+	for(r = s->rounds; r; r--)
 	{
 		THETA(x0, x1, x2, x3, s->dk[0], s->dk[1], s->dk[2], s->dk[3]);
 		x0 ^= rc[r];
@@ -168,7 +168,7 @@ static void noekeon_setup
 	uint8_t tk[16];
 	#endif
 
-	if(!s->r) s->r = NOEKEON_DEFAULT_ROUNDS;
+	if(!s->rounds) s->rounds = NOEKEON_DEFAULT_ROUNDS;
 
 	#ifndef NOEKEON_DIRECT
 
@@ -179,7 +179,7 @@ static void noekeon_setup
 	for(i = 0; i < key_len; i++) tk[i] = key[i];
 	while(i < 16) tk[i++] = 0;
 
-	ts.r = s->r;
+	ts.rounds = s->rounds;
 	noekeon_encrypt(&ts, tk, tk);
 	s->k[0] = U8TO32_BE(tk);
 	s->k[1] = U8TO32_BE(tk + 4);
@@ -219,7 +219,7 @@ static kripto_block *noekeon_create
 	if(!s) return 0;
 
 	s->desc = kripto_block_noekeon;
-	s->r = r;
+	s->rounds = r;
 
 	noekeon_setup(s, key, key_len);
 
@@ -234,7 +234,7 @@ static kripto_block *noekeon_change
 	unsigned int r
 )
 {
-	s->r = r;
+	s->rounds = r;
 	noekeon_setup(s, key, key_len);
 
 	return s;

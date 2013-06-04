@@ -30,8 +30,8 @@
 struct kripto_block
 {
 	kripto_block_desc *desc;
+	unsigned int rounds;
 	size_t size;
-	unsigned int r;
 	uint32_t *k;
 	uint32_t *dk;
 };
@@ -596,10 +596,10 @@ static int anubis_setup
 	for(r = 0; r < key_len; r++)
 		kx[r >> 2] = (kx[r >> 2] << 8) | key[r];
 
-	if(!s->r) s->r = ANUBIS_ROUNDS(ANUBIS_DEFAULT_ROUNDS, key_len);
+	if(!s->rounds) s->rounds = ANUBIS_ROUNDS(ANUBIS_DEFAULT_ROUNDS, key_len);
 
-	/* generate s->r + 1 round keys  */
-	for(r = 0; r <= s->r; r++)
+	/* generate s->rounds + 1 round keys  */
+	for(r = 0; r <= s->rounds; r++)
 	{
 		/* generate r-th round key K^r */
 		t0 = ks0[kx[n - 1] >> 24];
@@ -639,7 +639,7 @@ static int anubis_setup
 		s->k[(r << 2) + 2] = t2;
 		s->k[(r << 2) + 3] = t3;
 
-		if(r == s->r) break;
+		if(r == s->rounds) break;
 
 		/* compute kx^{r+1} from kx^r */
 		for(i = 0; (unsigned int)i < n; i++)
@@ -668,14 +668,14 @@ static int anubis_setup
 	/* generate inverse key schedule */
 	for(i = 0; i < 4; i++)
 	{
-		s->dk[i] = s->k[(s->r << 2) + i];
-		s->dk[(s->r << 2) + i] = s->k[i];
+		s->dk[i] = s->k[(s->rounds << 2) + i];
+		s->dk[(s->rounds << 2) + i] = s->k[i];
 	}
-	for(r = 1; r < s->r; r++)
+	for(r = 1; r < s->rounds; r++)
 	{
 		for(i = 0; i < 4; i++)
 		{
-			t0 = s->k[((s->r - r) << 2) + i];
+			t0 = s->k[((s->rounds - r) << 2) + i];
 
 			s->dk[(r << 2) + i] = s0[ks0[t0 >> 24] & 0xFF] ^
 				s1[ks0[(t0 >> 16) & 0xFF] & 0xFF] ^
@@ -697,7 +697,7 @@ static void anubis_encrypt
 	void *ct
 )
 {
-	anubis_crypt(s->k, s->r, pt, ct);
+	anubis_crypt(s->k, s->rounds, pt, ct);
 }
 
 static void anubis_decrypt
@@ -707,7 +707,7 @@ static void anubis_decrypt
 	void *pt
 )
 {
-	anubis_crypt(s->dk, s->r, ct, pt);
+	anubis_crypt(s->dk, s->rounds, ct, pt);
 }
 
 static kripto_block *anubis_create
@@ -726,7 +726,7 @@ static kripto_block *anubis_create
 
 	s->desc = kripto_block_anubis;
 	s->size = sizeof(kripto_block) + (ANUBIS_K_LEN(r) << 3);
-	s->r = r;
+	s->rounds = r;
 	s->k = (uint32_t *)((uint8_t *)s + sizeof(kripto_block));
 	s->dk = s->k + ANUBIS_K_LEN(r);
 
@@ -762,7 +762,7 @@ static kripto_block *anubis_change
 	}
 	else
 	{
-		s->r = r;
+		s->rounds = r;
 
 		if(anubis_setup(s, key, key_len))
 		{

@@ -26,8 +26,8 @@
 struct kripto_block
 {
 	kripto_block_desc *desc;
+	unsigned int rounds;
 	size_t size;
-	unsigned int r;
 	uint32_t *k;
 };
 
@@ -66,18 +66,18 @@ static int rc6_setup
 	for(j = key_len - 1; j != UINT_MAX; j--)
 		L[j >> 2] = (L[j >> 2] << 8) | key[j];
 
-	if(!s->r) s->r = RC6_DEFAULT_ROUNDS;
+	if(!s->rounds) s->rounds = RC6_DEFAULT_ROUNDS;
 
 	*s->k = 0xB7E15163;
-	for(i = 1; i < RC6_K_LEN(s->r); i++)
+	for(i = 1; i < RC6_K_LEN(s->rounds); i++)
 		s->k[i] = s->k[i-1] + 0x9E3779B9;
 
 	A = B = i = j = k = 0;
-	while(k < RC6_K_LEN(s->r) * 3)
+	while(k < RC6_K_LEN(s->rounds) * 3)
 	{
 		A = s->k[i] = ROL32(s->k[i] + A + B, 3);
 		B = L[j] = ROL32(L[j] + A + B, A + B);
-		if(++i == RC6_K_LEN(s->r)) i = 0;
+		if(++i == RC6_K_LEN(s->rounds)) i = 0;
 		if(++j == ls) j = 0;
 		k++;
 	}
@@ -113,7 +113,7 @@ static void rc6_encrypt(const kripto_block *s, const void *pt, void *ct)
 	B += s->k[0];
 	D += s->k[1];
 
-	while(i <= (s->r << 1))
+	while(i <= (s->rounds << 1))
 	{
 		Bm = ROL32(B * ((B << 1) | 1), 5);
 		Dm = ROL32(D * ((D << 1) | 1), 5);
@@ -143,7 +143,7 @@ static void rc6_decrypt(const kripto_block *s, const void *ct, void *pt)
 	uint32_t Am;
 	uint32_t Cm;
 	uint32_t t;
-	unsigned int i = s->r << 1;
+	unsigned int i = s->rounds << 1;
 
 	A = U8TO32_LE(CU8(ct));
 	B = U8TO32_LE(CU8(ct) + 4);
@@ -192,7 +192,7 @@ static kripto_block *rc6_create
 
 	s->desc = kripto_block_rc6;
 	s->size = sizeof(kripto_block) + (RC6_K_LEN(r) << 2);
-	s->r = r;
+	s->rounds = r;
 	s->k = (uint32_t *)((uint8_t *)s + sizeof(kripto_block));
 
 	if(rc6_setup(s, key, key_len))
@@ -227,7 +227,7 @@ static kripto_block *rc6_change
 	}
 	else
 	{
-		s->r = r;
+		s->rounds = r;
 
 		if(rc6_setup(s, key, key_len))
 		{

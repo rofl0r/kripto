@@ -28,8 +28,8 @@
 struct kripto_block
 {
 	kripto_block_desc *desc;
+	unsigned int rounds;
 	size_t size;
-	unsigned int r;
 	uint32_t s0[256];
 	uint32_t s1[256];
 	uint32_t s2[256];
@@ -1007,7 +1007,7 @@ static void twofish_setup
 	while(x < (key_len << 3)) K[x++] = 0;
 
 	/* make subkeys */
-	for(x = 0; x < (s->r + 4); x++)
+	for(x = 0; x < (s->rounds + 4); x++)
 	{
 		S[0] = S[1] = S[2] = S[3] = (x << 1);
 		A = h(S, K, key_len, 0);
@@ -1097,7 +1097,7 @@ static void twofish_encrypt
 	x3 = U8TO32_LE(CU8(pt) + 12) ^ s->k[3];
 
 	k = s->k + 8;
-	for(r = (s->r >> 1); r; r--)
+	for(r = (s->rounds >> 1); r; r--)
 	{
 		g1 = G1(x1, s);
 		g0 = G0(x0, s) + g1;
@@ -1146,8 +1146,8 @@ static void twofish_decrypt
 	x2 = U8TO32_LE(CU8(ct)) ^ s->k[4];
 	x3 = U8TO32_LE(CU8(ct) + 4) ^ s->k[5];
 
-	k = s->k + 4 + (s->r << 1);
-	for(r = (s->r >> 1); r; r--)
+	k = s->k + 4 + (s->rounds << 1);
+	for(r = (s->rounds >> 1); r; r--)
 	{
 		g1 = G1(x3, s);
 		g0 = G0(x2, s) + g1;
@@ -1189,7 +1189,7 @@ static kripto_block *twofish_create
 
 	s->desc = kripto_block_twofish;
 	s->size = sizeof(kripto_block) + (TWOFISH_K_LEN(r) << 2);
-	s->r = r;
+	s->rounds = r;
 	s->k = (uint32_t *)((uint8_t *)s + sizeof(struct kripto_block));
 
 	twofish_setup(s, key, key_len);
@@ -1220,7 +1220,7 @@ static kripto_block *twofish_change
 	}
 	else
 	{
-		s->r = r;
+		s->rounds = r;
 		twofish_setup(s, key, key_len);
 	}
 
