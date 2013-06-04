@@ -57,6 +57,8 @@ static void xtea_setup
 		c += 0x9E3779B9;
 		s->k[i++] = c + k[(c >> 11) % key_len];
 	}
+
+	kripto_memwipe(k, 16);
 }
 
 #define F(X) ((((X) << 4) ^ ((X) >> 5)) + (X))
