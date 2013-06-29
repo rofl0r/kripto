@@ -162,41 +162,14 @@ static void noekeon_setup
 {
 	unsigned int i;
 	uint32_t T;
-	struct kripto_block ts;
-
-	#ifndef NOEKEON_DIRECT
-	uint8_t tk[16];
-	#endif
 
 	if(!s->rounds) s->rounds = NOEKEON_DEFAULT_ROUNDS;
 
-	#ifndef NOEKEON_DIRECT
-
-	/* indirect */
-
-	ts.k[0] = ts.k[1] = ts.k[2] = ts.k[3] = 0;
-
-	for(i = 0; i < key_len; i++) tk[i] = key[i];
-	while(i < 16) tk[i++] = 0;
-
-	ts.rounds = s->rounds;
-	noekeon_encrypt(&ts, tk, tk);
-	s->k[0] = U8TO32_BE(tk);
-	s->k[1] = U8TO32_BE(tk + 4);
-	s->k[2] = U8TO32_BE(tk + 8);
-	s->k[3] = U8TO32_BE(tk + 12);
-
-	/* wipe */
-	kripto_memwipe(tk, 16);
-
-	#else
-
-	/* direct */
+	/* direct mode */
 	s->k[0] = s->k[1] = s->k[2] = s->k[3] = 0;
+
 	for(i = 0; i < key_len; i++)
 		s->k[i >> 2] = (s->k[i >> 2] << 8) | key[i];
-
-	#endif
 
 	/* decryption key */
 	s->dk[0] = s->k[0];
