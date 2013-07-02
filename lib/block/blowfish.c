@@ -343,7 +343,16 @@ static void blowfish_encrypt
 		l ^= s->p[i++];
 		r ^= F(l);
 
-		if(i == s->rounds) break;
+		if(i == s->rounds)
+		{
+			r ^= s->p[i++];
+			l ^= s->p[i];
+
+			U32TO8_BE(l, U8(ct));
+			U32TO8_BE(r, U8(ct) + 4);
+
+			return;
+		}
 
 		r ^= s->p[i++];
 		l ^= F(r);
@@ -375,7 +384,16 @@ static void blowfish_decrypt
 		l ^= s->p[i--];
 		r ^= F(l);
 
-		if(i == 1) break;
+		if(i == 1)
+		{
+			r ^= s->p[i--];
+			l ^= s->p[i];
+
+			U32TO8_BE(l, U8(pt));
+			U32TO8_BE(r, U8(pt) + 4);
+
+			return;
+		}
 
 		r ^= s->p[i--];
 		l ^= F(r);
@@ -429,6 +447,7 @@ static void blowfish_setup
 	{
 		blowfish_encrypt(s, b, b);
 		s->p[i++] = U8TO32_BE(b);
+		if(i == s->rounds + 2) break;
 		s->p[i++] = U8TO32_BE(b + 4);
 	}
 

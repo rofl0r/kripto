@@ -85,7 +85,6 @@ int main(void)
 			break;
 		}
 		if(i == 8) printf("%u-bit key decrypt: OK\n", n * 8);
-
 		kripto_block_destroy(s);
 	}
 
