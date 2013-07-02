@@ -16,7 +16,7 @@ Block ciphers:
  - Anubis
  - Rijndael 256*
  - SEED
- - Blowfish*
+ - Blowfish
  - GOST*
  - XTEA
  - Skipjack*
