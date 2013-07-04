@@ -6,7 +6,7 @@ Lightweight and flexible cryptographic library written in ISO C99.
 
 Block ciphers:
  - AES (Rijndael 128)
- - Serpent*
+ - Serpent
  - Twofish
  - RC6
  - Camellia*
