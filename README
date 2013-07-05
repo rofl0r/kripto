@@ -9,7 +9,7 @@ Block ciphers:
  - Serpent
  - Twofish
  - RC6
- - Camellia*
+ - Camellia
  - ARIA*
  - Threefish
  - Noekeon
