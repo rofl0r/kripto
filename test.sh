@@ -9,8 +9,8 @@ CFLAGS="libkripto.a -std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wmissi
 #cc test/block/xtea.c $CFLAGS -o t
 #./t
 
-cc test/block/blowfish.c $CFLAGS -o t
-./t
+cc test/block/gost.c $CFLAGS -o t
+valgrind ./t
 
 #cc test/block/serpent.c $CFLAGS -o t
 #./t
