@@ -870,7 +870,7 @@ static void rijndael128_decrypt
 	/* - 1 full rounds */
 	for(i = 4; i < (s->rounds << 2);)
 	{
-        t0 = D(x0, x3, x2, x1) ^ s->dk[i++];
+		t0 = D(x0, x3, x2, x1) ^ s->dk[i++];
 		t1 = D(x1, x0, x3, x2) ^ s->dk[i++];
 		t2 = D(x2, x1, x0, x3) ^ s->dk[i++];
 		t3 = D(x3, x2, x1, x0) ^ s->dk[i++];
