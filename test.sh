@@ -3,14 +3,14 @@
 CFLAGS="libkripto.a -std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wbad-function-cast -Wshadow -I include/ -D_ANSI_SOURCE -D_ISOC99_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $CFLAGS"
 
 
-#cc test/block/aes.c $CFLAGS -o t
-#./t
+cc test/block/rijndael128.c $CFLAGS -o t
+./t
 
 #cc test/block/xtea.c $CFLAGS -o t
 #./t
 
-cc test/block/gost.c $CFLAGS -o t
-valgrind ./t
+#cc test/block/blowfish.c $CFLAGS -o t
+#./t
 
 #cc test/block/serpent.c $CFLAGS -o t
 #./t
