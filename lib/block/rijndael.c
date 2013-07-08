@@ -732,7 +732,6 @@ static void rijndael128_setup
 		case 1: s->k[n - 1] <<= 24; break;
 		case 2: s->k[n - 1] <<= 16; break;
 		case 3: s->k[n - 1] <<= 8; break;
-		case 0:
 		default: break;
 	}
 

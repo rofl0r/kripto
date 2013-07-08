@@ -153,6 +153,9 @@
 #define ROL(B, X, R) (((X) << (R)) | ((X) >> ((B) - (R))))
 #define ROR(B, X, R) (((X) >> (R)) | ((X) << ((B) - (R))))
 
+#define ROL8(X, R) ROL(8, X, R)
+#define ROR8(X, R) ROR(8, X, R)
+
 #define ROL16(X, R) ROL(16, X, R)
 #define ROR16(X, R) ROR(16, X, R)
 
