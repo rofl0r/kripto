@@ -33,10 +33,7 @@ struct kripto_block
 
 #define RC6_K_LEN(r) (((r) + 2) << 1)
 
-#define RC6_DEFAULT_ROUNDS 20
-#define RC6_MAX_KEY 255
-
-static int rc6_setup
+static void rc6_setup
 (
 	kripto_block *s,
 	const uint8_t *key,
@@ -47,133 +44,115 @@ static int rc6_setup
 	unsigned int j;
 	unsigned int k;
 	const unsigned int ls = (key_len + 3) >> 2;
-	uint32_t A;
-	uint32_t B;
-	#ifdef KRIPTO_VLA
-	uint32_t L[ls];
-	#elif KRIPTO_MALLOC
-	uint32_t *L;
-	#else
-	uint32_t L[64];
-	#endif
+	uint32_t a;
+	uint32_t b;
+	uint32_t x[64];
 
-	#ifdef KRIPTO_MALLOC
-	L = malloc(ls << 2);
-	if(!L) return -1;
-	#endif
+	for(i = 0; i < ls; i++) x[i] = 0;
 
-	for(i = 0; i < ls; i++) L[i] = 0;
 	for(j = key_len - 1; j != UINT_MAX; j--)
-		L[j >> 2] = (L[j >> 2] << 8) | key[j];
-
-	if(!s->rounds) s->rounds = RC6_DEFAULT_ROUNDS;
+		x[j >> 2] = (x[j >> 2] << 8) | key[j];
 
 	*s->k = 0xB7E15163;
 	for(i = 1; i < RC6_K_LEN(s->rounds); i++)
 		s->k[i] = s->k[i-1] + 0x9E3779B9;
 
-	A = B = i = j = k = 0;
+	a = b = i = j = k = 0;
 	while(k < RC6_K_LEN(s->rounds) * 3)
 	{
-		A = s->k[i] = ROL32(s->k[i] + A + B, 3);
-		B = L[j] = ROL32(L[j] + A + B, A + B);
+		a = s->k[i] = ROL32(s->k[i] + a + b, 3);
+		b = x[j] = ROL32(x[j] + a + b, a + b);
 		if(++i == RC6_K_LEN(s->rounds)) i = 0;
 		if(++j == ls) j = 0;
 		k++;
 	}
 
 	/* wipe */
-	kripto_memwipe(L, ls << 2);
-	kripto_memwipe(&A, sizeof(uint32_t));
-	kripto_memwipe(&B, sizeof(uint32_t));
-
-	#ifdef KRIPTO_MALLOC
-	free(L);
-	#endif
-
-	return 0;
+	kripto_memwipe(x, ls << 2);
+	kripto_memwipe(&a, sizeof(uint32_t));
+	kripto_memwipe(&b, sizeof(uint32_t));
 }
 
 static void rc6_encrypt(const kripto_block *s, const void *pt, void *ct)
 {
-	uint32_t A;
-	uint32_t B;
-	uint32_t C;
-	uint32_t D;
-	uint32_t Bm;
-	uint32_t Dm;
+	uint32_t a;
+	uint32_t b;
+	uint32_t c;
+	uint32_t d;
+	uint32_t m0;
+	uint32_t m1;
 	uint32_t t;
 	unsigned int i = 2;
 
-	A = U8TO32_LE(CU8(pt));
-	B = U8TO32_LE(CU8(pt) + 4);
-	C = U8TO32_LE(CU8(pt) + 8);
-	D = U8TO32_LE(CU8(pt) + 12);
+	a = U8TO32_LE(CU8(pt));
+	b = U8TO32_LE(CU8(pt) + 4);
+	c = U8TO32_LE(CU8(pt) + 8);
+	d = U8TO32_LE(CU8(pt) + 12);
 
-	B += s->k[0];
-	D += s->k[1];
+	b += s->k[0];
+	d += s->k[1];
 
 	while(i <= (s->rounds << 1))
 	{
-		Bm = ROL32(B * ((B << 1) | 1), 5);
-		Dm = ROL32(D * ((D << 1) | 1), 5);
+		m0 = ROL32(b * ((b << 1) | 1), 5);
+		m1 = ROL32(d * ((d << 1) | 1), 5);
 
-		t = ROL32(A ^ Bm, Dm & 31) + s->k[i++];
-		A = B;
-		B = ROL32(C ^ Dm, Bm & 31) + s->k[i++];
-		C = D;
-		D = t;
+		t = ROL32(a ^ m0, m1 & 31) + s->k[i++];
+		a = b;
+		b = ROL32(c ^ m1, m0 & 31) + s->k[i++];
+		c = d;
+		d = t;
 	}
 
-	A += s->k[i];
-	C += s->k[i + 1];
+	a += s->k[i];
+	c += s->k[i + 1];
 
-	U32TO8_LE(A, U8(ct));
-	U32TO8_LE(B, U8(ct) + 4);
-	U32TO8_LE(C, U8(ct) + 8);
-	U32TO8_LE(D, U8(ct) + 12);
+	U32TO8_LE(a, U8(ct));
+	U32TO8_LE(b, U8(ct) + 4);
+	U32TO8_LE(c, U8(ct) + 8);
+	U32TO8_LE(d, U8(ct) + 12);
 }
 
 static void rc6_decrypt(const kripto_block *s, const void *ct, void *pt)
 {
-	uint32_t A;
-	uint32_t B;
-	uint32_t C;
-	uint32_t D;
-	uint32_t Am;
-	uint32_t Cm;
+	uint32_t a;
+	uint32_t b;
+	uint32_t c;
+	uint32_t d;
+	uint32_t m0;
+	uint32_t m1;
 	uint32_t t;
 	unsigned int i = s->rounds << 1;
 
-	A = U8TO32_LE(CU8(ct));
-	B = U8TO32_LE(CU8(ct) + 4);
-	C = U8TO32_LE(CU8(ct) + 8);
-	D = U8TO32_LE(CU8(ct) + 12);
+	a = U8TO32_LE(CU8(ct));
+	b = U8TO32_LE(CU8(ct) + 4);
+	c = U8TO32_LE(CU8(ct) + 8);
+	d = U8TO32_LE(CU8(ct) + 12);
 
-	A -= s->k[i + 2];
-	C -= s->k[i + 3];
+	a -= s->k[i + 2];
+	c -= s->k[i + 3];
 
 	while(i)
 	{
-		Am = ROL32(A * ((A << 1) | 1), 5);
-		Cm = ROL32(C * ((C << 1) | 1), 5);
+		m0 = ROL32(a * ((a << 1) | 1), 5);
+		m1 = ROL32(c * ((c << 1) | 1), 5);
 
-		t = D;
-		D = C;
-		C = ROR32(B - s->k[i+1], Am & 31) ^ Cm;
-		B = A;
-		A = ROR32(t - s->k[i], Cm & 31) ^ Am;
+		t = d;
+		d = c;
+		c = ROR32(b - s->k[i + 1], m0 & 31) ^ m1;
+		b = a;
+		a = ROR32(t - s->k[i], m1 & 31) ^ m0;
 
 		i -= 2;
 	}
 
-	B -= s->k[0];
-	D -= s->k[1];
+	b -= s->k[0];
+	d -= s->k[1];
 
-	U32TO8_LE(A, U8(pt));
-	U32TO8_LE(B, U8(pt) + 4);
-	U32TO8_LE(C, U8(pt) + 8);
-	U32TO8_LE(D, U8(pt) + 12);
+	U32TO8_LE(a, U8(pt));
+	U32TO8_LE(b, U8(pt) + 4);
+	U32TO8_LE(c, U8(pt) + 8);
+	U32TO8_LE(d, U8(pt) + 12);
 }
 
 static kripto_block *rc6_create
@@ -185,7 +164,7 @@ static kripto_block *rc6_create
 {
 	kripto_block *s;
 
-	if(!r) r = RC6_DEFAULT_ROUNDS;
+	if(!r) r = 20;
 
 	s = malloc(sizeof(kripto_block) + (RC6_K_LEN(r) << 2));
 	if(!s) return 0;
@@ -195,11 +174,7 @@ static kripto_block *rc6_create
 	s->rounds = r;
 	s->k = (uint32_t *)((uint8_t *)s + sizeof(kripto_block));
 
-	if(rc6_setup(s, key, key_len))
-	{
-		free(s);
-		return 0;
-	}
+	rc6_setup(s, key, key_len);
 
 	return s;
 }
@@ -218,7 +193,7 @@ static kripto_block *rc6_change
 	unsigned int r
 )
 {
-	if(!r) r = RC6_DEFAULT_ROUNDS;
+	if(!r) r = 20;
 
 	if(sizeof(kripto_block) + (RC6_K_LEN(r) << 2) > s->size)
 	{
@@ -228,12 +203,7 @@ static kripto_block *rc6_change
 	else
 	{
 		s->rounds = r;
-
-		if(rc6_setup(s, key, key_len))
-		{
-			free(s);
-			return 0;
-		}
+		rc6_setup(s, key, key_len);
 	}
 
 	return s;
@@ -247,9 +217,7 @@ static const struct kripto_block_desc rc6 =
 	&rc6_change,
 	&rc6_destroy,
 	16, /* block size */
-	255, /* max key */
-	INT_MAX, /* max rounds */
-	20 /* default rounds */
+	255 /* max key */
 };
 
 kripto_block_desc *const kripto_block_rc6 = &rc6;

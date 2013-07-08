@@ -227,9 +227,7 @@ static const struct kripto_block_desc noekeon =
 	&noekeon_change,
 	&noekeon_destroy,
 	16, /* block size */
-	16, /* max key */
-	32, /* max rounds */
-	16 /* default rounds */
+	16 /* max key */
 };
 
 kripto_block_desc *const kripto_block_noekeon = &noekeon;

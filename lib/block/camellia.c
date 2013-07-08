@@ -701,9 +701,7 @@ static const struct kripto_block_desc camellia =
 	&camellia_change,
 	&camellia_destroy,
 	16, /* block size */
-	32, /* max key */
-	0, /* max rounds */
-	0 /* default rounds */
+	32 /* max key */
 };
 
 kripto_block_desc *const kripto_block_camellia = &camellia;

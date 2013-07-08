@@ -340,9 +340,7 @@ static const struct kripto_block_desc gost =
 	&gost_change,
 	&gost_destroy,
 	8, /* block size */
-	32, /* max key */
-	UINT_MAX - 1, /* max rounds */
-	32 /* default rounds */
+	32 /* max key */
 };
 
 kripto_block_desc *const kripto_block_gost = &gost;

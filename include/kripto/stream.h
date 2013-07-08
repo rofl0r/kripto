@@ -55,8 +55,4 @@ extern unsigned int kripto_stream_max_key(kripto_stream_desc *desc);
 
 extern unsigned int kripto_stream_max_iv(kripto_stream_desc *desc);
 
-extern unsigned int kripto_stream_max_rounds(kripto_stream_desc *desc);
-
-extern unsigned int kripto_stream_default_rounds(kripto_stream_desc *desc);
-
 #endif

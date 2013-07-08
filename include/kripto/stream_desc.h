@@ -48,8 +48,6 @@ struct kripto_stream_desc
 
 	unsigned int max_key;
 	unsigned int max_iv;
-	unsigned int max_rounds;
-	unsigned int default_rounds;
 };
 
 #endif

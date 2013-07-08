@@ -305,9 +305,7 @@ static const struct kripto_stream_desc chacha =
 	&chacha_change,
 	&chacha_destroy,
 	32, /* max key */
-	24, /* max iv */
-	UINT_MAX, /* max rounds */
-	20 /* default rounds */
+	24 /* max iv */
 };
 
 kripto_stream_desc *const kripto_stream_chacha = &chacha;

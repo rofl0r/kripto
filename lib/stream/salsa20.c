@@ -323,9 +323,7 @@ static const struct kripto_stream_desc salsa20 =
 	&salsa20_change,
 	&salsa20_destroy,
 	32, /* max key */
-	24, /* max iv */
-	UINT_MAX, /* max rounds */
-	20 /* default rounds */
+	24 /* max iv */
 };
 
 kripto_stream_desc *const kripto_stream_salsa20 = &salsa20;

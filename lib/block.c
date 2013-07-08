@@ -38,7 +38,6 @@ kripto_block *kripto_block_create
 	assert(key);
 	assert(key_len);
 	assert(key_len <= kripto_block_max_key(desc));
-	assert(r <= kripto_block_max_rounds(desc));
 
 	return desc->create(key, key_len, r);
 }
@@ -58,7 +57,6 @@ kripto_block *kripto_block_change
 	assert(key);
 	assert(key_len);
 	assert(key_len <= kripto_block_max_key(s->desc));
-	assert(r <= kripto_block_max_rounds(s->desc));
 
 	return s->desc->change(s, key, key_len, r);
 }
@@ -133,18 +131,4 @@ unsigned int kripto_block_max_key(kripto_block_desc *desc)
 	assert(desc->max_key);
 
 	return desc->max_key;
-}
-
-unsigned int kripto_block_max_rounds(kripto_block_desc *desc)
-{
-	assert(desc);
-
-	return desc->max_rounds;
-}
-
-unsigned int kripto_block_default_rounds(kripto_block_desc *desc)
-{
-	assert(desc);
-
-	return desc->default_rounds;
 }

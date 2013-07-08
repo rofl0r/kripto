@@ -36,13 +36,6 @@ struct kripto_block
 	uint32_t *dk;
 };
 
-#define ANUBIS_MAX_ROUNDS 60
-#define ANUBIS_DEFAULT_ROUNDS 8
-#define ANUBIS_MAX_KEY 40
-
-#define ANUBIS_ROUNDS(r, klen) ((r) + ((klen + 3) >> 2))
-#define ANUBIS_K_LEN(r) (((r) + 1) << 2)
-
 static const uint32_t s0[256] =
 {
 	0xBA69D2BB, 0x54A84DE5, 0x2F5EBCE2, 0x74E8CD25,
@@ -806,9 +799,7 @@ static const struct kripto_block_desc anubis =
 	&anubis_change,
 	&anubis_destroy,
 	16, /* block size */
-	40, /* max key */
-	60, /* max rounds */
-	12 /* default rounds */
+	40 /* max key */
 };
 
 kripto_block_desc *const kripto_block_anubis = &anubis;

@@ -138,17 +138,3 @@ unsigned int kripto_stream_max_iv(kripto_stream_desc *desc)
 
 	return desc->max_iv;
 }
-
-unsigned int kripto_stream_max_rounds(kripto_stream_desc *desc)
-{
-	assert(desc);
-
-	return desc->max_rounds;
-}
-
-unsigned int kripto_stream_default_rounds(kripto_stream_desc *desc)
-{
-	assert(desc);
-
-	return desc->default_rounds;
-}

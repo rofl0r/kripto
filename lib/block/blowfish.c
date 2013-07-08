@@ -539,9 +539,7 @@ static const struct kripto_block_desc blowfish =
 	&blowfish_change,
 	&blowfish_destroy,
 	8, /* block size */
-	56, /* max key */
-	34, /* max rounds */
-	16 /* default rounds */
+	56 /* max key */
 };
 
 kripto_block_desc *const kripto_block_blowfish = &blowfish;

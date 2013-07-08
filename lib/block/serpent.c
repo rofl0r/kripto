@@ -713,7 +713,6 @@ static kripto_block *serpent_change
 	else
 	{
 		s->rounds = r;
-
 		serpent_setup(s, key, key_len);
 	}
 
@@ -728,9 +727,7 @@ static const struct kripto_block_desc serpent =
 	&serpent_change,
 	&serpent_destroy,
 	16, /* block size */
-	32, /* max key */
-	UINT_MAX >> 2, /* max rounds */
-	32 /* default rounds */
+	32 /* max key */
 };
 
 kripto_block_desc *const kripto_block_serpent = &serpent;

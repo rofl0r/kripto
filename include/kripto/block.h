@@ -49,10 +49,6 @@ extern unsigned int kripto_block_size(kripto_block_desc *desc);
 
 extern unsigned int kripto_block_max_key(kripto_block_desc *desc);
 
-extern unsigned int kripto_block_max_rounds(kripto_block_desc *desc);
-
-extern unsigned int kripto_block_default_rounds(kripto_block_desc *desc);
-
 #ifdef __cplusplus
 }
 #endif

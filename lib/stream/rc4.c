@@ -260,9 +260,7 @@ static const struct kripto_stream_desc rc4_desc =
 	&rc4_change,
 	&rc4_destroy,
 	256, /* max key */
-	256, /* max iv */
-	UINT_MAX, /* max rounds */
-	0 /* default rounds */
+	256 /* max iv */
 };
 
 kripto_stream_desc *const kripto_stream_rc4 = &rc4_desc;
@@ -277,9 +275,7 @@ static const struct kripto_stream_desc rc4i =
 	&rc4i_change,
 	&rc4_destroy,
 	256, /* max key */
-	256, /* max iv */
-	UINT_MAX, /* max rounds */
-	512 /* default rounds */
+	256 /* max iv */
 };
 
 kripto_stream_desc *const kripto_stream_rc4i = &rc4i;

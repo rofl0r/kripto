@@ -120,8 +120,6 @@ static kripto_stream *ecb_create
 	stream->destroy = &ecb_destroy;
 	stream->max_key = kripto_block_max_key(b);
 	stream->max_iv = 0;
-	stream->max_rounds = kripto_block_max_rounds(b);
-	stream->default_rounds = kripto_block_default_rounds(b);
 
 	s->desc = stream;
 	s->block = block;

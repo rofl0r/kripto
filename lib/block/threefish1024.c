@@ -66,7 +66,7 @@ static void threefish1024_encrypt
 	uint64_t x15 = U8TO64_LE(CU8(pt) + 120) + s->k[15];
 	unsigned int r = 1;
 
-	while(r <= s->rounds)
+	while(r <= s->rounds >> 2)
 	{
 		x0 += x1; x1 = ROL64(x1, 24); x1 ^= x0;
 		x2 += x3; x3 = ROL64(x3, 13); x3 ^= x2;
@@ -218,7 +218,7 @@ static void threefish1024_decrypt
 	uint64_t x13 = U8TO64_LE(CU8(ct) + 104);
 	uint64_t x14 = U8TO64_LE(CU8(ct) + 112);
 	uint64_t x15 = U8TO64_LE(CU8(ct) + 120);
-	unsigned int r = s->rounds;
+	unsigned int r = s->rounds >> 2;
 
 	while(r > 1)
 	{
@@ -377,7 +377,7 @@ static kripto_block *threefish1024_change
 	unsigned int i;
 
 	s->rounds = r;
-	if(!s->rounds) s->rounds = 20; /* 80 / 4 */
+	if(!s->rounds) s->rounds = 80;
 
 	memset(s->k, 0, 128);
 
@@ -427,9 +427,7 @@ static const struct kripto_block_desc threefish1024 =
 	&threefish1024_change,
 	&threefish1024_destroy,
 	128, /* block size */
-	128, /* max key */
-	UINT_MAX, /* max rounds */
-	20 /* default rounds */
+	128 /* max key */
 };
 
 kripto_block_desc *const kripto_block_threefish1024 = &threefish1024;

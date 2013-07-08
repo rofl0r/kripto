@@ -963,9 +963,7 @@ static const struct kripto_block_desc rijndael128 =
 	&rijndael128_change,
 	&rijndael_destroy,
 	16, /* block size */
-	32, /* max key */
-	52, /* max rounds */
-	10 /* default rounds */
+	32 /* max key */
 };
 
 kripto_block_desc *const kripto_block_rijndael128 = &rijndael128;
@@ -1192,9 +1190,7 @@ static const struct kripto_block_desc rijndael256 =
 	&rijndael256_change,
 	&rijndael_destroy,
 	32, /* block size */
-	32, /* max key */
-	52, /* max rounds */
-	14 /* default rounds */
+	32 /* max key */
 };
 
 kripto_block_desc *const kripto_block_rijndael256 = &rijndael256;

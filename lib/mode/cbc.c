@@ -168,8 +168,6 @@ static kripto_stream *cbc_create
 	stream->destroy = &cbc_destroy;
 	stream->max_key = kripto_block_max_key(b);
 	stream->max_iv = s->block_size;
-	stream->max_rounds = kripto_block_max_rounds(b);
-	stream->default_rounds = kripto_block_default_rounds(b);
 
 	s->desc = stream;
 

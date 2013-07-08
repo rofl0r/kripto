@@ -1235,9 +1235,7 @@ static const struct kripto_block_desc twofish =
 	&twofish_change,
 	&twofish_destroy,
 	16, /* block size */
-	32, /* max key */
-	INT_MAX, /* max rounds */
-	16 /* default rounds */
+	32 /* max key */
 };
 
 kripto_block_desc *const kripto_block_twofish = &twofish;

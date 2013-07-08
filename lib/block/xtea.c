@@ -149,7 +149,6 @@ static kripto_block *xtea_change
 	else
 	{
 		s->rounds = r;
-
 		xtea_setup(s, key, key_len);
 	}
 
@@ -164,9 +163,7 @@ static const struct kripto_block_desc xtea =
 	&xtea_change,
 	&xtea_destroy,
 	8, /* block size */
-	16, /* max key */
-	UINT_MAX, /* max rounds */
-	64 /* default rounds */
+	16 /* max key */
 };
 
 kripto_block_desc *const kripto_block_xtea = &xtea;

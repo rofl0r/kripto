@@ -30,12 +30,6 @@ struct kripto_block
 	uint32_t *k;
 };
 
-#define SEED_K_LEN(r) ((r) << 1)
-
-#define SEED_DEFAULT_ROUNDS 16
-#define SEED_MAX_ROUNDS 32
-#define SEED_MAX_KEY 16
-
 static const uint32_t s0[256] =
 {
 	0x2989A1A8, 0x05858184, 0x16C6D2D4, 0x13C3D3D0,
@@ -316,20 +310,20 @@ static const uint32_t s3[256] =
 
 #define R(L0, L1, R0, R1, K)	\
 {								\
-	T0 = R0 ^ (K)[0];			\
-	T1 = R1 ^ (K)[1] ^ T0;		\
-	T1 = F(T1);					\
-	T0 += T1;					\
-	T0 = F(T0);					\
-	T1 += T0;					\
-	T1 = F(T1);					\
-	T0 += T1;					\
-	T0 ^= L0;					\
-	T1 ^= L1;					\
+	t0 = R0 ^ (K)[0];			\
+	t1 = R1 ^ (K)[1] ^ t0;		\
+	t1 = F(t1);					\
+	t0 += t1;					\
+	t0 = F(t0);					\
+	t1 += t0;					\
+	t1 = F(t1);					\
+	t0 += t1;					\
+	t0 ^= L0;					\
+	t1 ^= L1;					\
 	L0 = R0;					\
 	L1 = R1;					\
-	R0 = T0;					\
-	R1 = T1;					\
+	R0 = t0;					\
+	R1 = t1;					\
 }
 
 static void seed_encrypt
@@ -339,26 +333,26 @@ static void seed_encrypt
 	void *ct
 )
 {
-	uint32_t L0;
-	uint32_t L1;
-	uint32_t R0;
-	uint32_t R1;
-	uint32_t T0;
-	uint32_t T1;
+	uint32_t l0;
+	uint32_t l1;
+	uint32_t r0;
+	uint32_t r1;
+	uint32_t t0;
+	uint32_t t1;
 	unsigned int i;
 
-	L0 = U8TO32_BE(CU8(pt));
-	L1 = U8TO32_BE(CU8(pt) + 4);
-	R0 = U8TO32_BE(CU8(pt) + 8);
-	R1 = U8TO32_BE(CU8(pt) + 12);
+	l0 = U8TO32_BE(CU8(pt));
+	l1 = U8TO32_BE(CU8(pt) + 4);
+	r0 = U8TO32_BE(CU8(pt) + 8);
+	r1 = U8TO32_BE(CU8(pt) + 12);
 
-	for(i = 0; i < SEED_K_LEN(s->rounds); i += 2)
-		R(L0, L1, R0, R1, s->k + i);
+	for(i = 0; i < s->rounds << 1; i += 2)
+		R(l0, l1, r0, r1, s->k + i);
 
-	U32TO8_BE(R0, U8(ct));
-	U32TO8_BE(R1, U8(ct) + 4);
-	U32TO8_BE(L0, U8(ct) + 8);
-	U32TO8_BE(L1, U8(ct) + 12);
+	U32TO8_BE(r0, U8(ct));
+	U32TO8_BE(r1, U8(ct) + 4);
+	U32TO8_BE(l0, U8(ct) + 8);
+	U32TO8_BE(l1, U8(ct) + 12);
 }
 
 static void seed_decrypt
@@ -368,26 +362,26 @@ static void seed_decrypt
 	void *pt
 )
 {
-	uint32_t L0;
-	uint32_t L1;
-	uint32_t R0;
-	uint32_t R1;
-	uint32_t T0;
-	uint32_t T1;
+	uint32_t l0;
+	uint32_t l1;
+	uint32_t r0;
+	uint32_t r1;
+	uint32_t t0;
+	uint32_t t1;
 	unsigned int i;
 
-	L0 = U8TO32_BE(CU8(ct));
-	L1 = U8TO32_BE(CU8(ct) + 4);
-	R0 = U8TO32_BE(CU8(ct) + 8);
-	R1 = U8TO32_BE(CU8(ct) + 12);
+	l0 = U8TO32_BE(CU8(ct));
+	l1 = U8TO32_BE(CU8(ct) + 4);
+	r0 = U8TO32_BE(CU8(ct) + 8);
+	r1 = U8TO32_BE(CU8(ct) + 12);
 
-	for(i = SEED_K_LEN(s->rounds) - 2; i + 2; i -= 2)
-		R(L0, L1, R0, R1, s->k + i);
+	for(i = (s->rounds << 1) - 2; i + 2; i -= 2)
+		R(l0, l1, r0, r1, s->k + i);
 
-	U32TO8_BE(L0, U8(pt));
-	U32TO8_BE(L1, U8(pt) + 4);
-	U32TO8_BE(R0, U8(pt) + 8);
-	U32TO8_BE(R1, U8(pt) + 12);
+	U32TO8_BE(l0, U8(pt));
+	U32TO8_BE(l1, U8(pt) + 4);
+	U32TO8_BE(r0, U8(pt) + 8);
+	U32TO8_BE(r1, U8(pt) + 12);
 }
 
 static void seed_setup
@@ -397,42 +391,42 @@ static void seed_setup
 	unsigned int key_len
 )
 {
-	uint32_t K[4] = {0, 0, 0, 0};
-	uint32_t T0;
-	uint32_t T1;
+	uint32_t k[4] = {0, 0, 0, 0};
+	uint32_t t0;
+	uint32_t t1;
 	uint32_t kc = 0x9E3779B9;
 	unsigned int i;
 
 	for(i = 0; i < key_len; i++)
-		K[i >> 2] = (K[i >> 2] << 8) | key[i];
+		k[i >> 2] = (k[i >> 2] << 8) | key[i];
 
 	for(i = 0; i < s->rounds; i++)
 	{
-		T0 = K[0] + K[2] - kc;
-		T1 = K[1] - K[3] + kc;
-		s->k[i << 1] = F(T0);
-		s->k[(i << 1) + 1] = F(T1);
+		t0 = k[0] + k[2] - kc;
+		t1 = k[1] - k[3] + kc;
+		s->k[i << 1] = F(t0);
+		s->k[(i << 1) + 1] = F(t1);
 
 		if(i & 1)
 		{
-			T0 = K[2];
-			K[2] = (K[2] << 8) | (K[3] >> 24);
-			K[3] = (K[3] << 8) | (T0 >> 24);
+			t0 = k[2];
+			k[2] = (k[2] << 8) | (k[3] >> 24);
+			k[3] = (k[3] << 8) | (t0 >> 24);
 		}
 		else
 		{
-			T0 = K[0];
-			K[0] = (K[0] >> 8) | (K[1] << 24);
-			K[1] = (K[1] >> 8) | (T0 << 24);
+			t0 = k[0];
+			k[0] = (k[0] >> 8) | (k[1] << 24);
+			k[1] = (k[1] >> 8) | (t0 << 24);
 		}
 
 		kc = ROL32(kc, 1);
 	}
 
 	/* wipe */
-	kripto_memwipe(K, 16);
-	kripto_memwipe(&T0, sizeof(uint32_t));
-	kripto_memwipe(&T1, sizeof(uint32_t));
+	kripto_memwipe(k, 16);
+	kripto_memwipe(&t0, sizeof(uint32_t));
+	kripto_memwipe(&t1, sizeof(uint32_t));
 }
 
 static kripto_block *seed_create
@@ -444,13 +438,13 @@ static kripto_block *seed_create
 {
 	kripto_block *s;
 
-	if(!r) r = SEED_DEFAULT_ROUNDS;
+	if(!r) r = 16;
 
-	s = malloc(sizeof(kripto_block) + (SEED_K_LEN(r) << 2));
+	s = malloc(sizeof(kripto_block) + (r << 3));
 	if(!s) return 0;
 
 	s->desc = kripto_block_seed;
-	s->size = sizeof(kripto_block) + (SEED_K_LEN(r) << 2);
+	s->size = sizeof(kripto_block) + (r << 3);
 	s->rounds = r;
 	s->k = (uint32_t *)((uint8_t *)s + sizeof(kripto_block));
 
@@ -473,9 +467,9 @@ static kripto_block *seed_change
 	unsigned int r
 )
 {
-	if(!r) r = SEED_DEFAULT_ROUNDS;
+	if(!r) r = 16;
 
-	if(sizeof(kripto_block) + (SEED_K_LEN(r) << 2) > s->size)
+	if(sizeof(kripto_block) + (r << 3) > s->size)
 	{
 		seed_destroy(s);
 		s = seed_create(key, key_len, r);
@@ -497,9 +491,7 @@ static const struct kripto_block_desc seed =
 	&seed_change,
 	&seed_destroy,
 	16, /* block size */
-	16, /* max key */
-	32, /* max rounds */
-	16 /* default rounds */
+	16 /* max key */
 };
 
 kripto_block_desc *const kripto_block_seed = &seed;
