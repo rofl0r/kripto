@@ -58,8 +58,16 @@ static const uint64_t iv[8] =
 	0x1F83D9ABFB41BD6B, 0x5BE0CD19137E2179
 };
 
-static void blake2b_init(kripto_hash *s, const size_t len)
+static kripto_hash *blake2b_recreate
+(
+	kripto_hash *s,
+	const size_t len,
+	const unsigned int r
+)
 {
+	s->r = r;
+	if(!s->r) s->r = 12;
+
 	s->f = s->len[0] = s->len[1] = s->n = 0;
 
 	/* s->h[0] = iv[0] ^ 0x0000000001010040; */
@@ -71,6 +79,8 @@ static void blake2b_init(kripto_hash *s, const size_t len)
 	s->h[5] = iv[5];
 	s->h[6] = iv[6];
 	s->h[7] = iv[7];
+
+	return s;
 }
 
 #define G(A, B, C, D, M0, M1)	\
@@ -207,6 +217,8 @@ static void blake2b_finish(kripto_hash *s)
 	s->f = 0xFFFFFFFFFFFFFFFF;
 
 	blake2b_process(s, s->buf);
+
+	s->n = 0;
 }
 
 static void blake2b_output(kripto_hash *s, void *out, const size_t len)
@@ -214,10 +226,10 @@ static void blake2b_output(kripto_hash *s, void *out, const size_t len)
 	unsigned int i;
 
 	/* little endian */
-	for(i = 0; i < len; i++)
+	for(i = 0; i < len; s->n++, i++)
 	{
-		U8(out)[i] = s->h[i >> 3];
-		s->h[i >> 3] >>= 8;
+		U8(out)[i] = s->h[s->n >> 3];
+		s->h[s->n >> 3] >>= 8;
 	}
 }
 
@@ -229,22 +241,19 @@ static kripto_hash *blake2b_create
 {
 	kripto_hash *s;
 
-	s = malloc(sizeof(struct kripto_hash));
+	s = malloc(sizeof(kripto_hash));
 	if(!s) return 0;
 
 	s->hash = kripto_hash_blake2b;
 
-	s->r = r;
-	if(!s->r) s->r = 12;
-
-	blake2b_init(s, len);
+	(void)blake2b_recreate(s, len, r);
 
 	return s;
 }
 
 static void blake2b_destroy(kripto_hash *s)
 {
-	kripto_memwipe(s, sizeof(struct kripto_hash));
+	kripto_memwipe(s, sizeof(kripto_hash));
 	free(s);
 }
 
@@ -257,34 +266,29 @@ static int blake2b_hash
 	const size_t out_len
 )
 {
-	struct kripto_hash s;
+	kripto_hash s;
 
-	s.r = r;
-	if(!s.r) s.r = 12;
-
-	blake2b_init(&s, out_len);
+	(void)blake2b_recreate(&s, out_len, r);
 	blake2b_input(&s, in, in_len);
 	blake2b_finish(&s);
 	blake2b_output(&s, out, out_len);
 
-	kripto_memwipe(&s, sizeof(struct kripto_hash));
+	kripto_memwipe(&s, sizeof(kripto_hash));
 
 	return 0;
 }
 
 static const struct kripto_hash_desc blake2b =
 {
-	&blake2b_init,
+	&blake2b_recreate,
 	&blake2b_input,
 	&blake2b_finish,
 	&blake2b_output,
 	&blake2b_create,
 	&blake2b_destroy,
 	&blake2b_hash,
-	64, /* max hash size */
-	128, /* block_size */
-	UINT_MAX, /* max_rounds */
-	12 /* default_rounds */
+	64, /* max output */
+	128 /* block_size */
 };
 
 kripto_hash_desc *const kripto_hash_blake2b = &blake2b;

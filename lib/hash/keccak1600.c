@@ -283,14 +283,24 @@ static void keccak1600_F(kripto_hash *s)
 	U64TO8_LE(a24, s->s + 192);
 }
 
-static void keccak1600_init(kripto_hash *s, const size_t len)
+static kripto_hash *keccak1600_recreate
+(
+	kripto_hash *s,
+	const size_t len,
+	const unsigned int r
+)
 {
 	s->n = 0;
+
+	s->r = r;
+	if(!s->r) s->r = 24;
 
 	if(len > 64) s->rate = 72;
 	else s->rate = 200 - (len << 1);
 
 	memset(s->s, 0, 200);
+
+	return s;
 }
 
 static void keccak1600_input
@@ -358,10 +368,8 @@ static kripto_hash *keccak1600_create
 	if(!s) return 0;
 
 	s->hash = kripto_hash_keccak1600;
-	s->r = r;
-	if(!s->r) s->r = 24;
 
-	keccak1600_init(s, len);
+	(void)keccak1600_recreate(s, len, r);
 
 	return s;
 }
@@ -381,34 +389,29 @@ static int keccak1600_hash
 	const size_t out_len
 )
 {
-	struct kripto_hash s;
+	kripto_hash s;
 
-	s.r = r;
-	if(!s.r) s.r = 24;
-
-	keccak1600_init(&s, out_len);
+	(void)keccak1600_recreate(&s, out_len, r);
 	keccak1600_input(&s, in, in_len);
 	keccak1600_finish(&s);
 	keccak1600_output(&s, out, out_len);
 
-	kripto_memwipe(&s, sizeof(struct kripto_hash));
+	kripto_memwipe(&s, sizeof(kripto_hash));
 
 	return 0;
 }
 
 static const struct kripto_hash_desc keccak1600 =
 {
-	&keccak1600_init,
+	&keccak1600_recreate,
 	&keccak1600_input,
 	&keccak1600_finish,
 	&keccak1600_output,
 	&keccak1600_create,
 	&keccak1600_destroy,
 	&keccak1600_hash,
-	UINT_MAX, /* max output */
-	200, /* block_size */
-	48, /* max_rounds */
-	24 /* default_rounds */
+	SIZE_MAX, /* max output */
+	200 /* block_size */
 };
 
 kripto_hash_desc *const kripto_hash_keccak1600 = &keccak1600;

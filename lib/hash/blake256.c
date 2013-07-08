@@ -59,8 +59,16 @@ static const uint32_t k[16] =
 	0xC0AC29B7, 0xC97C50DD, 0x3F84D5B5, 0xB5470917
 };
 
-static void blake256_init(kripto_hash *s, const size_t len)
+static kripto_hash *blake256_recreate
+(
+	kripto_hash *s,
+	const size_t len,
+	const unsigned int r
+)
 {
+	s->r = r;
+	if(!s->r) s->r = 14;
+
 	s->len[0] = s->len[1] = s->n = 0;
 	s->out = len;
 
@@ -88,6 +96,8 @@ static void blake256_init(kripto_hash *s, const size_t len)
 		s->h[6] = 0x64F98FA7;
 		s->h[7] = 0xBEFA4FA4;
 	}
+
+	return s;
 }
 
 #define G(A, B, C, D, M, S0, S1)				\
@@ -239,6 +249,8 @@ static void blake256_finish(kripto_hash *s)
 	if(!s->n) s->len[0] = s->len[1] = 0;
 
 	blake256_process(s, s->buf);
+
+	s->n = 0;
 }
 
 static void blake256_output(kripto_hash *s, void *out, const size_t len)
@@ -246,11 +258,8 @@ static void blake256_output(kripto_hash *s, void *out, const size_t len)
 	unsigned int i;
 
 	/* big endian */
-	for(i = len; i != UINT_MAX; i--)
-	{
-		U8(out)[i] = s->h[i >> 2];
-		s->h[i >> 2] >>= 8;
-	}
+	for(i = 0; i < len; s->n++, i++)
+		U8(out)[i] = s->h[s->n >> 2] >> (24 - ((s->n & 3) << 3));
 }
 
 static kripto_hash *blake256_create
@@ -261,22 +270,19 @@ static kripto_hash *blake256_create
 {
 	kripto_hash *s;
 
-	s = malloc(sizeof(struct kripto_hash));
+	s = malloc(sizeof(kripto_hash));
 	if(!s) return 0;
 
 	s->hash = kripto_hash_blake256;
 
-	s->r = r;
-	if(!s->r) s->r = 14;
-
-	blake256_init(s, len);
+	(void)blake256_recreate(s, len, r);
 
 	return s;
 }
 
 static void blake256_destroy(kripto_hash *s)
 {
-	kripto_memwipe(s, sizeof(struct kripto_hash));
+	kripto_memwipe(s, sizeof(kripto_hash));
 	free(s);
 }
 
@@ -289,34 +295,29 @@ static int blake256_hash
 	const size_t out_len
 )
 {
-	struct kripto_hash s;
+	kripto_hash s;
 
-	s.r = r;
-	if(!s.r) s.r = 14;
-
-	blake256_init(&s, out_len);
+	(void)blake256_recreate(&s, out_len, r);
 	blake256_input(&s, in, in_len);
 	blake256_finish(&s);
 	blake256_output(&s, out, out_len);
 
-	kripto_memwipe(&s, sizeof(struct kripto_hash));
+	kripto_memwipe(&s, sizeof(kripto_hash));
 
 	return 0;
 }
 
 static const struct kripto_hash_desc blake256 =
 {
-	&blake256_init,
+	&blake256_recreate,
 	&blake256_input,
 	&blake256_finish,
 	&blake256_output,
 	&blake256_create,
 	&blake256_destroy,
 	&blake256_hash,
-	32, /* max hash size */
-	64, /* block_size */
-	UINT_MAX, /* max_rounds */
-	14 /* default_rounds */
+	32, /* max output */
+	64 /* block_size */
 };
 
 kripto_hash_desc *const kripto_hash_blake256 = &blake256;

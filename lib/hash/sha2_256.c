@@ -80,9 +80,17 @@ static const uint32_t k[128] =
 	0xD740288C, 0xE21DBA7A, 0xEABBFF66, 0xF56A9E60
 };
 
-static void sha2_256_init(kripto_hash *s, const size_t len)
+static kripto_hash *sha2_256_recreate
+(
+	kripto_hash *s,
+	const size_t len,
+	const unsigned int r
+)
 {
 	s->len = s->n = 0;
+
+	s->r = r;
+	if(!s->r) s->r = 64;
 
 	if(len > 28)
 	{
@@ -108,6 +116,8 @@ static void sha2_256_init(kripto_hash *s, const size_t len)
 		s->h[6] = 0x64F98FA7;
 		s->h[7] = 0xBEFA4FA4;
 	}
+
+	return s;
 }
 
 static void sha2_256_process(kripto_hash *s, const uint8_t *data)
@@ -214,6 +224,8 @@ static void sha2_256_finish(kripto_hash *s)
 	U64TO8_BE(s->len, s->buf + 56);
 
 	sha2_256_process(s, s->buf);
+
+	s->n = 0;
 }
 
 static void sha2_256_output(kripto_hash *s, void *out, const size_t len)
@@ -221,11 +233,8 @@ static void sha2_256_output(kripto_hash *s, void *out, const size_t len)
 	unsigned int i;
 
 	/* big endian */
-	for(i = len; i != UINT_MAX; i--)
-	{
-		U8(out)[i] = s->h[i >> 2];
-		s->h[i >> 2] >>= 8;
-	}
+	for(i = 0; i < len; s->n++, i++)
+		U8(out)[i] = s->h[s->n >> 2] >> (24 - ((s->n & 3) << 3));
 }
 
 static kripto_hash *sha2_256_create
@@ -236,22 +245,19 @@ static kripto_hash *sha2_256_create
 {
 	kripto_hash *s;
 
-	s = malloc(sizeof(struct kripto_hash));
+	s = malloc(sizeof(kripto_hash));
 	if(!s) return 0;
 
 	s->hash = kripto_hash_sha2_256;
 
-	s->r = r;
-	if(!s->r) s->r = 64;
-
-	sha2_256_init(s, len);
+	(void)sha2_256_recreate(s, len, r);
 
 	return s;
 }
 
 static void sha2_256_destroy(kripto_hash *s)
 {
-	kripto_memwipe(s, sizeof(struct kripto_hash));
+	kripto_memwipe(s, sizeof(kripto_hash));
 	free(s);
 }
 
@@ -264,34 +270,29 @@ static int sha2_256_hash
 	const size_t out_len
 )
 {
-	struct kripto_hash s;
+	kripto_hash s;
 
-	s.r = r;
-	if(!s.r) s.r = 64;
-
-	sha2_256_init(&s, out_len);
+	(void)sha2_256_recreate(&s, out_len, r);
 	sha2_256_input(&s, in, in_len);
 	sha2_256_finish(&s);
 	sha2_256_output(&s, out, out_len);
 
-	kripto_memwipe(&s, sizeof(struct kripto_hash));
+	kripto_memwipe(&s, sizeof(kripto_hash));
 
 	return 0;
 }
 
 static const struct kripto_hash_desc sha2_256 =
 {
-	&sha2_256_init,
+	&sha2_256_recreate,
 	&sha2_256_input,
 	&sha2_256_finish,
 	&sha2_256_output,
 	&sha2_256_create,
 	&sha2_256_destroy,
 	&sha2_256_hash,
-	32, /* max hash size */
-	64, /* block_size */
-	128, /* max_rounds */
-	64 /* default_rounds */
+	32, /* max output */
+	64 /* block_size */
 };
 
 kripto_hash_desc *const kripto_hash_sha2_256 = &sha2_256;

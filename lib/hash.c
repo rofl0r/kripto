@@ -33,19 +33,23 @@ kripto_hash *kripto_hash_create
 	assert(hash);
 	assert(hash->create);
 	assert(len <= kripto_hash_max_output(hash));
-	assert(r <= kripto_hash_max_rounds(hash));
 
 	return hash->create(len, r);
 }
 
-void kripto_hash_init(kripto_hash *s, const size_t len)
+kripto_hash *kripto_hash_recreate
+(
+	kripto_hash *s,
+	const size_t len,
+	const unsigned int r
+)
 {
 	assert(s);
 	assert(s->hash);
-	assert(s->hash->init);
+	assert(s->hash->recreate);
 	assert(len <= kripto_hash_max_output(s->hash));
 
-	s->hash->init(s, len);
+	return s->hash->recreate(s, len, r);
 }
 
 void kripto_hash_input(kripto_hash *s, const void *in, const size_t len)
@@ -125,20 +129,4 @@ unsigned int kripto_hash_blocksize(kripto_hash_desc *s)
 	assert(s->block_size);
 
 	return s->block_size;
-}
-
-unsigned int kripto_hash_max_rounds(kripto_hash_desc *s)
-{
-	assert(s);
-	assert(s->max_rounds);
-
-	return s->max_rounds;
-}
-
-unsigned int kripto_hash_default_rounds(kripto_hash_desc *s)
-{
-	assert(s);
-	assert(s->default_rounds);
-
-	return s->default_rounds;
 }

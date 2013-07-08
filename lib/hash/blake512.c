@@ -63,10 +63,18 @@ static const uint64_t k[16] =
 	0x0801F2E2858EFC16, 0x636920D871574E69
 };
 
-static void blake512_init(kripto_hash *s, const size_t len)
+static kripto_hash *blake512_recreate
+(
+	kripto_hash *s,
+	const size_t len,
+	const unsigned int r
+)
 {
 	s->len[0] = s->len[1] = s->n = 0;
 	s->out = len;
+
+	s->r = r;
+	if(!s->r) s->r = 16;
 
 	if(len > 48)
 	{
@@ -92,6 +100,8 @@ static void blake512_init(kripto_hash *s, const size_t len)
 		s->h[6] = 0xDB0C2E0D64F98FA7;
 		s->h[7] = 0x47B5481DBEFA4FA4;
 	}
+
+	return s;
 }
 
 #define G(A, B, C, D, M, S0, S1)				\
@@ -243,6 +253,8 @@ static void blake512_finish(kripto_hash *s)
 	if(!s->n) s->len[0] = s->len[1] = 0;
 
 	blake512_process(s, s->buf);
+
+	s->n = 0;
 }
 
 static void blake512_output(kripto_hash *s, void *out, const size_t len)
@@ -250,11 +262,8 @@ static void blake512_output(kripto_hash *s, void *out, const size_t len)
 	unsigned int i;
 
 	/* big endian */
-	for(i = len; i != UINT_MAX; i--)
-	{
-		U8(out)[i] = s->h[i >> 3];
-		s->h[i >> 3] >>= 8;
-	}
+	for(i = 0; i < len; s->n++, i++)
+		U8(out)[i] = s->h[s->n >> 3] >> (56 - ((s->n & 7) << 3));
 }
 
 static kripto_hash *blake512_create
@@ -265,22 +274,19 @@ static kripto_hash *blake512_create
 {
 	kripto_hash *s;
 
-	s = malloc(sizeof(struct kripto_hash));
+	s = malloc(sizeof(kripto_hash));
 	if(!s) return 0;
 
 	s->hash = kripto_hash_blake512;
 
-	s->r = r;
-	if(!s->r) s->r = 16;
-
-	blake512_init(s, len);
+	(void)blake512_recreate(s, len, r);
 
 	return s;
 }
 
 static void blake512_destroy(kripto_hash *s)
 {
-	kripto_memwipe(s, sizeof(struct kripto_hash));
+	kripto_memwipe(s, sizeof(kripto_hash));
 	free(s);
 }
 
@@ -293,34 +299,29 @@ static int blake512_hash
 	const size_t out_len
 )
 {
-	struct kripto_hash s;
+	kripto_hash s;
 
-	s.r = r;
-	if(!s.r) s.r = 16;
-
-	blake512_init(&s, out_len);
+	(void)blake512_recreate(&s, out_len, r);
 	blake512_input(&s, in, in_len);
 	blake512_finish(&s);
 	blake512_output(&s, out, out_len);
 
-	kripto_memwipe(&s, sizeof(struct kripto_hash));
+	kripto_memwipe(&s, sizeof(kripto_hash));
 
 	return 0;
 }
 
 static const struct kripto_hash_desc blake512 =
 {
-	&blake512_init,
+	&blake512_recreate,
 	&blake512_input,
 	&blake512_finish,
 	&blake512_output,
 	&blake512_create,
 	&blake512_destroy,
 	&blake512_hash,
-	64, /* max hash size */
-	128, /* block_size */
-	UINT_MAX, /* max_rounds */
-	16 /* default_rounds */
+	64, /* max output */
+	128 /* block_size */
 };
 
 kripto_hash_desc *const kripto_hash_blake512 = &blake512;

@@ -21,6 +21,7 @@ Block ciphers:
  - SEED
  - Blowfish
  - GOST
+ - PRESENT*?
  - XTEA
  - Skipjack*?
  - DES*?
@@ -106,5 +107,12 @@ Authenticated stream ciphers:
  - Phelix*?
  - Keccak1600*?
  - Keccak800*?
+
+MISC
+ - PKCS7
+ - PBKDF2
+ - scrypt*
+ - random
+ - memwipe
 
 Run build.sh to compile.

@@ -5,7 +5,7 @@
 
 struct kripto_hash_desc
 {
-	void (*init)(kripto_hash *, const size_t);
+	kripto_hash *(*recreate)(kripto_hash *, const size_t, const unsigned int);
 	void (*input)(kripto_hash *, const void *, const size_t);
 	void (*finish)(kripto_hash *);
 	void (*output)(kripto_hash *, void *, const size_t);
@@ -21,8 +21,6 @@ struct kripto_hash_desc
 	);
 	size_t max_output;
 	unsigned int block_size;
-	unsigned int max_rounds;
-	unsigned int default_rounds;
 };
 
 #endif
