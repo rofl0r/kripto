@@ -8,7 +8,7 @@ Lightweight and flexible cryptographic library written in ISO C99.
 Block ciphers:
  - Rijndael128 (AES)
  - Rijndael192*?
- - Rijndael256*
+ - Rijndael256
  - Serpent
  - Twofish
  - RC6
@@ -17,6 +17,7 @@ Block ciphers:
  - Threefish
  - Noekeon
  - Anubis
+ - Anubis256*?
  - SEED
  - Blowfish
  - GOST

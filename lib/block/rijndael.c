@@ -34,6 +34,7 @@
 
 #include <kripto/block/rijndael128.h>
 #include <kripto/block/aes.h>
+#include <kripto/block/rijndael256.h>
 
 struct kripto_block
 {
@@ -709,18 +710,23 @@ static const uint32_t rcon[52] =
 	td4[(X3) & 0xFF]					\
 )
 
-static void rijndael128_setup
+static void rijndael_setup
 (
 	kripto_block *s,
 	const uint8_t *key,
-	unsigned int key_len
+	const unsigned int key_len,
+	unsigned int bs
 )
 {
 	unsigned int i;
 	unsigned int j;
 	unsigned int x;
-	const unsigned int n = ((key_len + 3) >> 2);
+	unsigned int len;
 	uint32_t t;
+	const unsigned int n = ((key_len + 3) >> 2);
+
+	bs >>= 2;
+	len = (s->rounds + 1) * bs;
 
 	for(i = 0; i < n; i++) s->k[i] = 0;
 
@@ -735,7 +741,7 @@ static void rijndael128_setup
 		default: break;
 	}
 
-	for(j = n, x = 0; j < (s->rounds + 1) << 2; j += n)
+	for(j = n, x = 0; j < len; j += n)
 	{
 		t = s->k[j - 1];
 		s->k[j] = s->k[j - n] ^
@@ -746,50 +752,44 @@ static void rijndael128_setup
 
 		if(n <= 6)
 		{
-			for(i = 1; i < n && i + j < (s->rounds + 1) << 2; i++)
+			for(i = 1; i < n && i + j < len; i++)
 				s->k[i + j] = s->k[i + j - n] ^ s->k[i + j - 1];
 		}
 		else
 		{
-			for(i = 1; i < 4 && i + j < (s->rounds + 1) << 2; i++)
+			for(i = 1; i < 4 && i + j < len; i++)
 				s->k[i + j] = s->k[i + j - n] ^ s->k[i + j - 1];
 
-			if(j + 4 < (s->rounds + 1) << 2)
+			if(j + 4 < len)
 			{
 				t = s->k[j + 3];
 				s->k[j + 4] = s->k[j + 4 - n] ^ EL(t, t, t, t);
 			}
 
-			for(i = 5; i < n && i + j < (s->rounds + 1) << 2; i++)
+			for(i = 5; i < n && i + j < len; i++)
 				s->k[i + j] = s->k[i + j - n] ^ s->k[i + j - 1];
 		}
 	}
 
 	/* invert the order of the round keys */
-	for(i = 0, j = s->rounds << 2; i <= j; i += 4, j -= 4)
+	for(i = 0, j = len - bs; i <= j; i += bs, j -= bs)
 	{
-		s->dk[i] = s->k[j];
-		s->dk[j] = s->k[i];
-
-		s->dk[i+1] = s->k[j+1];
-		s->dk[j+1] = s->k[i+1];
-
-		s->dk[i+2] = s->k[j+2];
-		s->dk[j+2] = s->k[i+2];
-
-		s->dk[i+3] = s->k[j+3];
-		s->dk[j+3] = s->k[i+3];
+		for(x = 0; x < bs; x++)
+		{
+			s->dk[i + x] = s->k[j + x];
+			s->dk[j + x] = s->k[i + x];
+		}
 	}
 
 	/* apply the inverse MixColumn transform to
 	all round keys,	except the first and the last */
-	for(i = 4; i < (s->rounds << 2); i++)
+	for(i = bs; i < len - bs; i++)
 	{
 		t = s->dk[i];
-		s->dk[i] = td0[te4[t >> 24] & 0xFF] ^
-			td1[te4[(t >> 16) & 0xFF] & 0xFF] ^
-			td2[te4[(t >> 8) & 0xFF] & 0xFF] ^
-			td3[te4[t & 0xFF] & 0xFF];
+		s->dk[i] = td0[te4[t >> 24]] ^
+			td1[te4[(t >> 16) & 0xFF]] ^
+			td2[te4[(t >> 8) & 0xFF]] ^
+			td3[te4[t & 0xFF]];
 	}
 
 	/* wipe */
@@ -813,7 +813,7 @@ static void rijndael128_encrypt
 	uint32_t t3;
 	unsigned int i;
 
-	x0 = U8TO32_BE(pt) ^ s->k[0];
+	x0 = U8TO32_BE(CU8(pt)) ^ s->k[0];
 	x1 = U8TO32_BE(CU8(pt) + 4) ^ s->k[1];
 	x2 = U8TO32_BE(CU8(pt) + 8) ^ s->k[2];
 	x3 = U8TO32_BE(CU8(pt) + 12) ^ s->k[3];
@@ -836,7 +836,7 @@ static void rijndael128_encrypt
 	t0 = EL(x0, x1, x2, x3) ^ s->k[i++];
 	t1 = EL(x1, x2, x3, x0) ^ s->k[i++];
 	t2 = EL(x2, x3, x0, x1) ^ s->k[i++];
-	t3 = EL(x3, x0, x1, x2) ^ s->k[i++];
+	t3 = EL(x3, x0, x1, x2) ^ s->k[i];
 
 	U32TO8_BE(t0, U8(ct));
 	U32TO8_BE(t1, U8(ct) + 4);
@@ -884,7 +884,7 @@ static void rijndael128_decrypt
 	t0 = DL(x0, x3, x2, x1) ^ s->dk[i++];
 	t1 = DL(x1, x0, x3, x2) ^ s->dk[i++];
 	t2 = DL(x2, x1, x0, x3) ^ s->dk[i++];
-	t3 = DL(x3, x2, x1, x0) ^ s->dk[i++];
+	t3 = DL(x3, x2, x1, x0) ^ s->dk[i];
 
 	U32TO8_BE(t0, U8(pt));
 	U32TO8_BE(t1, U8(pt) + 4);
@@ -916,12 +916,12 @@ static kripto_block *rijndael128_create
 	s->k = (uint32_t *)((uint8_t *)s + sizeof(kripto_block));
 	s->dk = s->k + ((r + 1) << 2);
 
-	rijndael128_setup(s, key, key_len);
+	rijndael_setup(s, key, key_len, 16);
 
 	return s;
 }
 
-static void rijndael128_destroy(kripto_block *s)
+static void rijndael_destroy(kripto_block *s)
 {
 	kripto_memwipe(s, s->size);
 	free(s);
@@ -943,13 +943,13 @@ static kripto_block *rijndael128_change
 
 	if(sizeof(kripto_block) + ((r + 1) << 5) > s->size)
 	{
-		rijndael128_destroy(s);
+		rijndael_destroy(s);
 		s = rijndael128_create(key, key_len, r);
 	}
 	else
 	{
 		s->rounds = r;
-		rijndael128_setup(s, key, key_len);
+		rijndael_setup(s, key, key_len, 16);
 	}
 
 	return s;
@@ -961,7 +961,7 @@ static const struct kripto_block_desc rijndael128 =
 	&rijndael128_decrypt,
 	&rijndael128_create,
 	&rijndael128_change,
-	&rijndael128_destroy,
+	&rijndael_destroy,
 	16, /* block size */
 	32, /* max key */
 	52, /* max rounds */
@@ -971,3 +971,230 @@ static const struct kripto_block_desc rijndael128 =
 kripto_block_desc *const kripto_block_rijndael128 = &rijndael128;
 
 kripto_block_desc *const kripto_block_aes = &rijndael128;
+
+
+/* rijndael256 */
+
+static void rijndael256_encrypt
+(
+	const kripto_block *s,
+	const void *pt,
+	void *ct
+)
+{
+	uint32_t x0;
+	uint32_t x1;
+	uint32_t x2;
+	uint32_t x3;
+	uint32_t x4;
+	uint32_t x5;
+	uint32_t x6;
+	uint32_t x7;
+	uint32_t t0;
+	uint32_t t1;
+	uint32_t t2;
+	uint32_t t3;
+	uint32_t t4;
+	uint32_t t5;
+	uint32_t t6;
+	uint32_t t7;
+	unsigned int i;
+
+	x0 = U8TO32_BE(CU8(pt)) ^ s->k[0];
+	x1 = U8TO32_BE(CU8(pt) + 4) ^ s->k[1];
+	x2 = U8TO32_BE(CU8(pt) + 8) ^ s->k[2];
+	x3 = U8TO32_BE(CU8(pt) + 12) ^ s->k[3];
+	x4 = U8TO32_BE(CU8(pt) + 16) ^ s->k[4];
+	x5 = U8TO32_BE(CU8(pt) + 20) ^ s->k[5];
+	x6 = U8TO32_BE(CU8(pt) + 24) ^ s->k[6];
+	x7 = U8TO32_BE(CU8(pt) + 28) ^ s->k[7];
+
+	/* - 1 full rounds */
+	for(i = 8; i < (s->rounds << 3);)
+	{
+		t0 = E(x0, x1, x3, x4) ^ s->k[i++];
+		t1 = E(x1, x2, x4, x5) ^ s->k[i++];
+		t2 = E(x2, x3, x5, x6) ^ s->k[i++];
+		t3 = E(x3, x4, x6, x7) ^ s->k[i++];
+		t4 = E(x4, x5, x7, x0) ^ s->k[i++];
+		t5 = E(x5, x6, x0, x1) ^ s->k[i++];
+		t6 = E(x6, x7, x1, x2) ^ s->k[i++];
+		t7 = E(x7, x0, x2, x3) ^ s->k[i++];
+
+		x0 = t0;
+		x1 = t1;
+		x2 = t2;
+		x3 = t3;
+		x4 = t4;
+		x5 = t5;
+		x6 = t6;
+		x7 = t7;
+	}
+
+	/* last round */
+	t0 = EL(x0, x1, x3, x4) ^ s->k[i++];
+	t1 = EL(x1, x2, x4, x5) ^ s->k[i++];
+	t2 = EL(x2, x3, x5, x6) ^ s->k[i++];
+	t3 = EL(x3, x4, x6, x7) ^ s->k[i++];
+	t4 = EL(x4, x5, x7, x0) ^ s->k[i++];
+	t5 = EL(x5, x6, x0, x1) ^ s->k[i++];
+	t6 = EL(x6, x7, x1, x2) ^ s->k[i++];
+	t7 = EL(x7, x0, x2, x3) ^ s->k[i];
+
+	U32TO8_BE(t0, U8(ct));
+	U32TO8_BE(t1, U8(ct) + 4);
+	U32TO8_BE(t2, U8(ct) + 8);
+	U32TO8_BE(t3, U8(ct) + 12);
+	U32TO8_BE(t4, U8(ct) + 16);
+	U32TO8_BE(t5, U8(ct) + 20);
+	U32TO8_BE(t6, U8(ct) + 24);
+	U32TO8_BE(t7, U8(ct) + 28);
+}
+
+static void rijndael256_decrypt
+(
+	const kripto_block *s,
+	const void *ct,
+	void *pt
+)
+{
+	uint32_t x0;
+	uint32_t x1;
+	uint32_t x2;
+	uint32_t x3;
+	uint32_t x4;
+	uint32_t x5;
+	uint32_t x6;
+	uint32_t x7;
+	uint32_t t0;
+	uint32_t t1;
+	uint32_t t2;
+	uint32_t t3;
+	uint32_t t4;
+	uint32_t t5;
+	uint32_t t6;
+	uint32_t t7;
+	unsigned int i;
+
+	x0 = U8TO32_BE(CU8(ct)) ^ s->dk[0];
+	x1 = U8TO32_BE(CU8(ct) + 4) ^ s->dk[1];
+	x2 = U8TO32_BE(CU8(ct) + 8) ^ s->dk[2];
+	x3 = U8TO32_BE(CU8(ct) + 12) ^ s->dk[3];
+	x4 = U8TO32_BE(CU8(ct) + 16) ^ s->dk[4];
+	x5 = U8TO32_BE(CU8(ct) + 20) ^ s->dk[5];
+	x6 = U8TO32_BE(CU8(ct) + 24) ^ s->dk[6];
+	x7 = U8TO32_BE(CU8(ct) + 28) ^ s->dk[7];
+
+	/* - 1 full rounds */
+	for(i = 8; i < (s->rounds << 3);)
+	{
+		t0 = D(x0, x7, x5, x4) ^ s->dk[i++];
+		t1 = D(x1, x0, x6, x5) ^ s->dk[i++];
+		t2 = D(x2, x1, x7, x6) ^ s->dk[i++];
+		t3 = D(x3, x2, x0, x7) ^ s->dk[i++];
+		t4 = D(x4, x3, x1, x0) ^ s->dk[i++];
+		t5 = D(x5, x4, x2, x1) ^ s->dk[i++];
+		t6 = D(x6, x5, x3, x2) ^ s->dk[i++];
+		t7 = D(x7, x6, x4, x3) ^ s->dk[i++];
+
+		x0 = t0;
+		x1 = t1;
+		x2 = t2;
+		x3 = t3;
+		x4 = t4;
+		x5 = t5;
+		x6 = t6;
+		x7 = t7;
+	}
+
+	/* last round */
+	t0 = DL(x0, x7, x5, x4) ^ s->dk[i++];
+	t1 = DL(x1, x0, x6, x5) ^ s->dk[i++];
+	t2 = DL(x2, x1, x7, x6) ^ s->dk[i++];
+	t3 = DL(x3, x2, x0, x7) ^ s->dk[i++];
+	t4 = DL(x4, x3, x1, x0) ^ s->dk[i++];
+	t5 = DL(x5, x4, x2, x1) ^ s->dk[i++];
+	t6 = DL(x6, x5, x3, x2) ^ s->dk[i++];
+	t7 = DL(x7, x6, x4, x3) ^ s->dk[i];
+
+	U32TO8_BE(t0, U8(pt));
+	U32TO8_BE(t1, U8(pt) + 4);
+	U32TO8_BE(t2, U8(pt) + 8);
+	U32TO8_BE(t3, U8(pt) + 12);
+	U32TO8_BE(t4, U8(pt) + 16);
+	U32TO8_BE(t5, U8(pt) + 20);
+	U32TO8_BE(t6, U8(pt) + 24);
+	U32TO8_BE(t7, U8(pt) + 28);
+}
+
+static kripto_block *rijndael256_create
+(
+	const void *key,
+	unsigned int key_len,
+	unsigned int r
+)
+{
+	kripto_block *s;
+
+	if(!r)
+	{
+		r = 6 + ((key_len + 3) >> 2);
+		if(r < 14) r = 14;
+	}
+
+	s = malloc(sizeof(kripto_block) + ((r + 1) << 6));
+	if(!s) return 0;
+
+	s->desc = kripto_block_rijndael256;
+	s->size = sizeof(kripto_block) + ((r + 1) << 6);
+	s->rounds = r;
+	s->k = (uint32_t *)((uint8_t *)s + sizeof(kripto_block));
+	s->dk = s->k + ((r + 1) << 3);
+
+	rijndael_setup(s, key, key_len, 32);
+
+	return s;
+}
+
+static kripto_block *rijndael256_change
+(
+	kripto_block *s,
+	const void *key,
+	unsigned int key_len,
+	unsigned int r
+)
+{
+	if(!r)
+	{
+		r = 6 + ((key_len + 3) >> 2);
+		if(r < 14) r = 14;
+	}
+
+	if(sizeof(kripto_block) + ((r + 1) << 6) > s->size)
+	{
+		rijndael_destroy(s);
+		s = rijndael256_create(key, key_len, r);
+	}
+	else
+	{
+		s->rounds = r;
+		rijndael_setup(s, key, key_len, 32);
+	}
+
+	return s;
+}
+
+static const struct kripto_block_desc rijndael256 =
+{
+	&rijndael256_encrypt,
+	&rijndael256_decrypt,
+	&rijndael256_create,
+	&rijndael256_change,
+	&rijndael_destroy,
+	32, /* block size */
+	32, /* max key */
+	52, /* max rounds */
+	14 /* default rounds */
+};
+
+kripto_block_desc *const kripto_block_rijndael256 = &rijndael256;
