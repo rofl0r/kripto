@@ -42,7 +42,6 @@ kripto_stream *kripto_stream_create
 	assert(key_len <= kripto_stream_max_key(desc));
 	/* if iv_len is not null, iv must not be null */
 	assert((uintptr_t)iv >= iv_len);
-	assert(r <= kripto_stream_max_rounds(desc));
 
 	return desc->create(key, key_len, iv, iv_len, r);
 }
@@ -66,7 +65,6 @@ kripto_stream *kripto_stream_change
 	assert(key_len <= kripto_stream_max_key(s->desc));
 	/* if iv_len is not null, iv must not be null */
 	assert((uintptr_t)iv >= iv_len);
-	assert(r <= kripto_stream_max_rounds(s->desc));
 
 	return s->desc->change(s, key, key_len, iv, iv_len, r);
 }

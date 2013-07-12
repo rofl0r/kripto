@@ -102,7 +102,6 @@ int kripto_hash_all
 	assert(hash);
 	assert(hash->hash_all);
 	assert(out_len <= kripto_hash_max_output(hash));
-	assert(r <= kripto_hash_max_rounds(hash));
 
 	return hash->hash_all(r, in, in_len, out, out_len);
 }
