@@ -13,8 +13,10 @@ Block ciphers:
  - Twofish
  - RC6
  - Camellia
- - ARIA*
- - Threefish
+ - ARIA
+ - Threefish256
+ - Threefish512
+ - Threefish1024
  - Noekeon
  - Anubis
  - Anubis256*?
@@ -27,8 +29,8 @@ Block ciphers:
  - DES*?
  - 3DES*?
  - IDEA*?
- - RC5*
- - CAST5*
+ - RC5*?
+ - CAST5*?
  - CAST6*?
  - SAFER*?
  - SAFER+*?
@@ -52,24 +54,22 @@ Authenticated modes:
  - OCB*
 
 Stream ciphers:
- - Salsa20
- - ChaCha
+ - Salsa20 (XSalsa20)
+ - ChaCha (XChaCha)
  - RC4
- - XSalsa20
- - XChaCha
  - Keccak1600*?
  - Keccak800*?
  - Skein*?
  - SEAL*?
  - Scream*?
- - SOSEMANUK*
+ - SOSEMANUK*?
  - Rabbit*?
  - HC-256*?
  - MUGI*?
 
 Hash functions:
  - SHA2
- - SHA3 (Keccak1600)
+ - Keccak1600 (SHA3)
  - Keccak800
  - Skein*
  - Blake
@@ -100,6 +100,7 @@ MAC's:
  - UMAC*
  - VMAC*
  - PMAC*
+ - SipHash*?
  - Poly1305*?
  - CBC-MAC*?
 
