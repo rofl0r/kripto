@@ -26,6 +26,7 @@ int kripto_pbkdf2
 (
 	kripto_mac_desc *mac_desc,
 	void *f,
+	const unsigned int r,
 	const unsigned int iter,
 	const void *pass,
 	const unsigned int pass_len,
@@ -38,7 +39,7 @@ int kripto_pbkdf2
 	unsigned int i;
 	unsigned int x;
 	unsigned int y;
-	uint32_t ctr = 1;
+	uint8_t ctr[4] = {0, 0, 0, 1};
 	uint8_t *buf[2];
 	kripto_mac *mac;
 
@@ -50,27 +51,37 @@ int kripto_pbkdf2
 
 	buf[1] = buf[0] + x;
 
+	mac = kripto_mac_create(mac_desc, f, r, pass, pass_len, x);
+	if(!mac) goto err;
+
 	while(out_len)
 	{
-		U32TO8_BE(ctr, buf[1]);
-		ctr++;
-
-		mac = kripto_mac_create(mac_desc, f, pass, pass_len);
-		if(!mac) goto err;
+		for(i = 3; !++ctr[i]; i--)
+			if(!i) i = 3;
 
 		kripto_mac_update(mac, salt, salt_len);
 
-		kripto_mac_update(mac, buf[1], 4);
+		kripto_mac_update(mac, ctr, 4);
 
 		kripto_mac_finish(mac, buf[0], x);
 
-		kripto_mac_destroy(mac);
-
 		memcpy(buf[1], buf[0], x);
+
 		for(i = 1; i < iter; i++)
 		{
-			if(kripto_mac_all(mac_desc, f, pass, pass_len, buf[0], x, buf[0], x))
-				goto err;
+			if(kripto_mac_all
+			(
+				mac_desc,
+				f,
+				r,
+				pass,
+				pass_len,
+				buf[0],
+				x,
+				buf[0],
+				x
+			))
+				goto err1;
 
 			for(y = 0; y < x; y++)
 				buf[1][y] ^= buf[0][y];
@@ -82,16 +93,21 @@ int kripto_pbkdf2
 			*U8(out) = buf[1][y];
 			PTR_INC(out, 1);
 		}
+
+		mac = kripto_mac_recreate(mac, f, r, pass, pass_len, x);
+		if(!mac) goto err;
 	}
 
-	//kripto_mac_destroy(mac);
+	kripto_mac_destroy(mac);
 	kripto_memwipe(buf[0], x << 1);
 	free(buf[0]);
 
 	return 0;
 
+err1:
+	kripto_mac_destroy(mac);
+
 err:
-	//kripto_mac_destroy(mac);
 	kripto_memwipe(buf[0], x << 1);
 	free(buf[0]);
 

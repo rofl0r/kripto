@@ -8,7 +8,19 @@ struct kripto_mac_desc
 	kripto_mac *(*create)
 	(
 		void *,
+		const unsigned int,
 		const void *,
+		const unsigned int,
+		const unsigned int
+	);
+
+	kripto_mac *(*recreate)
+	(
+		kripto_mac *,
+		void *,
+		const unsigned int,
+		const void *,
+		const unsigned int,
 		const unsigned int
 	);
 

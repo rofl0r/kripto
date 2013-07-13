@@ -27,8 +27,10 @@ kripto_mac *kripto_mac_create
 (
 	kripto_mac_desc *desc,
 	void *f,
+	const unsigned int r,
 	const void *key,
-	const unsigned int key_len
+	const unsigned int key_len,
+	const unsigned int out_len
 )
 {
 	assert(desc);
@@ -38,7 +40,28 @@ kripto_mac *kripto_mac_create
 	assert(key_len);
 	//assert(key_len <= kripto_mac_max_key(desc));
 
-	return desc->create(f, key, key_len);
+	return desc->create(f, r, key, key_len, out_len);
+}
+
+kripto_mac *kripto_mac_recreate
+(
+	kripto_mac *s,
+	void *f,
+	const unsigned int r,
+	const void *key,
+	const unsigned int key_len,
+	const unsigned int out_len
+)
+{
+	assert(s);
+	assert(s->desc);
+	assert(s->desc->recreate);
+
+	assert(key);
+	assert(key_len);
+	//assert(key_len <= kripto_mac_max_key(desc));
+
+	return s->desc->recreate(s, f, r, key, key_len, out_len);
 }
 
 void kripto_mac_update(kripto_mac *s, const void *in, const size_t len)
@@ -72,6 +95,7 @@ int kripto_mac_all
 (
 	kripto_mac_desc *desc,
 	void *f,
+	const unsigned int r,
 	const void *key,
 	const unsigned int key_len,
 	const void *in,
@@ -84,7 +108,7 @@ int kripto_mac_all
 
 	assert(desc);
 
-	s = kripto_mac_create(desc, f, key, key_len);
+	s = kripto_mac_create(desc, f, r, key, key_len, out_len);
 	if(!s) return -1;
 
 	kripto_mac_update(s, in, in_len);

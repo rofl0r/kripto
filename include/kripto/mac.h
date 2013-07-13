@@ -15,8 +15,20 @@ extern kripto_mac *kripto_mac_create
 (
 	kripto_mac_desc *desc,
 	void *f,
+	const unsigned int r,
 	const void *key,
-	const unsigned int key_len
+	const unsigned int key_len,
+	const unsigned int out_len
+);
+
+extern kripto_mac *kripto_mac_recreate
+(
+	kripto_mac *s,
+	void *f,
+	const unsigned int r,
+	const void *key,
+	const unsigned int key_len,
+	const unsigned int out_len
 );
 
 extern void kripto_mac_update
@@ -39,6 +51,7 @@ extern int kripto_mac_all
 (
 	kripto_mac_desc *desc,
 	void *f,
+	const unsigned int r,
 	const void *key,
 	const unsigned int key_len,
 	const void *in,
