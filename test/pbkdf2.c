@@ -36,6 +36,7 @@ int main(void)
 	(
 		kripto_mac_hmac,
 		kripto_hash_sha1,
+		0,
 		4096,
 		"password",
 		8,

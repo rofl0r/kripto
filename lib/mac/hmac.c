@@ -81,7 +81,7 @@ static void hmac_destroy(kripto_mac *s)
 
 static kripto_mac *hmac_create
 (
-	void *hash,
+	const void *hash,
 	const unsigned int r,
 	const void *key,
 	const unsigned int key_len,
@@ -116,7 +116,7 @@ static kripto_mac *hmac_create
 static kripto_mac *hmac_recreate
 (
 	kripto_mac *s,
-	void *hash,
+	const void *hash,
 	const unsigned int r,
 	const void *key,
 	const unsigned int key_len,

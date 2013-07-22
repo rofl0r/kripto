@@ -6,7 +6,7 @@
 extern int kripto_pbkdf2
 (
 	kripto_mac_desc *mac_desc,
-	void *f,
+	const void *f,
 	const unsigned int r,
 	const unsigned int iter,
 	const void *pass,

@@ -14,7 +14,7 @@ typedef struct kripto_mac kripto_mac;
 extern kripto_mac *kripto_mac_create
 (
 	kripto_mac_desc *desc,
-	void *f,
+	const void *f,
 	const unsigned int r,
 	const void *key,
 	const unsigned int key_len,
@@ -24,7 +24,7 @@ extern kripto_mac *kripto_mac_create
 extern kripto_mac *kripto_mac_recreate
 (
 	kripto_mac *s,
-	void *f,
+	const void *f,
 	const unsigned int r,
 	const void *key,
 	const unsigned int key_len,
@@ -50,7 +50,7 @@ extern void kripto_mac_destroy(kripto_mac *s);
 extern int kripto_mac_all
 (
 	kripto_mac_desc *desc,
-	void *f,
+	const void *f,
 	const unsigned int r,
 	const void *key,
 	const unsigned int key_len,

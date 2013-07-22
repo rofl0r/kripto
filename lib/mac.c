@@ -26,7 +26,7 @@ struct kripto_mac
 kripto_mac *kripto_mac_create
 (
 	kripto_mac_desc *desc,
-	void *f,
+	const void *f,
 	const unsigned int r,
 	const void *key,
 	const unsigned int key_len,
@@ -46,7 +46,7 @@ kripto_mac *kripto_mac_create
 kripto_mac *kripto_mac_recreate
 (
 	kripto_mac *s,
-	void *f,
+	const void *f,
 	const unsigned int r,
 	const void *key,
 	const unsigned int key_len,
@@ -94,7 +94,7 @@ void kripto_mac_destroy(kripto_mac *s)
 int kripto_mac_all
 (
 	kripto_mac_desc *desc,
-	void *f,
+	const void *f,
 	const unsigned int r,
 	const void *key,
 	const unsigned int key_len,

@@ -26,6 +26,8 @@ Block ciphers:
  - PRESENT*?
  - XTEA
  - Skipjack*?
+ - Speck*?
+ - Simon*?
  - DES*?
  - 3DES*?
  - IDEA*?
@@ -66,9 +68,11 @@ Stream ciphers:
  - Rabbit*?
  - HC-256*?
  - MUGI*?
+ - Trivium*?
 
 Hash functions:
  - SHA2
+ - SHA1
  - Keccak1600 (SHA3)
  - Keccak800
  - Skein*
@@ -77,8 +81,6 @@ Hash functions:
  - WHIRPOOL*
  - Tiger*
  - MD5*
- - SHA1*
- - SHA*
  - RIPEMD*?
  - BMW*?
  - CubeHash*?
@@ -88,7 +90,6 @@ Hash functions:
  - MD6*?
  - Fugue*?
  - Luffa*?
- - SIMD*?
 
 MAC's:
  - HMAC

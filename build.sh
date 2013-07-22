@@ -19,7 +19,6 @@ CFLAGS="-std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wmissing-prototype
 # -fstack-protector-all -fno-strict-aliasing -Werror  Wc++-compat -Wcast-align -DNDEBUG -fwhole-program -ffunction-sections -fdata-sections
 OPTIM="-O2 -D_FORTIFY_SOURCE=2 -flto -DNDEBUG $OPTIM"
 LDFLAGS="-Wall $LDFLAGS"
-# -Wl,--gc-sections -Wl,--print-gc-sections
 
 SRC="lib/version.c lib/mac.c lib/mac/hmac.c lib/stream/salsa20.c lib/mode.c lib/hash/blake256.c lib/hash/blake512.c lib/hash/blake2s.c lib/hash/blake2b.c lib/hash/keccak1600.c lib/hash/keccak800.c lib/block/xtea.c lib/block/threefish256.c lib/block/threefish512.c lib/block/threefish1024.c lib/mode/ecb.c lib/mode/ctr.c lib/mode/cbc.c lib/mode/ofb.c lib/stream/rc4.c lib/stream/chacha.c lib/block/rijndael.c lib/block/serpent.c lib/block/rc6.c lib/block/twofish.c lib/block/blowfish.c lib/block/anubis.c lib/block/noekeon.c lib/block/aria.c lib/block/seed.c lib/block/camellia.c lib/block/gost.c lib/hash.c lib/hash/sha1.c lib/hash/sha2_256.c lib/hash/sha2_512.c lib/memwipe.c lib/random.c lib/pkcs7.c lib/block.c lib/stream.c lib/pbkdf2.c"
 OBJ="version.o mac.o hmac.o salsa20.o mode.o blake256.o blake512.o blake2s.o blake2b.o keccak1600.o keccak800.o xtea.o threefish256.o threefish512.o threefish1024.o ecb.o ctr.o cbc.o ofb.o rc4.o chacha.o rijndael.o serpent.o rc6.o twofish.o blowfish.o anubis.o noekeon.o aria.o seed.o camellia.o gost.o hash.o sha1.o sha2_256.o sha2_512.o memwipe.o random.o pkcs7.o block.o stream.o pbkdf2.o"
@@ -37,9 +36,11 @@ while [ $i -le $# ]; do
 		shared=1
 		;;
 	"-os=unix")
+		os=1
 		CFLAGS="$CFLAGS -DKRIPTO_UNIX"
 		;;
 	"-os=windows")
+		os=2
 		CFLAGS="$CFLAGS -DKRIPTO_WINDOWS"
 		#LDFLAGS="$LDFLAGS -Wl,-subsystem,windows"
 		;;
@@ -57,12 +58,16 @@ while [ $i -le $# ]; do
 	i=$(($i+1))
 done
 
+# if OS not defined assume UNIX
+if [ -z $os ]; then
+	CFLAGS="$CFLAGS -DKRIPTO_UNIX"
+fi
+
 if [ -z $debug ]; then
 	CFLAGS="$CFLAGS $OPTIM"
 	LDFLAGS="$LDFLAGS $OPTIM"
 else
 	CFLAGS="$CFLAGS -g -fstack-protector-all"
-	#-Werror
 fi
 
 # compile
