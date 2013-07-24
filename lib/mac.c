@@ -38,7 +38,6 @@ kripto_mac *kripto_mac_create
 
 	assert(key);
 	assert(key_len);
-	//assert(key_len <= kripto_mac_max_key(desc));
 
 	return desc->create(f, r, key, key_len, out_len);
 }
@@ -59,7 +58,6 @@ kripto_mac *kripto_mac_recreate
 
 	assert(key);
 	assert(key_len);
-	//assert(key_len <= kripto_mac_max_key(desc));
 
 	return s->desc->recreate(s, f, r, key, key_len, out_len);
 }

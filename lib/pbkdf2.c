@@ -39,17 +39,18 @@ int kripto_pbkdf2
 	unsigned int i;
 	unsigned int x;
 	unsigned int y;
-	uint8_t ctr[4] = {0, 0, 0, 1};
-	uint8_t *buf[2];
+	uint8_t ctr[4] = {0, 0, 0, 0};
+	uint8_t *buf0;
+	uint8_t *buf1;
 	kripto_mac *mac;
 
 	x = kripto_mac_max_output(mac_desc, f);
 	if(out_len < x) x = out_len;
 
-	buf[0] = malloc(x << 1);
-	if(!buf[0]) return -1;
+	buf0 = malloc(x << 1);
+	if(!buf0) return -1;
 
-	buf[1] = buf[0] + x;
+	buf1 = buf0 + x;
 
 	mac = kripto_mac_create(mac_desc, f, r, pass, pass_len, x);
 	if(!mac) goto err;
@@ -63,34 +64,26 @@ int kripto_pbkdf2
 
 		kripto_mac_update(mac, ctr, 4);
 
-		kripto_mac_finish(mac, buf[0], x);
+		kripto_mac_finish(mac, buf0, x);
 
-		memcpy(buf[1], buf[0], x);
+		memcpy(buf1, buf0, x);
 
 		for(i = 1; i < iter; i++)
 		{
-			if(kripto_mac_all
-			(
-				mac_desc,
-				f,
-				r,
-				pass,
-				pass_len,
-				buf[0],
-				x,
-				buf[0],
-				x
-			))
-				goto err1;
+			mac = kripto_mac_recreate(mac, f, r, pass, pass_len, x);
+			if(!mac) goto err;
+
+			kripto_mac_update(mac, buf0, x);
+			kripto_mac_finish(mac, buf0, x);
 
 			for(y = 0; y < x; y++)
-				buf[1][y] ^= buf[0][y];
+				buf1[y] ^= buf0[y];
 		}
 
 		/* output */
 		for(y = 0; y < x && out_len; y++, out_len--)
 		{
-			*U8(out) = buf[1][y];
+			*U8(out) = buf1[y];
 			PTR_INC(out, 1);
 		}
 
@@ -99,17 +92,16 @@ int kripto_pbkdf2
 	}
 
 	kripto_mac_destroy(mac);
-	kripto_memwipe(buf[0], x << 1);
-	free(buf[0]);
+	kripto_memwipe(buf0, x);
+	kripto_memwipe(buf1, x);
+	free(buf0);
 
 	return 0;
 
-err1:
-	kripto_mac_destroy(mac);
-
 err:
-	kripto_memwipe(buf[0], x << 1);
-	free(buf[0]);
+	kripto_memwipe(buf0, x);
+	kripto_memwipe(buf1, x);
+	free(buf0);
 
 	return -1;
 }
