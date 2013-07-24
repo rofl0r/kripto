@@ -21,7 +21,6 @@
 struct kripto_block
 {
 	kripto_block_desc *desc;
-	unsigned int rounds;
 };
 
 kripto_block *kripto_block_create
@@ -100,13 +99,6 @@ void kripto_block_destroy(kripto_block *s)
 	assert(s->desc->destroy);
 
 	s->desc->destroy(s);
-}
-
-unsigned int kripto_block_rounds(const kripto_block *s)
-{
-	assert(s);
-
-	return s->rounds;
 }
 
 kripto_block_desc *kripto_block_get_desc(const kripto_block *s)
