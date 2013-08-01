@@ -2,6 +2,10 @@ THIS SOFTWARE IS NOT READY FOR USE!
 
 Lightweight and flexible cryptographic library written in ISO C99.
 
+Run build.sh to compile. Makefile is outdated.
+
+There is no public-key cryptography yet!
+
 * not supported (yet)
 ? maybe
 
@@ -116,5 +120,3 @@ MISC
  - scrypt*
  - random
  - memwipe
-
-Run build.sh to compile.
