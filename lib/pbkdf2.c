@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
@@ -33,7 +34,7 @@ int kripto_pbkdf2
 	const void *salt,
 	const unsigned int salt_len,
 	void *out,
-	unsigned int out_len
+	size_t out_len
 )
 {
 	unsigned int i;
@@ -43,6 +44,9 @@ int kripto_pbkdf2
 	uint8_t *buf0;
 	uint8_t *buf1;
 	kripto_mac *mac;
+
+	assert(mac_desc);
+	assert(iter);
 
 	x = kripto_mac_max_output(mac_desc, f);
 	if(out_len < x) x = out_len;
@@ -55,10 +59,10 @@ int kripto_pbkdf2
 	mac = kripto_mac_create(mac_desc, f, r, pass, pass_len, x);
 	if(!mac) goto err;
 
-	while(out_len)
+	for(;;)
 	{
 		for(i = 3; !++ctr[i]; i--)
-			if(!i) i = 3;
+			assert(i);
 
 		kripto_mac_update(mac, salt, salt_len);
 
@@ -81,11 +85,10 @@ int kripto_pbkdf2
 		}
 
 		/* output */
-		for(y = 0; y < x && out_len; y++, out_len--)
-		{
+		for(y = 0; y < x && out_len; y++, out_len--, PTR_INC(out, 1))
 			*U8(out) = buf1[y];
-			PTR_INC(out, 1);
-		}
+
+		if(!out_len) break;
 
 		mac = kripto_mac_recreate(mac, f, r, pass, pass_len, x);
 		if(!mac) goto err;

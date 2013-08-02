@@ -5,7 +5,7 @@ CFLAGS="libkripto.a -std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wmissi
 #cc test/mac/hmac.c $CFLAGS -o t
 #./t
 
-cc test/pbkdf2.c $CFLAGS -o t
+cc test/scrypt.c $CFLAGS -o t
 ./t
 
 #cc test/block/rijndael256.c $CFLAGS -o t

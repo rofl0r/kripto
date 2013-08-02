@@ -14,7 +14,7 @@ extern int kripto_pbkdf2
 	const void *salt,
 	const unsigned int salt_len,
 	void *out,
-	unsigned int out_len
+	size_t out_len
 );
 
 #endif
