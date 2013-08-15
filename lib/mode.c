@@ -17,7 +17,7 @@
 
 #include <kripto/stream.h>
 #include <kripto/block.h>
-#include <kripto/mode_struct.h>
+#include <kripto/mode_desc.h>
 
 #include <kripto/mode.h>
 

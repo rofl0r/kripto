@@ -21,7 +21,7 @@
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/mode.h>
-#include <kripto/mode_struct.h>
+#include <kripto/mode_desc.h>
 #include <kripto/stream.h>
 #include <kripto/stream_desc.h>
 

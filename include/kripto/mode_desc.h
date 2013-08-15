@@ -1,5 +1,5 @@
-#ifndef KRIPTO_MODE_STRUCT_H
-#define KRIPTO_MODE_STRUCT_H
+#ifndef KRIPTO_MODE_DESC_H
+#define KRIPTO_MODE_DESC_H
 
 #include <stddef.h>
 
