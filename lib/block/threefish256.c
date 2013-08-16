@@ -162,7 +162,7 @@ static void threefish256_decrypt
 	U64TO8_LE(x3, U8(pt) + 24);
 }
 
-static kripto_block *threefish256_change
+static kripto_block *threefish256_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -201,7 +201,7 @@ static kripto_block *threefish256_create
 
 	s->desc = kripto_block_threefish256;
 
-	(void)threefish256_change(s, key, key_len, r);
+	(void)threefish256_recreate(s, key, key_len, r);
 
 	return s;
 }
@@ -214,10 +214,10 @@ static void threefish256_destroy(kripto_block *s)
 
 static const struct kripto_block_desc threefish256 =
 {
+	&threefish256_create,
+	&threefish256_recreate,
 	&threefish256_encrypt,
 	&threefish256_decrypt,
-	&threefish256_create,
-	&threefish256_change,
 	&threefish256_destroy,
 	32, /* block size */
 	32 /* max key */

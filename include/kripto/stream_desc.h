@@ -7,6 +7,25 @@
 
 struct kripto_stream_desc
 {
+	kripto_stream *(*create)
+	(
+		const void *,
+		const unsigned int,
+		const void *,
+		const unsigned int,
+		const unsigned int
+	);
+
+	kripto_stream *(*recreate)
+	(
+		kripto_stream *,
+		const void *,
+		const unsigned int,
+		const void *,
+		const unsigned int,
+		const unsigned int
+	);
+
 	size_t (*encrypt)
 	(
 		kripto_stream *,
@@ -24,25 +43,6 @@ struct kripto_stream_desc
 	);
 
 	size_t (*prng)(kripto_stream *, void *, const size_t);
-
-	kripto_stream *(*create)
-	(
-		const void *,
-		const unsigned int,
-		const void *,
-		const unsigned int,
-		const unsigned int
-	);
-
-	kripto_stream *(*change)
-	(
-		kripto_stream *,
-		const void *,
-		const unsigned int,
-		const void *,
-		const unsigned int,
-		const unsigned int
-	);
 
 	void (*destroy)(kripto_stream *);
 

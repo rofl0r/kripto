@@ -648,7 +648,7 @@ static void camellia_decrypt
 	U64TO8_BE(l, U8(pt) + 8);
 }
 
-static kripto_block *camellia_change
+static kripto_block *camellia_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -682,7 +682,7 @@ static kripto_block *camellia_create
 
 	s->desc = kripto_block_camellia;
 
-	camellia_change(s, key, key_len, 0);
+	camellia_recreate(s, key, key_len, 0);
 
 	return s;
 }
@@ -695,10 +695,10 @@ static void camellia_destroy(kripto_block *s)
 
 static const struct kripto_block_desc camellia =
 {
+	&camellia_create,
+	&camellia_recreate,
 	&camellia_encrypt,
 	&camellia_decrypt,
-	&camellia_create,
-	&camellia_change,
 	&camellia_destroy,
 	16, /* block size */
 	32 /* max key */

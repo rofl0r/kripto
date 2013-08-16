@@ -131,7 +131,7 @@ static void xtea_destroy(kripto_block *s)
 	free(s);
 }
 
-static kripto_block *xtea_change
+static kripto_block *xtea_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -157,10 +157,10 @@ static kripto_block *xtea_change
 
 static const struct kripto_block_desc xtea =
 {
+	&xtea_create,
+	&xtea_recreate,
 	&xtea_encrypt,
 	&xtea_decrypt,
-	&xtea_create,
-	&xtea_change,
 	&xtea_destroy,
 	8, /* block size */
 	16 /* max key */

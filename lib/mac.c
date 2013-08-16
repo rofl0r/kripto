@@ -62,22 +62,22 @@ kripto_mac *kripto_mac_recreate
 	return s->desc->recreate(s, f, r, key, key_len, out_len);
 }
 
-void kripto_mac_update(kripto_mac *s, const void *in, const size_t len)
+void kripto_mac_input(kripto_mac *s, const void *in, const size_t len)
 {
 	assert(s);
 	assert(s->desc);
-	assert(s->desc->update);
+	assert(s->desc->input);
 
-	s->desc->update(s, in, len);
+	s->desc->input(s, in, len);
 }
 
-void kripto_mac_finish(kripto_mac *s, void *out, const size_t len)
+void kripto_mac_tag(kripto_mac *s, void *out, const size_t len)
 {
 	assert(s);
 	assert(s->desc);
-	assert(s->desc->finish);
+	assert(s->desc->tag);
 
-	s->desc->finish(s, out, len);
+	s->desc->tag(s, out, len);
 }
 
 void kripto_mac_destroy(kripto_mac *s)
@@ -109,8 +109,8 @@ int kripto_mac_all
 	s = kripto_mac_create(desc, f, r, key, key_len, out_len);
 	if(!s) return -1;
 
-	kripto_mac_update(s, in, in_len);
-	kripto_mac_finish(s, out, out_len);
+	kripto_mac_input(s, in, in_len);
+	kripto_mac_tag(s, out, out_len);
 
 	kripto_mac_destroy(s);
 

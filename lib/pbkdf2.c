@@ -64,11 +64,11 @@ int kripto_pbkdf2
 		for(i = 3; !++ctr[i]; i--)
 			assert(i);
 
-		kripto_mac_update(mac, salt, salt_len);
+		kripto_mac_input(mac, salt, salt_len);
 
-		kripto_mac_update(mac, ctr, 4);
+		kripto_mac_input(mac, ctr, 4);
 
-		kripto_mac_finish(mac, buf0, x);
+		kripto_mac_tag(mac, buf0, x);
 
 		memcpy(buf1, buf0, x);
 
@@ -77,8 +77,8 @@ int kripto_pbkdf2
 			mac = kripto_mac_recreate(mac, f, r, pass, pass_len, x);
 			if(!mac) goto err;
 
-			kripto_mac_update(mac, buf0, x);
-			kripto_mac_finish(mac, buf0, x);
+			kripto_mac_input(mac, buf0, x);
+			kripto_mac_tag(mac, buf0, x);
 
 			for(y = 0; y < x; y++)
 				buf1[y] ^= buf0[y];

@@ -159,12 +159,12 @@ static kripto_mac *hmac_recreate
 	return s;
 }
 
-static void hmac_update(kripto_mac *s, const void *in, const size_t len)
+static void hmac_input(kripto_mac *s, const void *in, const size_t len)
 {
 	kripto_hash_input(s->hash, in, len);
 }
 
-static void hmac_finish(kripto_mac *s, void *out, const size_t len)
+static void hmac_tag(kripto_mac *s, void *out, const size_t len)
 {
 	unsigned int i;
 
@@ -188,8 +188,8 @@ static const struct kripto_mac_desc hmac =
 {
 	&hmac_create,
 	&hmac_recreate,
-	&hmac_update,
-	&hmac_finish,
+	&hmac_input,
+	&hmac_tag,
 	&hmac_destroy,
 	&hmac_max_output
 };

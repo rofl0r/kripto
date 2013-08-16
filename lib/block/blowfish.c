@@ -506,7 +506,7 @@ static void blowfish_destroy(kripto_block *s)
 	free(s);
 }
 
-static kripto_block *blowfish_change
+static kripto_block *blowfish_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -533,10 +533,10 @@ static kripto_block *blowfish_change
 
 static const struct kripto_block_desc blowfish =
 {
+	&blowfish_create,
+	&blowfish_recreate,
 	&blowfish_encrypt,
 	&blowfish_decrypt,
-	&blowfish_create,
-	&blowfish_change,
 	&blowfish_destroy,
 	8, /* block size */
 	56 /* max key */

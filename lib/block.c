@@ -41,7 +41,7 @@ kripto_block *kripto_block_create
 	return desc->create(key, key_len, r);
 }
 
-kripto_block *kripto_block_change
+kripto_block *kripto_block_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -51,13 +51,13 @@ kripto_block *kripto_block_change
 {
 	assert(s);
 	assert(s->desc);
-	assert(s->desc->change);
+	assert(s->desc->recreate);
 
 	assert(key);
 	assert(key_len);
 	assert(key_len <= kripto_block_max_key(s->desc));
 
-	return s->desc->change(s, key, key_len, r);
+	return s->desc->recreate(s, key, key_len, r);
 }
 
 void kripto_block_encrypt

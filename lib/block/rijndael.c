@@ -927,7 +927,7 @@ static void rijndael_destroy(kripto_block *s)
 	free(s);
 }
 
-static kripto_block *rijndael128_change
+static kripto_block *rijndael128_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -957,10 +957,10 @@ static kripto_block *rijndael128_change
 
 static const struct kripto_block_desc rijndael128 =
 {
+	&rijndael128_create,
+	&rijndael128_recreate,
 	&rijndael128_encrypt,
 	&rijndael128_decrypt,
-	&rijndael128_create,
-	&rijndael128_change,
 	&rijndael_destroy,
 	16, /* block size */
 	32 /* max key */
@@ -1154,7 +1154,7 @@ static kripto_block *rijndael256_create
 	return s;
 }
 
-static kripto_block *rijndael256_change
+static kripto_block *rijndael256_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -1184,10 +1184,10 @@ static kripto_block *rijndael256_change
 
 static const struct kripto_block_desc rijndael256 =
 {
+	&rijndael256_create,
+	&rijndael256_recreate,
 	&rijndael256_encrypt,
 	&rijndael256_decrypt,
-	&rijndael256_create,
-	&rijndael256_change,
 	&rijndael_destroy,
 	32, /* block size */
 	32 /* max key */

@@ -230,7 +230,7 @@ static void threefish512_decrypt
 	U64TO8_LE(x7, U8(pt) + 56);
 }
 
-static kripto_block *threefish512_change
+static kripto_block *threefish512_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -270,7 +270,7 @@ static kripto_block *threefish512_create
 
 	s->desc = kripto_block_threefish512;
 
-	(void)threefish512_change(s, key, key_len, r);
+	(void)threefish512_recreate(s, key, key_len, r);
 
 	return s;
 }
@@ -283,10 +283,10 @@ static void threefish512_destroy(kripto_block *s)
 
 static const struct kripto_block_desc threefish512 =
 {
+	&threefish512_create,
+	&threefish512_recreate,
 	&threefish512_encrypt,
 	&threefish512_decrypt,
-	&threefish512_create,
-	&threefish512_change,
 	&threefish512_destroy,
 	64, /* block size */
 	64 /* max key */

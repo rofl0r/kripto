@@ -459,7 +459,7 @@ static void seed_destroy(kripto_block *s)
 	free(s);
 }
 
-static kripto_block *seed_change
+static kripto_block *seed_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -485,10 +485,10 @@ static kripto_block *seed_change
 
 static const struct kripto_block_desc seed =
 {
+	&seed_create,
+	&seed_recreate,
 	&seed_encrypt,
 	&seed_decrypt,
-	&seed_create,
-	&seed_change,
 	&seed_destroy,
 	16, /* block size */
 	16 /* max key */

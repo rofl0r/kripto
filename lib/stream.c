@@ -46,7 +46,7 @@ kripto_stream *kripto_stream_create
 	return desc->create(key, key_len, iv, iv_len, r);
 }
 
-kripto_stream *kripto_stream_change
+kripto_stream *kripto_stream_recreate
 (
 	kripto_stream *s,
 	const void *key,
@@ -58,7 +58,7 @@ kripto_stream *kripto_stream_change
 {
 	assert(s);
 	assert(s->desc);
-	assert(s->desc->change);
+	assert(s->desc->recreate);
 
 	assert(key);
 	assert(key_len);
@@ -66,7 +66,7 @@ kripto_stream *kripto_stream_change
 	/* if iv_len is not null, iv must not be null */
 	assert((uintptr_t)iv >= iv_len);
 
-	return s->desc->change(s, key, key_len, iv, iv_len, r);
+	return s->desc->recreate(s, key, key_len, iv, iv_len, r);
 }
 
 size_t kripto_stream_encrypt

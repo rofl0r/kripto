@@ -17,7 +17,7 @@ extern kripto_block *kripto_block_create
 	const unsigned int r
 );
 
-extern kripto_block *kripto_block_change
+extern kripto_block *kripto_block_recreate
 (
 	kripto_block *s,
 	const void *key,

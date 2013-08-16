@@ -1203,7 +1203,7 @@ static void twofish_destroy(kripto_block *s)
 	free(s);
 }
 
-static kripto_block *twofish_change
+static kripto_block *twofish_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -1229,10 +1229,10 @@ static kripto_block *twofish_change
 
 static const struct kripto_block_desc twofish =
 {
+	&twofish_create,
+	&twofish_recreate,
 	&twofish_encrypt,
 	&twofish_decrypt,
-	&twofish_create,
-	&twofish_change,
 	&twofish_destroy,
 	16, /* block size */
 	32 /* max key */

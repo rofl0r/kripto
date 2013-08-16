@@ -169,7 +169,7 @@ static size_t salsa20_prng
 	return i;
 }
 
-static void salsa20_setup
+static kripto_stream *salsa20_recreate
 (
 	kripto_stream *s,
 	const void *key,
@@ -270,6 +270,8 @@ static void salsa20_setup
 	}
 
 	s->used = 64;
+
+	return s;
 }
 
 static kripto_stream *salsa20_create
@@ -288,22 +290,7 @@ static kripto_stream *salsa20_create
 
 	s->desc = kripto_stream_salsa20;
 
-	salsa20_setup(s, key, key_len, iv, iv_len, r);
-
-	return s;
-}
-
-static kripto_stream *salsa20_change
-(
-	kripto_stream *s,
-	const void *key,
-	const unsigned int key_len,
-	const void *iv,
-	const unsigned int iv_len,
-	const unsigned int r
-)
-{
-	salsa20_setup(s, key, key_len, iv, iv_len, r);
+	(void)salsa20_recreate(s, key, key_len, iv, iv_len, r);
 
 	return s;
 }
@@ -316,11 +303,11 @@ static void salsa20_destroy(kripto_stream *s)
 
 static const struct kripto_stream_desc salsa20 =
 {
+	&salsa20_create,
+	&salsa20_recreate,
 	&salsa20_crypt,
 	&salsa20_crypt,
 	&salsa20_prng,
-	&salsa20_create,
-	&salsa20_change,
 	&salsa20_destroy,
 	32, /* max key */
 	24 /* max iv */

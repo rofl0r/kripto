@@ -696,7 +696,7 @@ static void aria_destroy(kripto_block *s)
 	free(s);
 }
 
-static kripto_block *aria_change
+static kripto_block *aria_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -727,10 +727,10 @@ static kripto_block *aria_change
 
 static const struct kripto_block_desc aria =
 {
+	&aria_create,
+	&aria_recreate,
 	&aria_encrypt,
 	&aria_decrypt,
-	&aria_create,
-	&aria_change,
 	&aria_destroy,
 	16, /* block size */
 	32 /* max key */

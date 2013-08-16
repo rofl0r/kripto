@@ -185,7 +185,7 @@ static void rc6_destroy(kripto_block *s)
 	free(s);
 }
 
-static kripto_block *rc6_change
+static kripto_block *rc6_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -211,10 +211,10 @@ static kripto_block *rc6_change
 
 static const struct kripto_block_desc rc6 =
 {
+	&rc6_create,
+	&rc6_recreate,
 	&rc6_encrypt,
 	&rc6_decrypt,
-	&rc6_create,
-	&rc6_change,
 	&rc6_destroy,
 	16, /* block size */
 	255 /* max key */

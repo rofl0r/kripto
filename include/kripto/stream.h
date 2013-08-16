@@ -16,7 +16,7 @@ extern kripto_stream *kripto_stream_create
 	const unsigned int r
 );
 
-extern kripto_stream *kripto_stream_change
+extern kripto_stream *kripto_stream_recreate
 (
 	kripto_stream *s,
 	const void *key,

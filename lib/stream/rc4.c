@@ -155,7 +155,7 @@ static size_t rc4_prng
 	return i;
 }
 
-static kripto_stream *rc4i_change
+static kripto_stream *rc4i_recreate
 (
 	kripto_stream *s,
 	const void *key,
@@ -175,7 +175,7 @@ static kripto_stream *rc4i_change
 	return s;
 }
 
-static kripto_stream *rc4_change
+static kripto_stream *rc4_recreate
 (
 	kripto_stream *s,
 	const void *key,
@@ -214,7 +214,7 @@ static kripto_stream *rc4i_create
 	if(!s) return 0;
 
 	s->desc = kripto_stream_rc4i;
-	(void)rc4i_change(s, key, key_len, iv, iv_len, r);
+	(void)rc4i_recreate(s, key, key_len, iv, iv_len, r);
 
 	return s;
 }
@@ -253,14 +253,14 @@ static void rc4_destroy(kripto_stream *s)
 /* RC4 */
 static const struct kripto_stream_desc rc4_desc =
 {
+	&rc4_create,
+	&rc4_recreate,
 	&rc4_crypt,
 	&rc4_crypt,
 	&rc4_prng,
-	&rc4_create,
-	&rc4_change,
 	&rc4_destroy,
 	256, /* max key */
-	256 /* max iv */
+	0 /* max iv */
 };
 
 kripto_stream_desc *const kripto_stream_rc4 = &rc4_desc;
@@ -268,11 +268,11 @@ kripto_stream_desc *const kripto_stream_rc4 = &rc4_desc;
 /* RC4i */
 static const struct kripto_stream_desc rc4i =
 {
+	&rc4i_create,
+	&rc4i_recreate,
 	&rc4_crypt,
 	&rc4_crypt,
 	&rc4_prng,
-	&rc4i_create,
-	&rc4i_change,
 	&rc4_destroy,
 	256, /* max key */
 	256 /* max iv */

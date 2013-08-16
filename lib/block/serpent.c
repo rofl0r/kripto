@@ -695,7 +695,7 @@ static void serpent_destroy(kripto_block *s)
 	free(s);
 }
 
-static kripto_block *serpent_change
+static kripto_block *serpent_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -721,10 +721,10 @@ static kripto_block *serpent_change
 
 static const struct kripto_block_desc serpent =
 {
+	&serpent_create,
+	&serpent_recreate,
 	&serpent_encrypt,
 	&serpent_decrypt,
-	&serpent_create,
-	&serpent_change,
 	&serpent_destroy,
 	16, /* block size */
 	32 /* max key */

@@ -169,7 +169,7 @@ static size_t chacha_prng
 	return i;
 }
 
-static void chacha_setup
+static kripto_stream *chacha_recreate
 (
 	kripto_stream *s,
 	const void *key,
@@ -252,6 +252,8 @@ static void chacha_setup
 	}
 
 	s->used = 64;
+
+	return s;
 }
 
 static kripto_stream *chacha_create
@@ -270,22 +272,7 @@ static kripto_stream *chacha_create
 
 	s->desc = kripto_stream_chacha;
 
-	chacha_setup(s, key, key_len, iv, iv_len, r);
-
-	return s;
-}
-
-static kripto_stream *chacha_change
-(
-	kripto_stream *s,
-	const void *key,
-	const unsigned int key_len,
-	const void *iv,
-	const unsigned int iv_len,
-	const unsigned int r
-)
-{
-	chacha_setup(s, key, key_len, iv, iv_len, r);
+	(void)chacha_recreate(s, key, key_len, iv, iv_len, r);
 
 	return s;
 }
@@ -298,11 +285,11 @@ static void chacha_destroy(kripto_stream *s)
 
 static const struct kripto_stream_desc chacha =
 {
+	&chacha_create,
+	&chacha_recreate,
 	&chacha_crypt,
 	&chacha_crypt,
 	&chacha_prng,
-	&chacha_create,
-	&chacha_change,
 	&chacha_destroy,
 	32, /* max key */
 	24 /* max iv */

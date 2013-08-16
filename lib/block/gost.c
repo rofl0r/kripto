@@ -308,7 +308,7 @@ static void gost_destroy(kripto_block *s)
 	free(s);
 }
 
-static kripto_block *gost_change
+static kripto_block *gost_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -334,10 +334,10 @@ static kripto_block *gost_change
 
 static const struct kripto_block_desc gost =
 {
+	&gost_create,
+	&gost_recreate,
 	&gost_encrypt,
 	&gost_decrypt,
-	&gost_create,
-	&gost_change,
 	&gost_destroy,
 	8, /* block size */
 	32 /* max key */

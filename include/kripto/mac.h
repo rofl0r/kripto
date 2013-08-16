@@ -31,14 +31,14 @@ extern kripto_mac *kripto_mac_recreate
 	const unsigned int out_len
 );
 
-extern void kripto_mac_update
+extern void kripto_mac_input
 (
 	kripto_mac *s,
 	const void *in,
 	const size_t len
 );
 
-extern void kripto_mac_finish
+extern void kripto_mac_tag
 (
 	kripto_mac *s,
 	void *out,

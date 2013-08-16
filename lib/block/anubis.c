@@ -763,7 +763,7 @@ static void anubis_destroy(kripto_block *s)
 	free(s);
 }
 
-static kripto_block *anubis_change
+static kripto_block *anubis_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -793,10 +793,10 @@ static kripto_block *anubis_change
 
 static const struct kripto_block_desc anubis =
 {
+	&anubis_create,
+	&anubis_recreate,
 	&anubis_encrypt,
 	&anubis_decrypt,
-	&anubis_create,
-	&anubis_change,
 	&anubis_destroy,
 	16, /* block size */
 	40 /* max key */

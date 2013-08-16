@@ -199,7 +199,7 @@ static kripto_block *noekeon_create
 	return s;
 }
 
-static kripto_block *noekeon_change
+static kripto_block *noekeon_recreate
 (
 	kripto_block *s,
 	const void *key,
@@ -221,10 +221,10 @@ static void noekeon_destroy(kripto_block *s)
 
 static const struct kripto_block_desc noekeon =
 {
+	&noekeon_create,
+	&noekeon_recreate,
 	&noekeon_encrypt,
 	&noekeon_decrypt,
-	&noekeon_create,
-	&noekeon_change,
 	&noekeon_destroy,
 	16, /* block size */
 	16 /* max key */
