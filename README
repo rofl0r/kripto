@@ -28,6 +28,8 @@ Block ciphers:
  - Blowfish
  - GOST
  - PRESENT*?
+ - 3way*?
+ - BaseKing*?
  - XTEA
  - Skipjack*?
  - Speck*?
@@ -46,12 +48,15 @@ Block ciphers:
 Modes:
  - CTR
  - CBC
- - CFB*
+ - CFB
  - CFB8*
  - CFB1*
  - OFB
  - ECB
  - TBC*?
+ - XTS*?
+ - LRW*?
+ - F8*?
 
 Authenticated modes:
  - EAX*
