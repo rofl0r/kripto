@@ -28,10 +28,11 @@
 struct kripto_hash
 {
 	kripto_hash_desc *hash;
+	uint64_t len;
 	uint32_t h[5];
 	uint8_t buf[64];
-	unsigned int n;
-	uint64_t len;
+	unsigned int i;
+	int o;
 };
 
 #define F0(X, Y, Z) (Z ^ (X & (Y ^ Z)))
@@ -71,7 +72,7 @@ static kripto_hash *sha1_recreate
 {
 	(void)r;
 	(void)len;
-	s->len = s->n = 0;
+	s->len = s->o = s->i = 0;
 
 	s->h[0] = 0x67452301;
 	s->h[1] = 0xEFCDAB89;
@@ -171,27 +172,27 @@ static void sha1_input
 
 	for(i = 0; i < len; i++)
 	{
-		s->buf[s->n++] = CU8(in)[i];
+		s->buf[s->i++] = CU8(in)[i];
 
-		if(s->n == 64)
+		if(s->i == 64)
 		{
 			sha1_process(s, s->buf);
-			s->n = 0;
+			s->i = 0;
 		}
 	}
 }
 
 static void sha1_finish(kripto_hash *s)
 {
-	s->buf[s->n++] = 0x80; /* pad */
+	s->buf[s->i++] = 0x80; /* pad */
 
-	if(s->n > 56) /* not enough space for length */
+	if(s->i > 56) /* not enough space for length */
 	{
-		while(s->n < 64) s->buf[s->n++] = 0;
+		while(s->i < 64) s->buf[s->i++] = 0;
 		sha1_process(s, s->buf);
-		s->n = 0;
+		s->i = 0;
 	}
-	while(s->n < 56) s->buf[s->n++] = 0;
+	while(s->i < 56) s->buf[s->i++] = 0;
 
 	/* add length */
 	//s->len << 3;
@@ -199,16 +200,19 @@ static void sha1_finish(kripto_hash *s)
 
 	sha1_process(s, s->buf);
 
-	s->n = 0;
+	s->i = 0;
+	s->o = -1;
 }
 
 static void sha1_output(kripto_hash *s, void *out, const size_t len)
 {
 	unsigned int i;
 
+	if(!s->o) sha1_finish(s);
+
 	/* big endian */
-	for(i = 0; i < len; s->n++, i++)
-		U8(out)[i] = s->h[s->n >> 2] >> (24 - ((s->n & 3) << 3));
+	for(i = 0; i < len; s->i++, i++)
+		U8(out)[i] = s->h[s->i >> 2] >> (24 - ((s->i & 3) << 3));
 }
 
 static kripto_hash *sha1_create
@@ -248,7 +252,6 @@ static int sha1_hash
 
 	(void)sha1_recreate(&s, out_len, r);
 	sha1_input(&s, in, in_len);
-	sha1_finish(&s);
 	sha1_output(&s, out, out_len);
 
 	kripto_memwipe(&s, sizeof(kripto_hash));
@@ -258,11 +261,10 @@ static int sha1_hash
 
 static const struct kripto_hash_desc sha1 =
 {
+	&sha1_create,
 	&sha1_recreate,
 	&sha1_input,
-	&sha1_finish,
 	&sha1_output,
-	&sha1_create,
 	&sha1_destroy,
 	&sha1_hash,
 	20, /* max output */

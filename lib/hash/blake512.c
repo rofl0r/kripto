@@ -33,8 +33,8 @@ struct kripto_hash
 	/* uint64_t s[4]; */
 	uint64_t len[2];
 	uint8_t buf[128];
-	unsigned int n;
-	unsigned int out;
+	unsigned int i;
+	unsigned int o; /* output length, 0 after finish */
 };
 
 static const uint8_t sigma[10][16] =
@@ -70,8 +70,8 @@ static kripto_hash *blake512_recreate
 	const unsigned int r
 )
 {
-	s->len[0] = s->len[1] = s->n = 0;
-	s->out = len;
+	s->len[0] = s->len[1] = s->i = 0;
+	s->o = len;
 
 	s->r = r;
 	if(!s->r) s->r = 16;
@@ -211,9 +211,9 @@ static void blake512_input
 
 	for(i = 0; i < len; i++)
 	{
-		s->buf[s->n++] = CU8(in)[i];
+		s->buf[s->i++] = CU8(in)[i];
 
-		if(s->n == 128)
+		if(s->i == 128)
 		{
 			s->len[0] += 1024;
 			if(!s->len[0])
@@ -223,47 +223,50 @@ static void blake512_input
 			}
 
 			blake512_process(s, s->buf);
-			s->n = 0;
+			s->i = 0;
 		}
 	}
 }
 
 static void blake512_finish(kripto_hash *s)
 {
-	s->len[0] += s->n << 3;
-	if(s->len[0] < (s->n << 3)) s->len[1]++;
+	s->len[0] += s->i << 3;
+	if(s->len[0] < (s->i << 3)) s->len[1]++;
 
 	/* pad */
-	s->buf[s->n++] = 0x80;
+	s->buf[s->i++] = 0x80;
 
-	if(s->n > 112) /* not enough space for length */
+	if(s->i > 112) /* not enough space for length */
 	{
-		while(s->n < 128) s->buf[s->n++] = 0;
+		while(s->i < 128) s->buf[s->i++] = 0;
 		blake512_process(s, s->buf);
-		s->n = 0;
+		s->i = 0;
 	}
 
-	while(s->n < 112) s->buf[s->n++] = 0;
-	if(s->out > 48) s->buf[111] ^= 0x01; /* 512 */
+	while(s->i < 112) s->buf[s->i++] = 0;
+
+	if(s->o > 48) s->buf[111] ^= 0x01; /* 512 */
 
 	/* add length */
 	U64TO8_BE(s->len[1], s->buf + 112);
 	U64TO8_BE(s->len[0], s->buf + 120);
 
-	if(!s->n) s->len[0] = s->len[1] = 0;
+	if(!s->i) s->len[0] = s->len[1] = 0;
 
 	blake512_process(s, s->buf);
 
-	s->n = 0;
+	s->o = s->i = 0;
 }
 
 static void blake512_output(kripto_hash *s, void *out, const size_t len)
 {
 	unsigned int i;
 
+	if(s->o) blake512_finish(s);
+
 	/* big endian */
-	for(i = 0; i < len; s->n++, i++)
-		U8(out)[i] = s->h[s->n >> 3] >> (56 - ((s->n & 7) << 3));
+	for(i = 0; i < len; s->i++, i++)
+		U8(out)[i] = s->h[s->i >> 3] >> (56 - ((s->i & 7) << 3));
 }
 
 static kripto_hash *blake512_create
@@ -303,7 +306,6 @@ static int blake512_hash
 
 	(void)blake512_recreate(&s, out_len, r);
 	blake512_input(&s, in, in_len);
-	blake512_finish(&s);
 	blake512_output(&s, out, out_len);
 
 	kripto_memwipe(&s, sizeof(kripto_hash));
@@ -313,11 +315,10 @@ static int blake512_hash
 
 static const struct kripto_hash_desc blake512 =
 {
+	&blake512_create,
 	&blake512_recreate,
 	&blake512_input,
-	&blake512_finish,
 	&blake512_output,
-	&blake512_create,
 	&blake512_destroy,
 	&blake512_hash,
 	64, /* max output */

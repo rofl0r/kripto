@@ -30,7 +30,8 @@ struct kripto_hash
 	kripto_hash_desc *hash;
 	unsigned int r;
 	unsigned int rate;
-	unsigned int n;
+	unsigned int i;
+	int o;
 	uint8_t s[100];
 };
 
@@ -276,13 +277,12 @@ static kripto_hash *keccak800_recreate
 	const unsigned int r
 )
 {
-	s->n = 0;
+	s->o = s->i = 0;
 
 	s->r = r;
 	if(!s->r) s->r = 20;
 
-	if(len > 32) s->rate = 36;
-	else s->rate = 100 - (len << 1);
+	s->rate = 100 - (len << 1);
 
 	memset(s->s, 0, 200);
 
@@ -298,42 +298,49 @@ static void keccak800_input
 {
 	size_t i;
 
+	/* switch back to input mode */
+	if(s->o) s->o = s->i = 0;
+
+	/* input */
 	for(i = 0; i < len; i++)
 	{
-		s->s[s->n++] ^= CU8(in)[i];
+		s->s[s->i++] ^= CU8(in)[i];
 
-		if(s->n == s->rate)
+		if(s->i == s->rate)
 		{
 			keccak800_F(s);
-			s->n = 0;
+			s->i = 0;
 		}
 	}
-}
-
-static void keccak800_finish(kripto_hash *s)
-{
-	/* pad */
-	s->s[s->n] ^= 0x01;
-	s->s[s->rate - 1] ^= 0x80;
-
-	keccak800_F(s);
-
-	s->n = 0;
 }
 
 static void keccak800_output(kripto_hash *s, void *out, const size_t len)
 {
 	size_t i;
 
+	/* switch to output mode */
+	if(!s->o)
+	{
+		/* pad */
+		s->s[s->i] ^= 0x01;
+		s->s[s->rate - 1] ^= 0x80;
+
+		keccak800_F(s);
+
+		s->i = 0;
+		s->o = -1;
+	}
+
+	/* output */
 	for(i = 0; i < len; i++)
 	{
-		if(s->n == s->rate)
+		if(s->i == s->rate)
 		{
 			keccak800_F(s);
-			s->n = 0;
+			s->i = 0;
 		}
 
-		U8(out)[i] = s->s[s->n++];
+		U8(out)[i] = s->s[s->i++];
 	}
 }
 
@@ -374,7 +381,6 @@ static int keccak800_hash
 
 	(void)keccak800_recreate(&s, out_len, r);
 	keccak800_input(&s, in, in_len);
-	keccak800_finish(&s);
 	keccak800_output(&s, out, out_len);
 
 	kripto_memwipe(&s, sizeof(kripto_hash));
@@ -384,11 +390,10 @@ static int keccak800_hash
 
 static const struct kripto_hash_desc keccak800 =
 {
+	&keccak800_create,
 	&keccak800_recreate,
 	&keccak800_input,
-	&keccak800_finish,
 	&keccak800_output,
-	&keccak800_create,
 	&keccak800_destroy,
 	&keccak800_hash,
 	SIZE_MAX, /* max output */

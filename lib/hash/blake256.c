@@ -33,8 +33,8 @@ struct kripto_hash
 	/* uint32_t s[4]; */
 	uint32_t len[2];
 	uint8_t buf[64];
-	unsigned int n;
-	unsigned int out;
+	unsigned int i;
+	unsigned int o; /* output length, 0 after finish */
 };
 
 static const uint8_t sigma[10][16] =
@@ -69,8 +69,8 @@ static kripto_hash *blake256_recreate
 	s->r = r;
 	if(!s->r) s->r = 14;
 
-	s->len[0] = s->len[1] = s->n = 0;
-	s->out = len;
+	s->len[0] = s->len[1] = s->i = 0;
+	s->o = len;
 
 	if(len > 28)
 	{
@@ -207,9 +207,9 @@ static void blake256_input
 
 	for(i = 0; i < len; i++)
 	{
-		s->buf[s->n++] = CU8(in)[i];
+		s->buf[s->i++] = CU8(in)[i];
 
-		if(s->n == 64)
+		if(s->i == 64)
 		{
 			s->len[0] += 512;
 			if(!s->len[0])
@@ -219,47 +219,50 @@ static void blake256_input
 			}
 
 			blake256_process(s, s->buf);
-			s->n = 0;
+			s->i = 0;
 		}
 	}
 }
 
 static void blake256_finish(kripto_hash *s)
 {
-	s->len[0] += s->n << 3;
-	if(s->len[0] < (s->n << 3)) s->len[1]++;
+	s->len[0] += s->i << 3;
+	if(s->len[0] < (s->i << 3)) s->len[1]++;
 
 	/* pad */
-	s->buf[s->n++] = 0x80;
+	s->buf[s->i++] = 0x80;
 
-	if(s->n > 56) /* not enough space for length */
+	if(s->i > 56) /* not enough space for length */
 	{
-		while(s->n < 64) s->buf[s->n++] = 0;
+		while(s->i < 64) s->buf[s->i++] = 0;
 		blake256_process(s, s->buf);
-		s->n = 0;
+		s->i = 0;
 	}
 
-	while(s->n < 56) s->buf[s->n++] = 0;
-	if(s->out > 28) s->buf[55] ^= 0x01; /* 256 */
+	while(s->i < 56) s->buf[s->i++] = 0;
+
+	if(s->o > 28) s->buf[55] ^= 0x01; /* 256 */
 
 	/* add length */
 	U32TO8_BE(s->len[1], s->buf + 56);
 	U32TO8_BE(s->len[0], s->buf + 60);
 
-	if(!s->n) s->len[0] = s->len[1] = 0;
+	if(!s->i) s->len[0] = s->len[1] = 0;
 
 	blake256_process(s, s->buf);
 
-	s->n = 0;
+	s->o = s->i = 0;
 }
 
 static void blake256_output(kripto_hash *s, void *out, const size_t len)
 {
 	unsigned int i;
 
+	if(s->o) blake256_finish(s);
+
 	/* big endian */
-	for(i = 0; i < len; s->n++, i++)
-		U8(out)[i] = s->h[s->n >> 2] >> (24 - ((s->n & 3) << 3));
+	for(i = 0; i < len; s->i++, i++)
+		U8(out)[i] = s->h[s->i >> 2] >> (24 - ((s->i & 3) << 3));
 }
 
 static kripto_hash *blake256_create
@@ -299,7 +302,6 @@ static int blake256_hash
 
 	(void)blake256_recreate(&s, out_len, r);
 	blake256_input(&s, in, in_len);
-	blake256_finish(&s);
 	blake256_output(&s, out, out_len);
 
 	kripto_memwipe(&s, sizeof(kripto_hash));
@@ -309,11 +311,10 @@ static int blake256_hash
 
 static const struct kripto_hash_desc blake256 =
 {
+	&blake256_create,
 	&blake256_recreate,
 	&blake256_input,
-	&blake256_finish,
 	&blake256_output,
-	&blake256_create,
 	&blake256_destroy,
 	&blake256_hash,
 	32, /* max output */

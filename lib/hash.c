@@ -61,15 +61,6 @@ void kripto_hash_input(kripto_hash *s, const void *in, const size_t len)
 	s->hash->input(s, in, len);
 }
 
-void kripto_hash_finish(kripto_hash *s)
-{
-	assert(s);
-	assert(s->hash);
-	assert(s->hash->finish);
-
-	s->hash->finish(s);
-}
-
 void kripto_hash_output(kripto_hash *s, void *out, const size_t len)
 {
 	assert(s);

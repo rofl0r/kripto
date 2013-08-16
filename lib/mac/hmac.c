@@ -171,13 +171,11 @@ static void hmac_finish(kripto_mac *s, void *out, const size_t len)
 	for(i = 0; i < s->blocksize; i++)
 		s->key[i] ^= 0x6A; /* 0x5C ^ 0x36 */
 
-	kripto_hash_finish(s->hash);
 	kripto_hash_output(s->hash, out, len);
 
 	kripto_hash_recreate(s->hash, len, s->r);
 	kripto_hash_input(s->hash, s->key, i);
 	kripto_hash_input(s->hash, out, len);
-	kripto_hash_finish(s->hash);
 	kripto_hash_output(s->hash, out, len);
 }
 

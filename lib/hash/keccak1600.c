@@ -30,7 +30,8 @@ struct kripto_hash
 	kripto_hash_desc *hash;
 	unsigned int r;
 	unsigned int rate;
-	unsigned int n;
+	unsigned int i;
+	int o;
 	uint8_t s[200];
 };
 
@@ -290,13 +291,12 @@ static kripto_hash *keccak1600_recreate
 	const unsigned int r
 )
 {
-	s->n = 0;
+	s->o = s->i = 0;
 
 	s->r = r;
 	if(!s->r) s->r = 24;
 
-	if(len > 64) s->rate = 72;
-	else s->rate = 200 - (len << 1);
+	s->rate = 200 - (len << 1);
 
 	memset(s->s, 0, 200);
 
@@ -312,27 +312,20 @@ static void keccak1600_input
 {
 	size_t i;
 
+	/* switch back to input mode */
+	if(s->o) s->o = s->i = 0;
+
+	/* input */
 	for(i = 0; i < len; i++)
 	{
-		s->s[s->n++] ^= CU8(in)[i];
+		s->s[s->i++] ^= CU8(in)[i];
 
-		if(s->n == s->rate)
+		if(s->i == s->rate)
 		{
 			keccak1600_F(s);
-			s->n = 0;
+			s->i = 0;
 		}
 	}
-}
-
-static void keccak1600_finish(kripto_hash *s)
-{
-	/* pad */
-	s->s[s->n] ^= 0x01;
-	s->s[s->rate - 1] ^= 0x80;
-
-	keccak1600_F(s);
-
-	s->n = 0;
 }
 
 static void keccak1600_output
@@ -344,15 +337,29 @@ static void keccak1600_output
 {
 	size_t i;
 
+	/* switch to output mode */
+	if(!s->o)
+	{
+		/* pad */
+		s->s[s->i] ^= 0x01;
+		s->s[s->rate - 1] ^= 0x80;
+
+		keccak1600_F(s);
+
+		s->i = 0;
+		s->o = -1;
+	}
+
+	/* output */
 	for(i = 0; i < len; i++)
 	{
-		if(s->n == s->rate)
+		if(s->i == s->rate)
 		{
 			keccak1600_F(s);
-			s->n = 0;
+			s->i = 0;
 		}
 
-		U8(out)[i] = s->s[s->n++];
+		U8(out)[i] = s->s[s->i++];
 	}
 }
 
@@ -376,7 +383,7 @@ static kripto_hash *keccak1600_create
 
 static void keccak1600_destroy(kripto_hash *s) 
 {
-	kripto_memwipe(s, sizeof(struct kripto_hash));
+	kripto_memwipe(s, sizeof(kripto_hash));
 	free(s);
 }
 
@@ -393,7 +400,6 @@ static int keccak1600_hash
 
 	(void)keccak1600_recreate(&s, out_len, r);
 	keccak1600_input(&s, in, in_len);
-	keccak1600_finish(&s);
 	keccak1600_output(&s, out, out_len);
 
 	kripto_memwipe(&s, sizeof(kripto_hash));
@@ -403,11 +409,10 @@ static int keccak1600_hash
 
 static const struct kripto_hash_desc keccak1600 =
 {
+	&keccak1600_create,
 	&keccak1600_recreate,
 	&keccak1600_input,
-	&keccak1600_finish,
 	&keccak1600_output,
-	&keccak1600_create,
 	&keccak1600_destroy,
 	&keccak1600_hash,
 	SIZE_MAX, /* max output */

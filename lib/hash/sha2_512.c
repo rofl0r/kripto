@@ -28,11 +28,12 @@
 struct kripto_hash
 {
 	kripto_hash_desc *hash;
-	unsigned int r;
 	uint64_t h[8];
-	uint8_t buf[128];
-	unsigned int n;
 	uint64_t len[2];
+	uint8_t buf[128];
+	unsigned int r;
+	unsigned int i;
+	int o;
 };
 
 #define CH(X0, X1, X2) (X2 ^ (X0 & (X1 ^ X2)))
@@ -135,7 +136,7 @@ static kripto_hash *sha2_512_recreate
 	const unsigned int r
 )
 {
-	s->len[1] = s->len[0] = s->n = 0;
+	s->len[1] = s->len[0] = s->o = s->i = 0;
 
 	s->r = r;
 	if(!s->r) s->r = 80;
@@ -246,27 +247,27 @@ static void sha2_512_input
 
 	for(i = 0; i < len; i++)
 	{
-		s->buf[s->n++] = CU8(in)[i];
+		s->buf[s->i++] = CU8(in)[i];
 
-		if(s->n == 128)
+		if(s->i == 128)
 		{
 			sha2_512_process(s, s->buf);
-			s->n = 0;
+			s->i = 0;
 		}
 	}
 }
 
 static void sha2_512_finish(kripto_hash *s)
 {
-	s->buf[s->n++] = 0x80; /* pad */
+	s->buf[s->i++] = 0x80; /* pad */
 
-	if(s->n > 112) /* not enough space for length */
+	if(s->i > 112) /* not enough space for length */
 	{
-		while(s->n < 128) s->buf[s->n++] = 0;
+		while(s->i < 128) s->buf[s->i++] = 0;
 		sha2_512_process(s, s->buf);
-		s->n = 0;
+		s->i = 0;
 	}
-	while(s->n < 112) s->buf[s->n++] = 0;
+	while(s->i < 112) s->buf[s->i++] = 0;
 
 	/* add length */
 	U64TO8_BE(s->len[1], s->buf + 112);
@@ -274,16 +275,19 @@ static void sha2_512_finish(kripto_hash *s)
 
 	sha2_512_process(s, s->buf);
 
-	s->n = 0;
+	s->i = 0;
+	s->o = -1;
 }
 
 static void sha2_512_output(kripto_hash *s, void *out, const size_t len)
 {
 	unsigned int i;
 
+	if(!s->o) sha2_512_finish(s);
+
 	/* big endian */
-	for(i = 0; i < len; s->n++, i++)
-		U8(out)[i] = s->h[s->n >> 3] >> (56 - ((s->n & 7) << 3));
+	for(i = 0; i < len; s->i++, i++)
+		U8(out)[i] = s->h[s->i >> 3] >> (56 - ((s->i & 7) << 3));
 }
 
 static kripto_hash *sha2_512_create
@@ -323,7 +327,6 @@ static int sha2_512_hash
 
 	(void)sha2_512_recreate(&s, out_len, r);
 	sha2_512_input(&s, in, in_len);
-	sha2_512_finish(&s);
 	sha2_512_output(&s, out, out_len);
 
 	kripto_memwipe(&s, sizeof(kripto_hash));
@@ -333,11 +336,10 @@ static int sha2_512_hash
 
 static const struct kripto_hash_desc sha2_512 =
 {
+	&sha2_512_create,
 	&sha2_512_recreate,
 	&sha2_512_input,
-	&sha2_512_finish,
 	&sha2_512_output,
-	&sha2_512_create,
 	&sha2_512_destroy,
 	&sha2_512_hash,
 	64, /* max output */

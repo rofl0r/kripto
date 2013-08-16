@@ -32,8 +32,6 @@ extern void kripto_hash_input
 	const size_t len
 );
 
-extern void kripto_hash_finish(kripto_hash *s);
-
 extern void kripto_hash_output
 (
 	kripto_hash *s,

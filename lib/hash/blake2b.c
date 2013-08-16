@@ -33,7 +33,7 @@ struct kripto_hash
 	uint64_t len[2];
 	uint64_t f;
 	uint8_t buf[128];
-	unsigned int n;
+	unsigned int i;
 };
 
 static const uint8_t sigma[10][16] =
@@ -68,7 +68,7 @@ static kripto_hash *blake2b_recreate
 	s->r = r;
 	if(!s->r) s->r = 12;
 
-	s->f = s->len[0] = s->len[1] = s->n = 0;
+	s->f = s->len[0] = s->len[1] = s->i = 0;
 
 	/* s->h[0] = iv[0] ^ 0x0000000001010040; */
 	s->h[0] = iv[0] ^ 0x0000000001010000 ^ (uint8_t)len;
@@ -190,7 +190,7 @@ static void blake2b_input
 
 	for(i = 0; i < len; i++)
 	{
-		if(s->n == 128)
+		if(s->i == 128)
 		{
 			s->len[0] += 128;
 			if(!s->len[0])
@@ -200,36 +200,38 @@ static void blake2b_input
 			}
 
 			blake2b_process(s, s->buf);
-			s->n = 0;
+			s->i = 0;
 		}
 
-		s->buf[s->n++] = CU8(in)[i];
+		s->buf[s->i++] = CU8(in)[i];
 	}
 }
 
 static void blake2b_finish(kripto_hash *s)
 {
-	s->len[0] += s->n;
-	if(s->len[0] < s->n) s->len[1]++;
+	s->len[0] += s->i;
+	if(s->len[0] < s->i) s->len[1]++;
 
-	while(s->n < 128) s->buf[s->n++] = 0;
+	while(s->i < 128) s->buf[s->i++] = 0;
 
 	s->f = 0xFFFFFFFFFFFFFFFF;
 
 	blake2b_process(s, s->buf);
 
-	s->n = 0;
+	s->i = 0;
 }
 
 static void blake2b_output(kripto_hash *s, void *out, const size_t len)
 {
 	unsigned int i;
 
+	if(!s->f) blake2b_finish(s);
+
 	/* little endian */
-	for(i = 0; i < len; s->n++, i++)
+	for(i = 0; i < len; s->i++, i++)
 	{
-		U8(out)[i] = s->h[s->n >> 3];
-		s->h[s->n >> 3] >>= 8;
+		U8(out)[i] = s->h[s->i >> 3];
+		s->h[s->i >> 3] >>= 8;
 	}
 }
 
@@ -270,7 +272,6 @@ static int blake2b_hash
 
 	(void)blake2b_recreate(&s, out_len, r);
 	blake2b_input(&s, in, in_len);
-	blake2b_finish(&s);
 	blake2b_output(&s, out, out_len);
 
 	kripto_memwipe(&s, sizeof(kripto_hash));
@@ -280,11 +281,10 @@ static int blake2b_hash
 
 static const struct kripto_hash_desc blake2b =
 {
+	&blake2b_create,
 	&blake2b_recreate,
 	&blake2b_input,
-	&blake2b_finish,
 	&blake2b_output,
-	&blake2b_create,
 	&blake2b_destroy,
 	&blake2b_hash,
 	64, /* max output */
