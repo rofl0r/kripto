@@ -30,8 +30,8 @@ struct kripto_stream
 {
 	kripto_stream_desc *desc;
 	const kripto_block *block;
-	unsigned int block_size;
 	uint8_t *prev;
+	unsigned int block_size;
 	unsigned int used;
 };
 

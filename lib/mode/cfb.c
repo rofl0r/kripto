@@ -30,8 +30,9 @@ struct kripto_stream
 {
 	kripto_stream_desc *desc;
 	const kripto_block *block;
+	uint8_t *prev;
 	unsigned int block_size;
-	uint8_t *iv;
+	unsigned int used;
 };
 
 static size_t cfb_encrypt
@@ -43,17 +44,16 @@ static size_t cfb_encrypt
 )
 {
 	size_t i;
-	unsigned int n;
 
-	for(i = 0; i < len; i += n)
+	for(i = 0; i < len; i++)
 	{
-		kripto_block_encrypt(s->block, s->iv, ct);
+		if(s->used == s->block_size)
+		{
+			kripto_block_encrypt(s->block, s->prev, s->prev);
+			s->used = 0;
+		}
 
-		for(n = 0; n < s->block_size; n++)
-			s->iv[n] = U8(ct)[n] ^= CU8(pt)[n];
-
-		CPTR_INC(pt, n);
-		PTR_INC(ct, n);
+		U8(ct)[i] = s->prev[s->used++] ^= CU8(pt)[i];
 	}
 
 	return i;
@@ -68,20 +68,17 @@ static size_t cfb_decrypt
 )
 {
 	size_t i;
-	unsigned int n;
 
-	for(i = 0; i < len; i += n)
+	for(i = 0; i < len; i++)
 	{
-		kripto_block_encrypt(s->block, s->iv, pt);
-
-		for(n = 0; n < s->block_size; n++)
+		if(s->used == s->block_size)
 		{
-			U8(pt)[n] ^= CU8(ct)[n];
-			s->iv[n] = CU8(ct)[n];
+			kripto_block_encrypt(s->block, s->prev, pt);
+			s->used = 0;
 		}
 
-		CPTR_INC(ct, n);
-		PTR_INC(pt, n);
+		U8(pt)[i] ^= CU8(ct)[i];
+		s->prev[s->used++] = CU8(ct)[i];
 	}
 
 	return i;
@@ -95,16 +92,16 @@ static size_t cfb_prng
 )
 {
 	size_t i;
-	unsigned int n;
 
-	for(i = 0; i < len; i += n)
+	for(i = 0; i < len; i++)
 	{
-		kripto_block_encrypt(s->block, s->iv, out);
+		if(s->used == s->block_size)
+		{
+			kripto_block_encrypt(s->block, s->prev, s->prev);
+			s->used = 0;
+		}
 
-		for(n = 0; n < s->block_size; n++)
-			s->iv[n] = U8(out)[n];
-
-		PTR_INC(out, n);
+		U8(out)[i] = s->prev[s->used++];
 	}
 
 	return i;
@@ -144,7 +141,7 @@ static kripto_stream *cfb_create
 	stream = (struct kripto_stream_desc *)
 		((uint8_t *)s + sizeof(kripto_stream));
 
-	s->iv = (uint8_t *)stream + sizeof(kripto_stream_desc);
+	s->prev = (uint8_t *)stream + sizeof(kripto_stream_desc);
 
 	stream->encrypt = &cfb_encrypt;
 	stream->decrypt = &cfb_decrypt;
@@ -156,8 +153,8 @@ static kripto_stream *cfb_create
 
 	s->desc = stream;
 
-	if(iv_len) memcpy(s->iv, iv, iv_len);
-	memset(s->iv + iv_len, 0, s->block_size - iv_len);
+	if(iv_len) memcpy(s->prev, iv, iv_len);
+	memset(s->prev + iv_len, 0, s->block_size - iv_len);
 
 	s->block = block;
 
