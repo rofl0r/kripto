@@ -15,7 +15,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-#include <assert.h>
 
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
@@ -46,9 +45,6 @@ static size_t ofb_crypt
 {
 	size_t i;
 
-	assert(in);
-	assert(out);
-
 	for(i = 0; i < len; i++)
 	{
 		if(s->used == s->block_size)
@@ -72,8 +68,6 @@ static size_t ofb_prng
 {
 	size_t i;
 
-	assert(out);
-
 	for(i = 0; i < len; i++)
 	{
 		if(s->used == s->block_size)
@@ -94,6 +88,7 @@ static void ofb_destroy(kripto_stream *s)
 		+ sizeof(struct kripto_stream_desc)
 		+ s->block_size
 	);
+
 	free(s);
 }
 
@@ -108,11 +103,7 @@ static kripto_stream *ofb_create
 	kripto_block_desc *b;
 	struct kripto_stream_desc *stream;
 
-	assert(block);
-
 	b = kripto_block_get_desc(block);
-
-	assert(iv_len > kripto_block_size(b));
 
 	s = malloc(sizeof(struct kripto_stream)
 		+ sizeof(struct kripto_stream_desc)

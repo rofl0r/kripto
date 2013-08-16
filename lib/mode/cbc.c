@@ -15,7 +15,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-#include <assert.h>
 
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
@@ -47,11 +46,6 @@ static size_t cbc_encrypt
 	size_t i;
 	unsigned int n;
 
-	assert(pt);
-	assert(ct);
-
-	if(len & (s->block_size - 1)) return 0;
-
 	for(i = 0; i < len; i += n)
 	{
 		for(n = 0; n < s->block_size; n++)
@@ -80,11 +74,6 @@ static size_t cbc_decrypt
 	size_t i;
 	unsigned int n;
 
-	assert(ct);
-	assert(pt);
-
-	if(len & (s->block_size - 1)) return 0;
-
 	for(i = 0; i < len; i += n)
 	{
 		for(n = 0; n < s->block_size; n++)
@@ -105,28 +94,13 @@ static size_t cbc_decrypt
 	return i;
 }
 
-static size_t cbc_prng
-(
-	kripto_stream *s,
-	void *out,
-	const size_t len
-)
-{
-	(void)s;
-	(void)out;
-	(void)len;
-
-	assert(1);
-
-	return 0;
-}
-
 static void cbc_destroy(kripto_stream *s)
 {
-	kripto_memwipe(s, sizeof(struct kripto_stream)
+	kripto_memwipe(s, sizeof(kripto_stream)
 		+ (s->block_size << 1)
-		+ sizeof(struct kripto_stream_desc)
+		+ sizeof(kripto_stream_desc)
 	);
+
 	free(s);
 }
 
@@ -141,29 +115,25 @@ static kripto_stream *cbc_create
 	kripto_block_desc *b;
 	struct kripto_stream_desc *stream;
 
-	assert(block);
-
 	b = kripto_block_get_desc(block);
 
-	assert(iv_len > kripto_block_size(b));
-
-	s = malloc(sizeof(struct kripto_stream)
+	s = malloc(sizeof(kripto_stream)
 		+ (kripto_block_size(b) << 1)
-		+ sizeof(struct kripto_stream_desc)
+		+ sizeof(kripto_stream_desc)
 	);
 	if(!s) return 0;
 
 	s->block_size = kripto_block_size(b);
 
 	stream = (struct kripto_stream_desc *)
-		((uint8_t *)s + sizeof(struct kripto_stream));
+		((uint8_t *)s + sizeof(kripto_stream));
 
-	s->iv = (uint8_t *)stream + sizeof(struct kripto_stream_desc);
+	s->iv = (uint8_t *)stream + sizeof(kripto_stream_desc);
 	s->buf = s->iv + s->block_size;
 
 	stream->encrypt = &cbc_encrypt;
 	stream->decrypt = &cbc_decrypt;
-	stream->prng = &cbc_prng;
+	stream->prng = 0;
 	stream->create = 0;
 	stream->destroy = &cbc_destroy;
 	stream->max_key = kripto_block_max_key(b);

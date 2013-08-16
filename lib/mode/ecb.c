@@ -15,7 +15,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-#include <assert.h>
 
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
@@ -44,8 +43,6 @@ static size_t ecb_encrypt
 {
 	size_t i;
 
-	if(len & (s->block_size - 1)) return 0;
-
 	for(i = 0; i < len; i += s->block_size)
 		kripto_block_encrypt(s->block, CU8(pt) + i, U8(ct) + i);
 
@@ -62,8 +59,6 @@ static size_t ecb_decrypt
 {
 	size_t i;
 
-	if(len & (s->block_size - 1)) return 0;
-
 	for(i = 0; i < len; i += s->block_size)
 		kripto_block_decrypt(s->block, CU8(ct) + i, U8(pt) + i);
 
@@ -76,6 +71,7 @@ static void ecb_destroy(kripto_stream *s)
 		+ s->block_size
 		+ sizeof(kripto_stream_desc)
 	);
+
 	free(s);
 }
 
@@ -99,8 +95,6 @@ static kripto_stream *ecb_create
 
 	(void)iv;
 	(void)iv_len;
-	assert(block);
-	assert(!iv_len);
 
 	b = kripto_block_get_desc(block);
 
