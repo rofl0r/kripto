@@ -15,23 +15,24 @@
 #include <assert.h>
 #include <stdint.h>
 
-#include <kripto/stream_desc.h>
+#include <kripto/authstream_desc.h>
 
-#include <kripto/stream.h>
+#include <kripto/authstream.h>
 
-struct kripto_stream
+struct kripto_authstream
 {
-	kripto_stream_desc *desc;
+	kripto_authstream_desc *desc;
 };
 
-kripto_stream *kripto_stream_create
+kripto_authstream *kripto_authstream_create
 (
-	kripto_stream_desc *desc,
+	kripto_authstream_desc *desc,
 	const void *key,
 	const unsigned int key_len,
 	const void *iv,
 	const unsigned int iv_len,
-	const unsigned int r
+	const unsigned int r,
+	const unsigned int tag_len
 )
 {
 	assert(desc);
@@ -39,20 +40,22 @@ kripto_stream *kripto_stream_create
 
 	assert(key);
 	assert(key_len);
-	assert(key_len <= kripto_stream_max_key(desc));
+	assert(key_len <= kripto_authstream_max_key(desc));
 	if(iv_len) assert(iv);
+	assert(tag_len <= kripto_authstream_max_tag(desc));
 
-	return desc->create(key, key_len, iv, iv_len, r);
+	return desc->create(key, key_len, iv, iv_len, r, tag_len);
 }
 
-kripto_stream *kripto_stream_recreate
+kripto_authstream *kripto_authstream_recreate
 (
-	kripto_stream *s,
+	kripto_authstream *s,
 	const void *key,
 	const unsigned int key_len,
 	const void *iv,
 	const unsigned int iv_len,
-	const unsigned int r
+	const unsigned int r,
+	const unsigned int tag_len
 )
 {
 	assert(s);
@@ -61,15 +64,16 @@ kripto_stream *kripto_stream_recreate
 
 	assert(key);
 	assert(key_len);
-	assert(key_len <= kripto_stream_max_key(s->desc));
+	assert(key_len <= kripto_authstream_max_key(s->desc));
 	if(iv_len) assert(iv);
+	assert(tag_len <= kripto_authstream_max_tag(s->desc));
 
-	return s->desc->recreate(s, key, key_len, iv, iv_len, r);
+	return s->desc->recreate(s, key, key_len, iv, iv_len, r, tag_len);
 }
 
-size_t kripto_stream_encrypt
+size_t kripto_authstream_encrypt
 (
-	kripto_stream *s,
+	kripto_authstream *s,
 	const void *pt,
 	void *ct,
 	const size_t len
@@ -82,9 +86,9 @@ size_t kripto_stream_encrypt
 	return s->desc->encrypt(s, pt, ct, len);
 }
 
-size_t kripto_stream_decrypt
+size_t kripto_authstream_decrypt
 (
-	kripto_stream *s,
+	kripto_authstream *s,
 	const void *ct,
 	void *pt,
 	const size_t len
@@ -97,21 +101,21 @@ size_t kripto_stream_decrypt
 	return s->desc->decrypt(s, ct, pt, len);
 }
 
-size_t kripto_stream_prng
+void kripto_authstream_tag
 (
-	kripto_stream *s,
-	void *out,
-	const size_t len
+	kripto_authstream *s,
+	void *tag,
+	const unsigned int len
 )
 {
 	assert(s);
 	assert(s->desc);
-	assert(s->desc->prng);
+	assert(s->desc->tag);
 
-	return s->desc->prng(s, out, len);
+	s->desc->tag(s, tag, len);
 }
 
-void kripto_stream_destroy(kripto_stream *s)
+void kripto_authstream_destroy(kripto_authstream *s)
 {
 	assert(s);
 	assert(s->desc);
@@ -120,7 +124,7 @@ void kripto_stream_destroy(kripto_stream *s)
 	s->desc->destroy(s);
 }
 
-unsigned int kripto_stream_max_key(kripto_stream_desc *desc)
+unsigned int kripto_authstream_max_key(kripto_authstream_desc *desc)
 {
 	assert(desc);
 	assert(desc->max_key);
@@ -128,9 +132,16 @@ unsigned int kripto_stream_max_key(kripto_stream_desc *desc)
 	return desc->max_key;
 }
 
-unsigned int kripto_stream_max_iv(kripto_stream_desc *desc)
+unsigned int kripto_authstream_max_iv(kripto_authstream_desc *desc)
 {
 	assert(desc);
 
 	return desc->max_iv;
+}
+
+unsigned int kripto_authstream_max_tag(kripto_authstream_desc *desc)
+{
+	assert(desc);
+
+	return desc->max_tag;
 }

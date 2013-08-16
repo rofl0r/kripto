@@ -48,7 +48,7 @@ int kripto_pbkdf2
 	assert(mac_desc);
 	assert(iter);
 
-	x = kripto_mac_max_output(mac_desc, f);
+	x = kripto_mac_max_tag(mac_desc, f);
 	if(out_len < x) x = out_len;
 
 	buf0 = malloc(x << 1);

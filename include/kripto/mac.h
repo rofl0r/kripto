@@ -18,7 +18,7 @@ extern kripto_mac *kripto_mac_create
 	const unsigned int r,
 	const void *key,
 	const unsigned int key_len,
-	const unsigned int out_len
+	const unsigned int tag_len
 );
 
 extern kripto_mac *kripto_mac_recreate
@@ -28,7 +28,7 @@ extern kripto_mac *kripto_mac_recreate
 	const unsigned int r,
 	const void *key,
 	const unsigned int key_len,
-	const unsigned int out_len
+	const unsigned int tag_len
 );
 
 extern void kripto_mac_input
@@ -41,8 +41,8 @@ extern void kripto_mac_input
 extern void kripto_mac_tag
 (
 	kripto_mac *s,
-	void *out,
-	const size_t len
+	void *tag,
+	const unsigned int len
 );
 
 extern void kripto_mac_destroy(kripto_mac *s);
@@ -56,13 +56,13 @@ extern int kripto_mac_all
 	const unsigned int key_len,
 	const void *in,
 	const unsigned int in_len,
-	void *out,
-	const unsigned int out_len
+	void *tag,
+	const unsigned int tag_len
 );
 
 extern kripto_mac_desc *kripto_mac_get_desc(const kripto_mac *s);
 
-extern unsigned int kripto_mac_max_output
+extern unsigned int kripto_mac_max_tag
 (
 	kripto_mac_desc *s,
 	const void *f

@@ -15,37 +15,52 @@
 #include <assert.h>
 #include <stdint.h>
 
-#include <kripto/stream.h>
+#include <kripto/authstream.h>
 #include <kripto/block.h>
-#include <kripto/mode_desc.h>
+#include <kripto/authmode_desc.h>
 
-#include <kripto/mode.h>
+#include <kripto/authmode.h>
 
-kripto_stream *kripto_mode_create
+kripto_authstream *kripto_authmode_create
 (
-	kripto_mode_desc *mode,
+	kripto_authmode_desc *authmode,
 	const kripto_block *block,
 	const void *iv,
-	const unsigned int iv_len
+	const unsigned int iv_len,
+	const unsigned int tag_len
 )
 {
-	assert(mode);
+	assert(authmode);
 	assert(block);
-	assert(mode->create);
+	assert(authmode->create);
 	if(iv_len) assert(iv);
+	assert(tag_len <= kripto_authmode_max_tag(authmode, block));
 
-	return mode->create(block, iv, iv_len);
+	return authmode->create(block, iv, iv_len, tag_len);
 }
 
-unsigned int kripto_mode_max_iv
+unsigned int kripto_authmode_max_iv
 (
-	kripto_mode_desc *mode,
+	kripto_authmode_desc *authmode,
 	kripto_block_desc *block
 )
 {
-	assert(mode);
+	assert(authmode);
 	assert(block);
-	assert(mode->max_iv);
+	assert(authmode->max_iv);
 
-	return mode->max_iv(block);
+	return authmode->max_iv(block);
+}
+
+unsigned int kripto_authmode_max_tag
+(
+	kripto_authmode_desc *authmode,
+	kripto_block_desc *block
+)
+{
+	assert(authmode);
+	assert(block);
+	assert(authmode->max_tag);
+
+	return authmode->max_tag(block);
 }

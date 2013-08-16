@@ -25,9 +25,9 @@ struct kripto_mac_desc
 	);
 
 	void (*input)(kripto_mac *, const void *, const size_t);
-	void (*tag)(kripto_mac *, void *, const size_t);
+	void (*tag)(kripto_mac *, void *, const unsigned int);
 	void (*destroy)(kripto_mac *);
-	unsigned int (*max_output)(const void *);
+	unsigned int (*max_tag)(const void *);
 };
 
 #endif

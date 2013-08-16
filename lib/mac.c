@@ -30,7 +30,7 @@ kripto_mac *kripto_mac_create
 	const unsigned int r,
 	const void *key,
 	const unsigned int key_len,
-	const unsigned int out_len
+	const unsigned int tag_len
 )
 {
 	assert(desc);
@@ -39,7 +39,7 @@ kripto_mac *kripto_mac_create
 	assert(key);
 	assert(key_len);
 
-	return desc->create(f, r, key, key_len, out_len);
+	return desc->create(f, r, key, key_len, tag_len);
 }
 
 kripto_mac *kripto_mac_recreate
@@ -49,7 +49,7 @@ kripto_mac *kripto_mac_recreate
 	const unsigned int r,
 	const void *key,
 	const unsigned int key_len,
-	const unsigned int out_len
+	const unsigned int tag_len
 )
 {
 	assert(s);
@@ -59,7 +59,7 @@ kripto_mac *kripto_mac_recreate
 	assert(key);
 	assert(key_len);
 
-	return s->desc->recreate(s, f, r, key, key_len, out_len);
+	return s->desc->recreate(s, f, r, key, key_len, tag_len);
 }
 
 void kripto_mac_input(kripto_mac *s, const void *in, const size_t len)
@@ -71,13 +71,13 @@ void kripto_mac_input(kripto_mac *s, const void *in, const size_t len)
 	s->desc->input(s, in, len);
 }
 
-void kripto_mac_tag(kripto_mac *s, void *out, const size_t len)
+void kripto_mac_tag(kripto_mac *s, void *tag, const unsigned int len)
 {
 	assert(s);
 	assert(s->desc);
 	assert(s->desc->tag);
 
-	s->desc->tag(s, out, len);
+	s->desc->tag(s, tag, len);
 }
 
 void kripto_mac_destroy(kripto_mac *s)
@@ -98,19 +98,19 @@ int kripto_mac_all
 	const unsigned int key_len,
 	const void *in,
 	const unsigned int in_len,
-	void *out,
-	const unsigned int out_len
+	void *tag,
+	const unsigned int tag_len
 )
 {
 	kripto_mac *s;
 
 	assert(desc);
 
-	s = kripto_mac_create(desc, f, r, key, key_len, out_len);
+	s = kripto_mac_create(desc, f, r, key, key_len, tag_len);
 	if(!s) return -1;
 
 	kripto_mac_input(s, in, in_len);
-	kripto_mac_tag(s, out, out_len);
+	kripto_mac_tag(s, tag, tag_len);
 
 	kripto_mac_destroy(s);
 
@@ -125,10 +125,10 @@ kripto_mac_desc *kripto_mac_get_desc(const kripto_mac *s)
 	return s->desc;
 }
 
-unsigned int kripto_mac_max_output(kripto_mac_desc *mac, const void *f)
+unsigned int kripto_mac_max_tag(kripto_mac_desc *mac, const void *f)
 {
 	assert(mac);
-	assert(mac->max_output);
+	assert(mac->max_tag);
 
-	return mac->max_output(f);
+	return mac->max_tag(f);
 }
