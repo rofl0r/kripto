@@ -21,9 +21,9 @@
 size_t kripto_pkcs7_add
 (
 	void *buf,
-	const size_t len,
+	size_t len,
 	unsigned int pad,
-	const size_t maxlen
+	size_t maxlen
 )
 {
 	unsigned int i;
@@ -38,7 +38,7 @@ size_t kripto_pkcs7_add
 	return (len + pad);
 }
 
-size_t kripto_pkcs7_rem(void *buf, const size_t len)
+size_t kripto_pkcs7_rem(void *buf, size_t len)
 {
 	if(U8(buf)[len - 1] < len)
 		return (len - U8(buf)[len - 1]);

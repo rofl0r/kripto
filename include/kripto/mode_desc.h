@@ -12,7 +12,7 @@ struct kripto_mode_desc
 	(
 		const kripto_block *,
 		const void *,
-		const unsigned int
+		unsigned int
 	);
 	unsigned int (*max_iv)(kripto_block_desc *);
 };

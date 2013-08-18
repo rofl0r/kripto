@@ -6,11 +6,11 @@
 extern size_t kripto_pkcs7_add
 (
 	void *buf,
-	const size_t len,
+	size_t len,
 	unsigned int pad,
-	const size_t maxlen
+	size_t maxlen
 );
 
-extern size_t kripto_pkcs7_rem(void *buf, const size_t len);
+extern size_t kripto_pkcs7_rem(void *buf, size_t len);
 
 #endif

@@ -10,22 +10,22 @@ struct kripto_authstream_desc
 	kripto_authstream *(*create)
 	(
 		const void *,
-		const unsigned int,
+		unsigned int,
 		const void *,
-		const unsigned int,
-		const unsigned int,
-		const unsigned int
+		unsigned int,
+		unsigned int,
+		unsigned int
 	);
 
 	kripto_authstream *(*recreate)
 	(
 		kripto_authstream *,
 		const void *,
-		const unsigned int,
+		unsigned int,
 		const void *,
-		const unsigned int,
-		const unsigned int,
-		const unsigned int
+		unsigned int,
+		unsigned int,
+		unsigned int
 	);
 
 	size_t (*encrypt)
@@ -33,7 +33,7 @@ struct kripto_authstream_desc
 		kripto_authstream *,
 		const void *,
 		void *,
-		const size_t
+		size_t
 	);
 
 	size_t (*decrypt)
@@ -41,10 +41,10 @@ struct kripto_authstream_desc
 		kripto_authstream *,
 		const void *,
 		void *,
-		const size_t
+		size_t
 	);
 
-	void (*tag)(kripto_authstream *, void *, const unsigned int);
+	void (*tag)(kripto_authstream *, void *, unsigned int);
 
 	void (*destroy)(kripto_authstream *);
 

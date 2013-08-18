@@ -26,8 +26,8 @@ struct kripto_hash
 kripto_hash *kripto_hash_create
 (
 	kripto_hash_desc *hash,
-	const size_t len,
-	const unsigned int r
+	size_t len,
+	unsigned int r
 )
 {
 	assert(hash);
@@ -40,8 +40,8 @@ kripto_hash *kripto_hash_create
 kripto_hash *kripto_hash_recreate
 (
 	kripto_hash *s,
-	const size_t len,
-	const unsigned int r
+	size_t len,
+	unsigned int r
 )
 {
 	assert(s);
@@ -52,7 +52,7 @@ kripto_hash *kripto_hash_recreate
 	return s->hash->recreate(s, len, r);
 }
 
-void kripto_hash_input(kripto_hash *s, const void *in, const size_t len)
+void kripto_hash_input(kripto_hash *s, const void *in, size_t len)
 {
 	assert(s);
 	assert(s->hash);
@@ -61,7 +61,7 @@ void kripto_hash_input(kripto_hash *s, const void *in, const size_t len)
 	s->hash->input(s, in, len);
 }
 
-void kripto_hash_output(kripto_hash *s, void *out, const size_t len)
+void kripto_hash_output(kripto_hash *s, void *out, size_t len)
 {
 	assert(s);
 	assert(s->hash);
@@ -83,11 +83,11 @@ void kripto_hash_destroy(kripto_hash *s)
 int kripto_hash_all
 (
 	kripto_hash_desc *hash,
-	const unsigned int r,
+	unsigned int r,
 	const void *in,
-	const size_t in_len,
+	size_t in_len,
 	void *out,
-	const size_t out_len
+	size_t out_len
 )
 {
 	assert(hash);

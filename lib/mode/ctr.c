@@ -41,7 +41,7 @@ static size_t ctr_crypt
 	kripto_stream *s,
 	const void *in,
 	void *out,
-	const size_t len
+	size_t len
 )
 {
 	size_t i;
@@ -68,7 +68,7 @@ static size_t ctr_prng
 (
 	kripto_stream *s,
 	void *out,
-	const size_t len
+	size_t len
 )
 {
 	size_t i;
@@ -105,7 +105,7 @@ static kripto_stream *ctr_create
 (
 	const kripto_block *block,
 	const void *iv,
-	const unsigned int iv_len
+	unsigned int iv_len
 )
 {
 	kripto_stream *s;

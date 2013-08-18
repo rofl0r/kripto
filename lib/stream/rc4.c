@@ -42,10 +42,10 @@ static void improved_setup
 (
 	kripto_stream *s,
 	const void *key,
-	const unsigned int key_len,
+	unsigned int key_len,
 	const void *iv,
-	const unsigned int iv_len,
-	const unsigned int rounds
+	unsigned int iv_len,
+	unsigned int rounds
 )
 {
 	unsigned int i;
@@ -129,7 +129,7 @@ static size_t rc4_crypt
 	kripto_stream *s,
 	const void *in,
 	void *out,
-	const size_t len
+	size_t len
 )
 {
 	size_t i;
@@ -144,7 +144,7 @@ static size_t rc4_prng
 (
 	kripto_stream *s,
 	void *out,
-	const size_t len
+	size_t len
 )
 {
 	size_t i;
@@ -159,10 +159,10 @@ static kripto_stream *rc4i_recreate
 (
 	kripto_stream *s,
 	const void *key,
-	const unsigned int key_len,
+	unsigned int key_len,
 	const void *iv,
-	const unsigned int iv_len,
-	const unsigned int r
+	unsigned int iv_len,
+	unsigned int r
 )
 {
 	unsigned int rounds = r;
@@ -179,10 +179,10 @@ static kripto_stream *rc4_recreate
 (
 	kripto_stream *s,
 	const void *key,
-	const unsigned int key_len,
+	unsigned int key_len,
 	const void *iv,
-	const unsigned int iv_len,
-	const unsigned int r
+	unsigned int iv_len,
+	unsigned int r
 )
 {
 	unsigned int i;
@@ -202,10 +202,10 @@ static kripto_stream *rc4_recreate
 static kripto_stream *rc4i_create
 (
 	const void *key,
-	const unsigned int key_len,
+	unsigned int key_len,
 	const void *iv,
-	const unsigned int iv_len,
-	const unsigned int r
+	unsigned int iv_len,
+	unsigned int r
 )
 {
 	kripto_stream *s;
@@ -222,10 +222,10 @@ static kripto_stream *rc4i_create
 static kripto_stream *rc4_create
 (
 	const void *key,
-	const unsigned int key_len,
+	unsigned int key_len,
 	const void *iv,
-	const unsigned int iv_len,
-	const unsigned int r
+	unsigned int iv_len,
+	unsigned int r
 )
 {
 	kripto_stream *s;

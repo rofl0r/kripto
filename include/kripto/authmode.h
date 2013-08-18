@@ -11,8 +11,8 @@ extern kripto_authstream *kripto_authmode_create
 	kripto_authmode_desc *authmode,
 	const kripto_block *block,
 	const void *iv,
-	const unsigned int iv_len,
-	const unsigned int tag_len
+	unsigned int iv_len,
+	unsigned int tag_len
 );
 
 extern unsigned int kripto_authmode_max_iv

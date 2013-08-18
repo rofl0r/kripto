@@ -42,7 +42,7 @@ struct kripto_stream
 
 static void chacha_core
 (
-	const unsigned int r,
+	unsigned int r,
 	const uint32_t *x,
 	void *out
 )
@@ -121,7 +121,7 @@ static size_t chacha_crypt
 	kripto_stream *s,
 	const void *in,
 	void *out,
-	const size_t len
+	size_t len
 )
 {
 	size_t i;
@@ -147,7 +147,7 @@ static size_t chacha_prng
 (
 	kripto_stream *s,
 	void *out,
-	const size_t len
+	size_t len
 )
 {
 	size_t i;
@@ -173,10 +173,10 @@ static kripto_stream *chacha_recreate
 (
 	kripto_stream *s,
 	const void *key,
-	const unsigned int key_len,
+	unsigned int key_len,
 	const void *iv,
-	const unsigned int iv_len,
-	const unsigned int r
+	unsigned int iv_len,
+	unsigned int r
 )
 {
 	unsigned int i;
@@ -259,10 +259,10 @@ static kripto_stream *chacha_recreate
 static kripto_stream *chacha_create
 (
 	const void *key,
-	const unsigned int key_len,
+	unsigned int key_len,
 	const void *iv,
-	const unsigned int iv_len,
-	const unsigned int r
+	unsigned int iv_len,
+	unsigned int r
 )
 {
 	kripto_stream *s;

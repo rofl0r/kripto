@@ -8,24 +8,24 @@ struct kripto_mac_desc
 	kripto_mac *(*create)
 	(
 		const void *,
-		const unsigned int,
+		unsigned int,
 		const void *,
-		const unsigned int,
-		const unsigned int
+		unsigned int,
+		unsigned int
 	);
 
 	kripto_mac *(*recreate)
 	(
 		kripto_mac *,
 		const void *,
-		const unsigned int,
+		unsigned int,
 		const void *,
-		const unsigned int,
-		const unsigned int
+		unsigned int,
+		unsigned int
 	);
 
-	void (*input)(kripto_mac *, const void *, const size_t);
-	void (*tag)(kripto_mac *, void *, const unsigned int);
+	void (*input)(kripto_mac *, const void *, size_t);
+	void (*tag)(kripto_mac *, void *, unsigned int);
 	void (*destroy)(kripto_mac *);
 	unsigned int (*max_tag)(const void *);
 };

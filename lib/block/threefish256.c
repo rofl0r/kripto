@@ -190,8 +190,8 @@ static kripto_block *threefish256_recreate
 static kripto_block *threefish256_create
 (
 	const void *key,
-	const unsigned int key_len,
-	const unsigned int r
+	unsigned int key_len,
+	unsigned int r
 )
 {
 	kripto_block *s;

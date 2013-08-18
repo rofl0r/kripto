@@ -40,7 +40,7 @@ static size_t cfb_encrypt
 	kripto_stream *s,
 	const void *pt,
 	void *ct,
-	const size_t len
+	size_t len
 )
 {
 	size_t i;
@@ -64,7 +64,7 @@ static size_t cfb_decrypt
 	kripto_stream *s,
 	const void *ct,
 	void *pt,
-	const size_t len
+	size_t len
 )
 {
 	size_t i;
@@ -88,7 +88,7 @@ static size_t cfb_prng
 (
 	kripto_stream *s,
 	void *out,
-	const size_t len
+	size_t len
 )
 {
 	size_t i;
@@ -121,7 +121,7 @@ static kripto_stream *cfb_create
 (
 	const kripto_block *block,
 	const void *iv,
-	const unsigned int iv_len
+	unsigned int iv_len
 )
 {
 	kripto_stream *s;

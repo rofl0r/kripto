@@ -157,7 +157,7 @@ static void noekeon_setup
 (
 	kripto_block *s,
 	const uint8_t *key,
-	const unsigned int key_len
+	unsigned int key_len
 )
 {
 	unsigned int i;

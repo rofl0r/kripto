@@ -398,7 +398,7 @@ static void blowfish_setup
 (
 	kripto_block *s,
 	const uint8_t *key,
-	const unsigned int key_len
+	unsigned int key_len
 )
 {
 	uint32_t t;

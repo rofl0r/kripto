@@ -12,8 +12,8 @@ struct kripto_authmode_desc
 	(
 		const kripto_block *,
 		const void *,
-		const unsigned int,
-		const unsigned int
+		unsigned int,
+		unsigned int
 	);
 	unsigned int (*max_iv)(kripto_block_desc *);
 	unsigned int (*max_tag)(kripto_block_desc *);

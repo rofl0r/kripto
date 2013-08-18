@@ -368,7 +368,7 @@ static void camellia_setup
 (
 	kripto_block *s,
 	const uint8_t *key,
-	const unsigned int key_len
+	unsigned int key_len
 )
 {
 	uint8_t t[48];

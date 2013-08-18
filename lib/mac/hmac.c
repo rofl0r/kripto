@@ -38,8 +38,8 @@ static int hmac_init
 	kripto_mac *s,
 	kripto_hash_desc *hash,
 	const void *key,
-	const unsigned int key_len,
-	const unsigned int tag_len
+	unsigned int key_len,
+	unsigned int tag_len
 )
 {
 	unsigned int i;
@@ -86,10 +86,10 @@ static void hmac_destroy(kripto_mac *s)
 static kripto_mac *hmac_create
 (
 	const void *hash,
-	const unsigned int r,
+	unsigned int r,
 	const void *key,
-	const unsigned int key_len,
-	const unsigned int tag_len
+	unsigned int key_len,
+	unsigned int tag_len
 )
 {
 	kripto_mac *s;
@@ -122,10 +122,10 @@ static kripto_mac *hmac_recreate
 (
 	kripto_mac *s,
 	const void *hash,
-	const unsigned int r,
+	unsigned int r,
 	const void *key,
-	const unsigned int key_len,
-	const unsigned int tag_len
+	unsigned int key_len,
+	unsigned int tag_len
 )
 {
 	if(sizeof(kripto_mac) + kripto_hash_blocksize(hash) > s->size)
@@ -159,12 +159,12 @@ static kripto_mac *hmac_recreate
 	return s;
 }
 
-static void hmac_input(kripto_mac *s, const void *in, const size_t len)
+static void hmac_input(kripto_mac *s, const void *in, size_t len)
 {
 	kripto_hash_input(s->hash, in, len);
 }
 
-static void hmac_tag(kripto_mac *s, void *tag, const unsigned int len)
+static void hmac_tag(kripto_mac *s, void *tag, unsigned int len)
 {
 	unsigned int i;
 

@@ -287,8 +287,8 @@ static void keccak1600_F(kripto_hash *s)
 static kripto_hash *keccak1600_recreate
 (
 	kripto_hash *s,
-	const size_t len,
-	const unsigned int r
+	size_t len,
+	unsigned int r
 )
 {
 	s->o = s->i = 0;
@@ -307,7 +307,7 @@ static void keccak1600_input
 (
 	kripto_hash *s,
 	const void *in,
-	const size_t len
+	size_t len
 ) 
 {
 	size_t i;
@@ -332,7 +332,7 @@ static void keccak1600_output
 (
 	kripto_hash *s,
 	void *out,
-	const size_t len
+	size_t len
 )
 {
 	size_t i;
@@ -363,11 +363,7 @@ static void keccak1600_output
 	}
 }
 
-static kripto_hash *keccak1600_create
-(
-	const size_t len,
-	const unsigned int r
-)
+static kripto_hash *keccak1600_create(size_t len, unsigned int r)
 {
 	kripto_hash *s;
 
@@ -389,11 +385,11 @@ static void keccak1600_destroy(kripto_hash *s)
 
 static int keccak1600_hash
 (
-	const unsigned int r,
+	unsigned int r,
 	const void *in,
-	const size_t in_len,
+	size_t in_len,
 	void *out,
-	const size_t out_len
+	size_t out_len
 )
 {
 	kripto_hash s;

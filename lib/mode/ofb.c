@@ -40,7 +40,7 @@ static size_t ofb_crypt
 	kripto_stream *s,
 	const void *in,
 	void *out,
-	const size_t len
+	size_t len
 )
 {
 	size_t i;
@@ -63,7 +63,7 @@ static size_t ofb_prng
 (
 	kripto_stream *s,
 	void *out,
-	const size_t len
+	size_t len
 )
 {
 	size_t i;
@@ -96,7 +96,7 @@ static kripto_stream *ofb_create
 (
 	const kripto_block *block,
 	const void *iv,
-	const unsigned int iv_len
+	unsigned int iv_len
 )
 {
 	kripto_stream *s;

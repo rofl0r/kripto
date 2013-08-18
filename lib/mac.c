@@ -27,10 +27,10 @@ kripto_mac *kripto_mac_create
 (
 	kripto_mac_desc *desc,
 	const void *f,
-	const unsigned int r,
+	unsigned int r,
 	const void *key,
-	const unsigned int key_len,
-	const unsigned int tag_len
+	unsigned int key_len,
+	unsigned int tag_len
 )
 {
 	assert(desc);
@@ -46,10 +46,10 @@ kripto_mac *kripto_mac_recreate
 (
 	kripto_mac *s,
 	const void *f,
-	const unsigned int r,
+	unsigned int r,
 	const void *key,
-	const unsigned int key_len,
-	const unsigned int tag_len
+	unsigned int key_len,
+	unsigned int tag_len
 )
 {
 	assert(s);
@@ -62,7 +62,7 @@ kripto_mac *kripto_mac_recreate
 	return s->desc->recreate(s, f, r, key, key_len, tag_len);
 }
 
-void kripto_mac_input(kripto_mac *s, const void *in, const size_t len)
+void kripto_mac_input(kripto_mac *s, const void *in, size_t len)
 {
 	assert(s);
 	assert(s->desc);
@@ -71,7 +71,7 @@ void kripto_mac_input(kripto_mac *s, const void *in, const size_t len)
 	s->desc->input(s, in, len);
 }
 
-void kripto_mac_tag(kripto_mac *s, void *tag, const unsigned int len)
+void kripto_mac_tag(kripto_mac *s, void *tag, unsigned int len)
 {
 	assert(s);
 	assert(s->desc);
@@ -93,13 +93,13 @@ int kripto_mac_all
 (
 	kripto_mac_desc *desc,
 	const void *f,
-	const unsigned int r,
+	unsigned int r,
 	const void *key,
-	const unsigned int key_len,
+	unsigned int key_len,
 	const void *in,
-	const unsigned int in_len,
+	unsigned int in_len,
 	void *tag,
-	const unsigned int tag_len
+	unsigned int tag_len
 )
 {
 	kripto_mac *s;

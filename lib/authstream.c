@@ -28,11 +28,11 @@ kripto_authstream *kripto_authstream_create
 (
 	kripto_authstream_desc *desc,
 	const void *key,
-	const unsigned int key_len,
+	unsigned int key_len,
 	const void *iv,
-	const unsigned int iv_len,
-	const unsigned int r,
-	const unsigned int tag_len
+	unsigned int iv_len,
+	unsigned int r,
+	unsigned int tag_len
 )
 {
 	assert(desc);
@@ -51,11 +51,11 @@ kripto_authstream *kripto_authstream_recreate
 (
 	kripto_authstream *s,
 	const void *key,
-	const unsigned int key_len,
+	unsigned int key_len,
 	const void *iv,
-	const unsigned int iv_len,
-	const unsigned int r,
-	const unsigned int tag_len
+	unsigned int iv_len,
+	unsigned int r,
+	unsigned int tag_len
 )
 {
 	assert(s);
@@ -76,7 +76,7 @@ size_t kripto_authstream_encrypt
 	kripto_authstream *s,
 	const void *pt,
 	void *ct,
-	const size_t len
+	size_t len
 )
 {
 	assert(s);
@@ -91,7 +91,7 @@ size_t kripto_authstream_decrypt
 	kripto_authstream *s,
 	const void *ct,
 	void *pt,
-	const size_t len
+	size_t len
 )
 {
 	assert(s);
@@ -105,7 +105,7 @@ void kripto_authstream_tag
 (
 	kripto_authstream *s,
 	void *tag,
-	const unsigned int len
+	unsigned int len
 )
 {
 	assert(s);

@@ -28,10 +28,10 @@ kripto_stream *kripto_stream_create
 (
 	kripto_stream_desc *desc,
 	const void *key,
-	const unsigned int key_len,
+	unsigned int key_len,
 	const void *iv,
-	const unsigned int iv_len,
-	const unsigned int r
+	unsigned int iv_len,
+	unsigned int r
 )
 {
 	assert(desc);
@@ -49,10 +49,10 @@ kripto_stream *kripto_stream_recreate
 (
 	kripto_stream *s,
 	const void *key,
-	const unsigned int key_len,
+	unsigned int key_len,
 	const void *iv,
-	const unsigned int iv_len,
-	const unsigned int r
+	unsigned int iv_len,
+	unsigned int r
 )
 {
 	assert(s);
@@ -72,7 +72,7 @@ size_t kripto_stream_encrypt
 	kripto_stream *s,
 	const void *pt,
 	void *ct,
-	const size_t len
+	size_t len
 )
 {
 	assert(s);
@@ -87,7 +87,7 @@ size_t kripto_stream_decrypt
 	kripto_stream *s,
 	const void *ct,
 	void *pt,
-	const size_t len
+	size_t len
 )
 {
 	assert(s);
@@ -101,7 +101,7 @@ size_t kripto_stream_prng
 (
 	kripto_stream *s,
 	void *out,
-	const size_t len
+	size_t len
 )
 {
 	assert(s);

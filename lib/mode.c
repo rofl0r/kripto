@@ -26,7 +26,7 @@ kripto_stream *kripto_mode_create
 	kripto_mode_desc *mode,
 	const kripto_block *block,
 	const void *iv,
-	const unsigned int iv_len
+	unsigned int iv_len
 )
 {
 	assert(mode);

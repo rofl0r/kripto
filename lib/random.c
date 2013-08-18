@@ -117,7 +117,7 @@ kripto_random *kripto_random_create(void)
 	#endif
 }
 
-size_t kripto_random_get(kripto_random *s, void *out, const size_t len)
+size_t kripto_random_get(kripto_random *s, void *out, size_t len)
 {
 	assert(s);
 

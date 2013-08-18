@@ -8,16 +8,16 @@ extern kripto_block *kripto_block_create
 (
 	kripto_block_desc *desc,
 	const void *key,
-	const unsigned int key_len,
-	const unsigned int r
+	unsigned int key_len,
+	unsigned int r
 );
 
 extern kripto_block *kripto_block_recreate
 (
 	kripto_block *s,
 	const void *key,
-	const unsigned int key_len,
-	const unsigned int r
+	unsigned int key_len,
+	unsigned int r
 );
 
 extern void kripto_block_encrypt
