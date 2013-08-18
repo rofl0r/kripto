@@ -16,4 +16,4 @@
 
 const unsigned int kripto_version_major = 0;
 const unsigned int kripto_version_minor = 1;
-const unsigned int kripto_version_revision = 0;
+const unsigned int kripto_version_bugfix = 0;
