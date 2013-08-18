@@ -3,15 +3,6 @@
 
 #include <kripto/stream.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 extern kripto_stream_desc *const kripto_stream_chacha;
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

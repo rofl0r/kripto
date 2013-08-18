@@ -3,11 +3,6 @@
 
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 typedef const struct kripto_hash_desc kripto_hash_desc;
 typedef struct kripto_hash kripto_hash;
 
@@ -56,9 +51,5 @@ extern kripto_hash_desc *kripto_hash_get_desc(const kripto_hash *s);
 extern size_t kripto_hash_max_output(kripto_hash_desc *s);
 
 extern unsigned int kripto_hash_blocksize(kripto_hash_desc *s);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

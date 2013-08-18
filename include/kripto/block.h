@@ -1,11 +1,6 @@
 #ifndef KRIPTO_BLOCK_H
 #define KRIPTO_BLOCK_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 typedef const struct kripto_block_desc kripto_block_desc;
 typedef struct kripto_block kripto_block;
 
@@ -46,9 +41,5 @@ extern kripto_block_desc *kripto_block_get_desc(const kripto_block *s);
 extern unsigned int kripto_block_size(kripto_block_desc *desc);
 
 extern unsigned int kripto_block_max_key(kripto_block_desc *desc);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

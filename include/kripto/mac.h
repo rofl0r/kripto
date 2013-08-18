@@ -3,11 +3,6 @@
 
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 typedef const struct kripto_mac_desc kripto_mac_desc;
 typedef struct kripto_mac kripto_mac;
 
@@ -67,9 +62,5 @@ extern unsigned int kripto_mac_max_tag
 	kripto_mac_desc *s,
 	const void *f
 );
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

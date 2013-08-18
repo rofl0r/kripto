@@ -3,11 +3,6 @@
 
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 extern size_t kripto_pkcs7_add
 (
 	void *buf,
@@ -17,9 +12,5 @@ extern size_t kripto_pkcs7_add
 );
 
 extern size_t kripto_pkcs7_rem(void *buf, const size_t len);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
