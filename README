@@ -23,7 +23,6 @@ Block ciphers:
  - Threefish1024
  - Noekeon
  - Anubis
- - Anubis256*?
  - SEED
  - Blowfish
  - GOST
