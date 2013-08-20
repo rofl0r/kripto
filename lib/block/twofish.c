@@ -27,7 +27,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc *desc;
+	const kripto_block_desc *desc;
 	unsigned int rounds;
 	size_t size;
 	uint32_t s0[256];
@@ -1175,9 +1175,9 @@ static void twofish_decrypt
 
 static kripto_block *twofish_create
 (
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	kripto_block *s;
@@ -1206,9 +1206,9 @@ static void twofish_destroy(kripto_block *s)
 static kripto_block *twofish_recreate
 (
 	kripto_block *s,
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	if(!r) r = 16;
@@ -1216,7 +1216,7 @@ static kripto_block *twofish_recreate
 	if(sizeof(kripto_block) + (TWOFISH_K_LEN(r) << 2) > s->size)
 	{
 		twofish_destroy(s);
-		s = twofish_create(key, key_len, r);
+		s = twofish_create(r, key, key_len);
 	}
 	else
 	{
@@ -1227,7 +1227,7 @@ static kripto_block *twofish_recreate
 	return s;
 }
 
-static const struct kripto_block_desc twofish =
+static const kripto_block_desc twofish =
 {
 	&twofish_create,
 	&twofish_recreate,
@@ -1238,4 +1238,4 @@ static const struct kripto_block_desc twofish =
 	32 /* max key */
 };
 
-kripto_block_desc *const kripto_block_twofish = &twofish;
+const kripto_block_desc *const kripto_block_twofish = &twofish;

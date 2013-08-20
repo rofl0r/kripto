@@ -27,7 +27,7 @@
 
 struct kripto_hash
 {
-	kripto_hash_desc *hash;
+	const kripto_hash_desc *hash;
 	uint64_t len;
 	uint32_t h[5];
 	uint8_t buf[64];
@@ -66,8 +66,8 @@ struct kripto_hash
 static kripto_hash *sha1_recreate
 (
 	kripto_hash *s,
-	size_t len,
-	unsigned int r
+	unsigned int r,
+	size_t len
 )
 {
 	(void)r;
@@ -215,7 +215,7 @@ static void sha1_output(kripto_hash *s, void *out, size_t len)
 		U8(out)[i] = s->h[s->i >> 2] >> (24 - ((s->i & 3) << 3));
 }
 
-static kripto_hash *sha1_create(size_t len, unsigned int r)
+static kripto_hash *sha1_create(unsigned int r, size_t len)
 {
 	kripto_hash *s;
 
@@ -224,7 +224,7 @@ static kripto_hash *sha1_create(size_t len, unsigned int r)
 
 	s->hash = kripto_hash_sha1;
 
-	(void)sha1_recreate(s, len, r);
+	(void)sha1_recreate(s, r, len);
 
 	return s;
 }
@@ -246,7 +246,7 @@ static int sha1_hash
 {
 	kripto_hash s;
 
-	(void)sha1_recreate(&s, out_len, r);
+	(void)sha1_recreate(&s, r, out_len);
 	sha1_input(&s, in, in_len);
 	sha1_output(&s, out, out_len);
 
@@ -255,7 +255,7 @@ static int sha1_hash
 	return 0;
 }
 
-static const struct kripto_hash_desc sha1 =
+static const kripto_hash_desc sha1 =
 {
 	&sha1_create,
 	&sha1_recreate,
@@ -267,4 +267,4 @@ static const struct kripto_hash_desc sha1 =
 	64 /* block_size */
 };
 
-kripto_hash_desc *const kripto_hash_sha1 = &sha1;
+const kripto_hash_desc *const kripto_hash_sha1 = &sha1;

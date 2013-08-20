@@ -7,7 +7,6 @@ struct kripto_mac_desc
 {
 	kripto_mac *(*create)
 	(
-		const void *,
 		unsigned int,
 		const void *,
 		unsigned int,
@@ -17,7 +16,6 @@ struct kripto_mac_desc
 	kripto_mac *(*recreate)
 	(
 		kripto_mac *,
-		const void *,
 		unsigned int,
 		const void *,
 		unsigned int,
@@ -25,9 +23,12 @@ struct kripto_mac_desc
 	);
 
 	void (*input)(kripto_mac *, const void *, size_t);
+
 	void (*tag)(kripto_mac *, void *, unsigned int);
+
 	void (*destroy)(kripto_mac *);
-	unsigned int (*max_tag)(const void *);
+
+	unsigned int maxtag;
 };
 
 #endif

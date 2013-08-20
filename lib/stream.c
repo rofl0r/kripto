@@ -21,17 +21,17 @@
 
 struct kripto_stream
 {
-	kripto_stream_desc *desc;
+	const kripto_stream_desc *desc;
 };
 
 kripto_stream *kripto_stream_create
 (
-	kripto_stream_desc *desc,
+	const kripto_stream_desc *desc,
+	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
 	const void *iv,
-	unsigned int iv_len,
-	unsigned int r
+	unsigned int iv_len
 )
 {
 	assert(desc);
@@ -39,20 +39,21 @@ kripto_stream *kripto_stream_create
 
 	assert(key);
 	assert(key_len);
-	assert(key_len <= kripto_stream_max_key(desc));
+	assert(key_len <= kripto_stream_maxkey(desc));
+	assert(iv_len <= kripto_stream_maxiv(desc));
 	if(iv_len) assert(iv);
 
-	return desc->create(key, key_len, iv, iv_len, r);
+	return desc->create(desc, rounds, key, key_len, iv, iv_len);
 }
 
 kripto_stream *kripto_stream_recreate
 (
 	kripto_stream *s,
+	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
 	const void *iv,
-	unsigned int iv_len,
-	unsigned int r
+	unsigned int iv_len
 )
 {
 	assert(s);
@@ -61,10 +62,11 @@ kripto_stream *kripto_stream_recreate
 
 	assert(key);
 	assert(key_len);
-	assert(key_len <= kripto_stream_max_key(s->desc));
+	assert(key_len <= kripto_stream_maxkey(s->desc));
+	assert(iv_len <= kripto_stream_maxiv(s->desc));
 	if(iv_len) assert(iv);
 
-	return s->desc->recreate(s, key, key_len, iv, iv_len, r);
+	return s->desc->recreate(s, rounds, key, key_len, iv, iv_len);
 }
 
 size_t kripto_stream_encrypt
@@ -120,17 +122,25 @@ void kripto_stream_destroy(kripto_stream *s)
 	s->desc->destroy(s);
 }
 
-unsigned int kripto_stream_max_key(kripto_stream_desc *desc)
+const kripto_stream_desc *kripto_stream_getdesc(const kripto_stream *s)
 {
-	assert(desc);
-	assert(desc->max_key);
+	assert(s);
+	assert(s->desc);
 
-	return desc->max_key;
+	return s->desc;
 }
 
-unsigned int kripto_stream_max_iv(kripto_stream_desc *desc)
+unsigned int kripto_stream_maxkey(const kripto_stream_desc *desc)
+{
+	assert(desc);
+	assert(desc->maxkey);
+
+	return desc->maxkey;
+}
+
+unsigned int kripto_stream_maxiv(const kripto_stream_desc *desc)
 {
 	assert(desc);
 
-	return desc->max_iv;
+	return desc->maxiv;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Gregor Pintar <grpintar@gmail.com>
+ * Copyright (C) 2011, 2013 Gregor Pintar <grpintar@gmail.com>
  *
  * Permission is granted to deal in this work without any restriction,
  * including unlimited rights to use, publicly perform, publish,
@@ -19,8 +19,6 @@
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
-#include <kripto/mode.h>
-#include <kripto/mode_desc.h>
 #include <kripto/stream.h>
 #include <kripto/stream_desc.h>
 
@@ -28,11 +26,11 @@
 
 struct kripto_stream
 {
-	kripto_stream_desc *desc;
-	const kripto_block *block;
+	const kripto_stream_desc *desc;
+	kripto_block *block;
 	uint8_t *x;
 	uint8_t *buf;
-	unsigned int block_size;
+	unsigned int blocksize;
 	unsigned int used;
 };
 
@@ -49,12 +47,12 @@ static size_t ctr_crypt
 
 	for(i = 0; i < len; i++)
 	{
-		if(s->used == s->block_size)
+		if(s->used == s->blocksize)
 		{
 			kripto_block_encrypt(s->block, s->x, s->buf);
 			s->used = 0;
 
-			for(n = s->block_size - 1; n; n--)
+			for(n = s->blocksize - 1; n; n--)
 				if(++s->x[n]) break;
 		}
 
@@ -76,12 +74,12 @@ static size_t ctr_prng
 
 	for(i = 0; i < len; i++)
 	{
-		if(s->used == s->block_size)
+		if(s->used == s->blocksize)
 		{
 			kripto_block_encrypt(s->block, s->x, s->buf);
 			s->used = 0;
 
-			for(n = s->block_size - 1; n; n--)
+			for(n = s->blocksize - 1; n; n--)
 				if(++s->x[n]) break;
 		}
 
@@ -93,64 +91,100 @@ static size_t ctr_prng
 
 static void ctr_destroy(kripto_stream *s)
 {
-	kripto_memwipe(s, sizeof(kripto_stream)
-		+ (s->block_size << 1)
-		+ sizeof(kripto_stream_desc)
-	);
-
+	kripto_block_destroy(s->block);
+	kripto_memwipe(s, sizeof(kripto_stream) + (s->blocksize << 1));
 	free(s);
 }
 
+struct ext
+{
+	kripto_stream_desc desc;
+	const kripto_block_desc *block;
+};
+
+#define EXT(X) ((struct ext *)(X))
+
 static kripto_stream *ctr_create
 (
-	const kripto_block *block,
+	const kripto_stream_desc *desc,
+	unsigned int rounds,
+	const void *key,
+	unsigned int key_len,
 	const void *iv,
 	unsigned int iv_len
 )
 {
 	kripto_stream *s;
-	kripto_block_desc *b;
-	struct kripto_stream_desc *stream;
 
-	b = kripto_block_get_desc(block);
-
-	s = malloc(sizeof(kripto_stream)
-		+ (kripto_block_size(b) << 1)
-		+ sizeof(kripto_stream_desc)
-	);
+	s = malloc(sizeof(kripto_stream) + (desc->maxiv << 1));
 	if(!s) return 0;
 
-	s->block_size = kripto_block_size(b);
+	s->desc = desc;
 
-	stream = (struct kripto_stream_desc *)
-		((uint8_t *)s + sizeof(kripto_stream));
+	s->used = s->blocksize = desc->maxiv;
 
-	s->x = (uint8_t *)stream + sizeof(kripto_stream_desc);
-	s->buf = s->x + s->block_size;
+	s->x = (uint8_t *)s + sizeof(kripto_stream);
+	s->buf = s->x + s->blocksize;
 
-	stream->encrypt = &ctr_crypt;
-	stream->decrypt = &ctr_crypt;
-	stream->prng = &ctr_prng;
-	stream->create = 0;
-	stream->destroy = &ctr_destroy;
-	stream->max_key = kripto_block_max_key(b);
-	stream->max_iv = s->block_size;
+	/* block cipher */
+	s->block = kripto_block_create(EXT(s)->block, rounds, key, key_len);
+	if(!s->block)
+	{
+		ctr_destroy(s);
+		return 0;
+	}
 
-	s->desc = stream;
-
+	/* IV (nonce) */
 	if(iv_len) memcpy(s->x, iv, iv_len);
-	memset(s->x + iv_len, 0, s->block_size - iv_len);
-
-	s->used = s->block_size;
-	s->block = block;
+	memset(s->x + iv_len, 0, s->blocksize - iv_len);
 
 	return s;
 }
 
-static const struct kripto_mode_desc ctr =
+static kripto_stream *ctr_recreate
+(
+	kripto_stream *s,
+	unsigned int rounds,
+	const void *key,
+	unsigned int key_len,
+	const void *iv,
+	unsigned int iv_len
+)
 {
-	&ctr_create,
-	&kripto_block_size
-};
+	/* block cipher */
+	s->block = kripto_block_recreate(s->block, rounds, key, key_len);
+	if(!s->block)
+	{
+		ctr_destroy(s);
+		return 0;
+	}
 
-kripto_mode_desc *const kripto_mode_ctr = &ctr;
+	/* IV (nonce) */
+	if(iv_len) memcpy(s->x, iv, iv_len);
+	memset(s->x + iv_len, 0, s->blocksize - iv_len);
+
+	s->used = s->blocksize;
+
+	return s;
+}
+
+kripto_stream_desc *kripto_stream_ctr(const kripto_block_desc *block)
+{
+	struct ext *s;
+
+	s = malloc(sizeof(struct ext));
+	if(!s) return 0;
+
+	s->block = block;
+
+	s->desc.create = &ctr_create;
+	s->desc.recreate = &ctr_recreate;
+	s->desc.encrypt = &ctr_crypt;
+	s->desc.decrypt = &ctr_crypt;
+	s->desc.prng = &ctr_prng;
+	s->desc.destroy = &ctr_destroy;
+	s->desc.maxkey = kripto_block_maxkey(block);
+	s->desc.maxiv = kripto_block_size(block);
+
+	return (kripto_stream_desc *)s;
+}

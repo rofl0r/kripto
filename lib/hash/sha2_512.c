@@ -27,7 +27,7 @@
 
 struct kripto_hash
 {
-	kripto_hash_desc *hash;
+	const kripto_hash_desc *hash;
 	uint64_t h[8];
 	uint64_t len[2];
 	uint8_t buf[128];
@@ -132,8 +132,8 @@ static const uint64_t k[160] =
 static kripto_hash *sha2_512_recreate
 (
 	kripto_hash *s,
-	size_t len,
-	unsigned int r
+	unsigned int r,
+	size_t len
 )
 {
 	s->len[1] = s->len[0] = s->o = s->i = 0;
@@ -290,7 +290,7 @@ static void sha2_512_output(kripto_hash *s, void *out, size_t len)
 		U8(out)[i] = s->h[s->i >> 3] >> (56 - ((s->i & 7) << 3));
 }
 
-static kripto_hash *sha2_512_create(size_t len, unsigned int r)
+static kripto_hash *sha2_512_create(unsigned int r, size_t len)
 {
 	kripto_hash *s;
 
@@ -299,7 +299,7 @@ static kripto_hash *sha2_512_create(size_t len, unsigned int r)
 
 	s->hash = kripto_hash_sha2_512;
 
-	(void)sha2_512_recreate(s, len, r);
+	(void)sha2_512_recreate(s, r, len);
 
 	return s;
 }
@@ -321,7 +321,7 @@ static int sha2_512_hash
 {
 	kripto_hash s;
 
-	(void)sha2_512_recreate(&s, out_len, r);
+	(void)sha2_512_recreate(&s, r, out_len);
 	sha2_512_input(&s, in, in_len);
 	sha2_512_output(&s, out, out_len);
 
@@ -330,7 +330,7 @@ static int sha2_512_hash
 	return 0;
 }
 
-static const struct kripto_hash_desc sha2_512 =
+static const kripto_hash_desc sha2_512 =
 {
 	&sha2_512_create,
 	&sha2_512_recreate,
@@ -342,4 +342,4 @@ static const struct kripto_hash_desc sha2_512 =
 	128 /* block_size */
 };
 
-kripto_hash_desc *const kripto_hash_sha2_512 = &sha2_512;
+const kripto_hash_desc *const kripto_hash_sha2_512 = &sha2_512;

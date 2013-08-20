@@ -27,7 +27,7 @@
 
 struct kripto_hash
 {
-	kripto_hash_desc *hash;
+	const kripto_hash_desc *hash;
 	unsigned int r;
 	uint32_t h[8];
 	/* uint32_t s[4]; */
@@ -62,8 +62,8 @@ static const uint32_t k[16] =
 static kripto_hash *blake256_recreate
 (
 	kripto_hash *s,
-	size_t len,
-	unsigned int r
+	unsigned int r,
+	size_t len
 )
 {
 	s->r = r;
@@ -265,7 +265,7 @@ static void blake256_output(kripto_hash *s, void *out, size_t len)
 		U8(out)[i] = s->h[s->i >> 2] >> (24 - ((s->i & 3) << 3));
 }
 
-static kripto_hash *blake256_create(size_t len, unsigned int r)
+static kripto_hash *blake256_create(unsigned int r, size_t len)
 {
 	kripto_hash *s;
 
@@ -274,7 +274,7 @@ static kripto_hash *blake256_create(size_t len, unsigned int r)
 
 	s->hash = kripto_hash_blake256;
 
-	(void)blake256_recreate(s, len, r);
+	(void)blake256_recreate(s, r, len);
 
 	return s;
 }
@@ -296,7 +296,7 @@ static int blake256_hash
 {
 	kripto_hash s;
 
-	(void)blake256_recreate(&s, out_len, r);
+	(void)blake256_recreate(&s, r, out_len);
 	blake256_input(&s, in, in_len);
 	blake256_output(&s, out, out_len);
 
@@ -305,7 +305,7 @@ static int blake256_hash
 	return 0;
 }
 
-static const struct kripto_hash_desc blake256 =
+static const kripto_hash_desc blake256 =
 {
 	&blake256_create,
 	&blake256_recreate,
@@ -317,4 +317,4 @@ static const struct kripto_hash_desc blake256 =
 	64 /* block_size */
 };
 
-kripto_hash_desc *const kripto_hash_blake256 = &blake256;
+const kripto_hash_desc *const kripto_hash_blake256 = &blake256;

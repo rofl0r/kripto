@@ -3,6 +3,6 @@
 
 #include <kripto/stream.h>
 
-extern kripto_stream_desc *const kripto_stream_salsa20;
+extern const kripto_stream_desc *const kripto_stream_salsa20;
 
 #endif

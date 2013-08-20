@@ -3,6 +3,6 @@
 
 #include <kripto/stream.h>
 
-extern kripto_stream_desc *const kripto_stream_chacha;
+extern const kripto_stream_desc *const kripto_stream_chacha;
 
 #endif

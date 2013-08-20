@@ -3,6 +3,6 @@
 
 #include <kripto/stream.h>
 
-extern kripto_stream_desc *const kripto_stream_rc4i;
+extern const kripto_stream_desc *const kripto_stream_rc4i;
 
 #endif

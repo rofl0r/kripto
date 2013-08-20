@@ -242,14 +242,12 @@ int main(void)
 
 	for(n = 1; n <= 32; n++)
 	{
-		s = kripto_block_create(kripto_block_threefish256, k, n, 0);
+		s = kripto_block_create(kripto_block_threefish256, 0, k, n);
 		if(!s) puts("error");
 
 		kripto_block_threefish256_tweak(s, tweak);
 
 		kripto_block_encrypt(s, pt, t);
-		/*for(i = 0; i < 32; i++) printf("0x%.2X, ", t[i]);
-		puts("");*/
 		for(i = 0; i < 32; i++) if(t[i] != ct[n - 1][i])
 		{
 			printf("%u-bit key encrypt: FAIL\n", n * 8);

@@ -3,7 +3,7 @@
 
 #include <kripto/block.h>
 
-extern kripto_block_desc *const kripto_block_threefish512;
+extern const kripto_block_desc *const kripto_block_threefish512;
 
 extern void kripto_block_threefish512_tweak(kripto_block *s, const void *tweak);
 

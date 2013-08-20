@@ -9,20 +9,21 @@ struct kripto_stream_desc
 {
 	kripto_stream *(*create)
 	(
-		const void *,
+		const kripto_stream_desc *,
 		unsigned int,
 		const void *,
 		unsigned int,
+		const void *,
 		unsigned int
 	);
 
 	kripto_stream *(*recreate)
 	(
 		kripto_stream *,
-		const void *,
 		unsigned int,
 		const void *,
 		unsigned int,
+		const void *,
 		unsigned int
 	);
 
@@ -46,8 +47,8 @@ struct kripto_stream_desc
 
 	void (*destroy)(kripto_stream *);
 
-	unsigned int max_key;
-	unsigned int max_iv;
+	unsigned int maxkey;
+	unsigned int maxiv;
 };
 
 #endif

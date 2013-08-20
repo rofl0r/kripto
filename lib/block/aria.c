@@ -25,7 +25,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc *desc;
+	const kripto_block_desc *desc;
 	unsigned int rounds;
 	size_t size;
 	uint32_t *k;
@@ -662,9 +662,9 @@ static void aria_setup
 
 static kripto_block *aria_create
 (
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	kripto_block *s;
@@ -699,9 +699,9 @@ static void aria_destroy(kripto_block *s)
 static kripto_block *aria_recreate
 (
 	kripto_block *s,
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	if(!r)
@@ -714,7 +714,7 @@ static kripto_block *aria_recreate
 	if(sizeof(kripto_block) + ((r + 1) << 5) > s->size)
 	{
 		aria_destroy(s);
-		s = aria_create(key, key_len, r);
+		s = aria_create(r, key, key_len);
 	}
 	else
 	{
@@ -725,7 +725,7 @@ static kripto_block *aria_recreate
 	return s;
 }
 
-static const struct kripto_block_desc aria =
+static const kripto_block_desc aria =
 {
 	&aria_create,
 	&aria_recreate,
@@ -736,4 +736,4 @@ static const struct kripto_block_desc aria =
 	32 /* max key */
 };
 
-kripto_block_desc *const kripto_block_aria = &aria;
+const kripto_block_desc *const kripto_block_aria = &aria;

@@ -25,7 +25,7 @@
 
 struct kripto_mac
 {
-	kripto_mac_desc *desc;
+	const kripto_mac_desc *desc;
 	kripto_hash *hash;
 	size_t size;
 	unsigned int r;
@@ -36,7 +36,7 @@ struct kripto_mac
 static int hmac_init
 (
 	kripto_mac *s,
-	kripto_hash_desc *hash,
+	const kripto_hash_desc *hash,
 	const void *key,
 	unsigned int key_len,
 	unsigned int tag_len
@@ -135,18 +135,18 @@ static kripto_mac *hmac_recreate
 	}
 	else
 	{
-		if(hash == kripto_hash_get_desc(s->hash))
-			s->hash = kripto_hash_recreate(s->hash, tag_len, r);
+		/*if(hash == kripto_hash_getdesc(s->hash))
+			s->hash = kripto_hash_recreate(s->hash, r, tag_len);
 		else
-		{
+		{*/
 			kripto_hash_destroy(s->hash);
-			s->hash = kripto_hash_create(hash, tag_len, r);
+			s->hash = kripto_hash_create(hash, r, tag_len);
 			if(!s->hash)
 			{
 				hmac_destroy(s);
 				return 0;
 			}
-		}
+		//}
 
 		s->r = r;
 		if(hmac_init(s, hash, key, key_len, tag_len))
@@ -184,7 +184,7 @@ static unsigned int hmac_max_tag(const void *hash)
 	return kripto_hash_max_output(hash);
 }
 
-static const struct kripto_mac_desc hmac =
+static const struct const kripto_mac_desc hmac =
 {
 	&hmac_create,
 	&hmac_recreate,
@@ -194,4 +194,4 @@ static const struct kripto_mac_desc hmac =
 	&hmac_max_tag
 };
 
-kripto_mac_desc *const kripto_mac_hmac = &hmac;
+const kripto_mac_desc *const kripto_mac_hmac = &hmac;

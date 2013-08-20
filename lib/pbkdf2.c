@@ -25,9 +25,8 @@
 
 int kripto_pbkdf2
 (
-	kripto_mac_desc *mac_desc,
-	const void *f,
-	unsigned int r,
+	const kripto_mac_desc *mac,
+	unsigned int mac_rounds,
 	unsigned int iter,
 	const void *pass,
 	unsigned int pass_len,
@@ -43,12 +42,12 @@ int kripto_pbkdf2
 	uint8_t ctr[4] = {0, 0, 0, 0};
 	uint8_t *buf0;
 	uint8_t *buf1;
-	kripto_mac *mac;
+	kripto_mac *m;
 
-	assert(mac_desc);
+	assert(mac);
 	assert(iter);
 
-	x = kripto_mac_max_tag(mac_desc, f);
+	x = kripto_mac_maxtag(mac);
 	if(out_len < x) x = out_len;
 
 	buf0 = malloc(x << 1);
@@ -56,29 +55,29 @@ int kripto_pbkdf2
 
 	buf1 = buf0 + x;
 
-	mac = kripto_mac_create(mac_desc, f, r, pass, pass_len, x);
-	if(!mac) goto err;
+	m = kripto_mac_create(mac, mac_rounds, pass, pass_len, x);
+	if(!m) goto err;
 
 	for(;;)
 	{
 		for(i = 3; !++ctr[i]; i--)
 			assert(i);
 
-		kripto_mac_input(mac, salt, salt_len);
+		kripto_mac_input(m, salt, salt_len);
 
-		kripto_mac_input(mac, ctr, 4);
+		kripto_mac_input(m, ctr, 4);
 
-		kripto_mac_tag(mac, buf0, x);
+		kripto_mac_tag(m, buf0, x);
 
 		memcpy(buf1, buf0, x);
 
 		for(i = 1; i < iter; i++)
 		{
-			mac = kripto_mac_recreate(mac, f, r, pass, pass_len, x);
+			m = kripto_mac_recreate(m, mac_rounds, pass, pass_len, x);
 			if(!mac) goto err;
 
-			kripto_mac_input(mac, buf0, x);
-			kripto_mac_tag(mac, buf0, x);
+			kripto_mac_input(m, buf0, x);
+			kripto_mac_tag(m, buf0, x);
 
 			for(y = 0; y < x; y++)
 				buf1[y] ^= buf0[y];
@@ -90,11 +89,11 @@ int kripto_pbkdf2
 
 		if(!out_len) break;
 
-		mac = kripto_mac_recreate(mac, f, r, pass, pass_len, x);
-		if(!mac) goto err;
+		m = kripto_mac_recreate(m, mac_rounds, pass, pass_len, x);
+		if(!m) goto err;
 	}
 
-	kripto_mac_destroy(mac);
+	kripto_mac_destroy(m);
 	kripto_memwipe(buf0, x);
 	kripto_memwipe(buf1, x);
 	free(buf0);

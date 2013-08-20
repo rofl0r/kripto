@@ -3,28 +3,28 @@
 
 #include <stddef.h>
 
+typedef struct kripto_authstream_desc kripto_authstream_desc;
 typedef struct kripto_authstream kripto_authstream;
-typedef const struct kripto_authstream_desc kripto_authstream_desc;
 
 extern kripto_authstream *kripto_authstream_create
 (
-	kripto_authstream_desc *desc,
+	const kripto_authstream_desc *desc,
+	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
 	const void *iv,
 	unsigned int iv_len,
-	unsigned int r,
 	unsigned int tag_len
 );
 
 extern kripto_authstream *kripto_authstream_recreate
 (
 	kripto_authstream *s,
+	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
 	const void *iv,
 	unsigned int iv_len,
-	unsigned int r,
 	unsigned int tag_len
 );
 
@@ -53,10 +53,12 @@ extern void kripto_authstream_tag
 
 extern void kripto_authstream_destroy(kripto_authstream *s);
 
-extern unsigned int kripto_authstream_max_key(kripto_authstream_desc *desc);
+extern const kripto_authstream_desc *kripto_authstream_getdesc(const kripto_authstream *s);
 
-extern unsigned int kripto_authstream_max_iv(kripto_authstream_desc *desc);
+extern unsigned int kripto_authstream_maxkey(const kripto_authstream_desc *desc);
 
-extern unsigned int kripto_authstream_max_tag(kripto_authstream_desc *desc);
+extern unsigned int kripto_authstream_maxiv(const kripto_authstream_desc *desc);
+
+extern unsigned int kripto_authstream_maxtag(const kripto_authstream_desc *desc);
 
 #endif

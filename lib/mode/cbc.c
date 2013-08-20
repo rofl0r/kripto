@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Gregor Pintar <grpintar@gmail.com>
+ * Copyright (C) 2011, 2013 Gregor Pintar <grpintar@gmail.com>
  *
  * Permission is granted to deal in this work without any restriction,
  * including unlimited rights to use, publicly perform, publish,
@@ -19,8 +19,6 @@
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
-#include <kripto/mode.h>
-#include <kripto/mode_desc.h>
 #include <kripto/stream.h>
 #include <kripto/stream_desc.h>
 
@@ -28,9 +26,9 @@
 
 struct kripto_stream
 {
-	kripto_stream_desc *desc;
-	const kripto_block *block;
-	unsigned int block_size;
+	const kripto_stream_desc *desc;
+	kripto_block *block;
+	unsigned int blocksize;
 	uint8_t *iv;
 	uint8_t *buf;
 };
@@ -48,12 +46,12 @@ static size_t cbc_encrypt
 
 	for(i = 0; i < len; i += n)
 	{
-		for(n = 0; n < s->block_size; n++)
+		for(n = 0; n < s->blocksize; n++)
 			U8(ct)[n] = CU8(pt)[n] ^ s->iv[n];
 
 		kripto_block_encrypt(s->block, ct, ct);
 
-		for(n = 0; n < s->block_size; n++)
+		for(n = 0; n < s->blocksize; n++)
 			s->iv[n] = U8(ct)[n];
 
 		CPTR_INC(pt, n);
@@ -76,12 +74,12 @@ static size_t cbc_decrypt
 
 	for(i = 0; i < len; i += n)
 	{
-		for(n = 0; n < s->block_size; n++)
+		for(n = 0; n < s->blocksize; n++)
 			s->buf[n] = CU8(ct)[n];
 
 		kripto_block_decrypt(s->block, ct, pt);
 
-		for(n = 0; n < s->block_size; n++)
+		for(n = 0; n < s->blocksize; n++)
 		{
 			U8(pt)[n] ^=  s->iv[n];
 			s->iv[n] = s->buf[n];
@@ -96,63 +94,98 @@ static size_t cbc_decrypt
 
 static void cbc_destroy(kripto_stream *s)
 {
-	kripto_memwipe(s, sizeof(kripto_stream)
-		+ (s->block_size << 1)
-		+ sizeof(kripto_stream_desc)
-	);
-
+	kripto_block_destroy(s->block);
+	kripto_memwipe(s, sizeof(kripto_stream) + (s->blocksize << 1));
 	free(s);
 }
 
+struct ext
+{
+	kripto_stream_desc desc;
+	const kripto_block_desc *block;
+};
+
+#define EXT(X) ((struct ext *)(X))
+
 static kripto_stream *cbc_create
 (
-	const kripto_block *block,
+	const kripto_stream_desc *desc,
+	unsigned int rounds,
+	const void *key,
+	unsigned int key_len,
 	const void *iv,
 	unsigned int iv_len
 )
 {
 	kripto_stream *s;
-	kripto_block_desc *b;
-	struct kripto_stream_desc *stream;
 
-	b = kripto_block_get_desc(block);
-
-	s = malloc(sizeof(kripto_stream)
-		+ (kripto_block_size(b) << 1)
-		+ sizeof(kripto_stream_desc)
-	);
+	s = malloc(sizeof(kripto_stream) + (desc->maxiv << 1));
 	if(!s) return 0;
 
-	s->block_size = kripto_block_size(b);
+	s->desc = desc;
 
-	stream = (struct kripto_stream_desc *)
-		((uint8_t *)s + sizeof(kripto_stream));
+	s->blocksize = desc->maxiv;
 
-	s->iv = (uint8_t *)stream + sizeof(kripto_stream_desc);
-	s->buf = s->iv + s->block_size;
+	s->iv = (uint8_t *)s + sizeof(kripto_stream);
+	s->buf = s->iv + s->blocksize;
 
-	stream->encrypt = &cbc_encrypt;
-	stream->decrypt = &cbc_decrypt;
-	stream->prng = 0;
-	stream->create = 0;
-	stream->destroy = &cbc_destroy;
-	stream->max_key = kripto_block_max_key(b);
-	stream->max_iv = s->block_size;
+	/* block cipher */
+	s->block = kripto_block_create(EXT(s)->block, rounds, key, key_len);
+	if(!s->block)
+	{
+		cbc_destroy(s);
+		return 0;
+	}
 
-	s->desc = stream;
-
+	/* IV */
 	if(iv_len) memcpy(s->iv, iv, iv_len);
-	memset(s->iv + iv_len, 0, s->block_size - iv_len);
-
-	s->block = block;
+	memset(s->iv + iv_len, 0, s->blocksize - iv_len);
 
 	return s;
 }
 
-static const struct kripto_mode_desc cbc =
+static kripto_stream *cbc_recreate
+(
+	kripto_stream *s,
+	unsigned int rounds,
+	const void *key,
+	unsigned int key_len,
+	const void *iv,
+	unsigned int iv_len
+)
 {
-	&cbc_create,
-	&kripto_block_size
-};
+	/* block cipher */
+	s->block = kripto_block_recreate(s->block, rounds, key, key_len);
+	if(!s->block)
+	{
+		cbc_destroy(s);
+		return 0;
+	}
 
-kripto_mode_desc *const kripto_mode_cbc = &cbc;
+	/* IV */
+	if(iv_len) memcpy(s->iv, iv, iv_len);
+	memset(s->iv + iv_len, 0, s->blocksize - iv_len);
+
+	return s;
+}
+
+kripto_stream_desc *kripto_stream_cbc(const kripto_block_desc *block)
+{
+	struct ext *s;
+
+	s = malloc(sizeof(struct ext));
+	if(!s) return 0;
+
+	s->block = block;
+
+	s->desc.create = &cbc_create;
+	s->desc.recreate = &cbc_recreate;
+	s->desc.encrypt = &cbc_encrypt;
+	s->desc.decrypt = &cbc_decrypt;
+	s->desc.prng = 0;
+	s->desc.destroy = &cbc_destroy;
+	s->desc.maxkey = kripto_block_maxkey(block);
+	s->desc.maxiv = kripto_block_size(block);
+
+	return (kripto_stream_desc *)s;
+}

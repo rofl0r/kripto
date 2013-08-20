@@ -21,17 +21,17 @@
 
 struct kripto_authstream
 {
-	kripto_authstream_desc *desc;
+	const kripto_authstream_desc *desc;
 };
 
 kripto_authstream *kripto_authstream_create
 (
-	kripto_authstream_desc *desc,
+	const kripto_authstream_desc *desc,
+	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
 	const void *iv,
 	unsigned int iv_len,
-	unsigned int r,
 	unsigned int tag_len
 )
 {
@@ -40,21 +40,22 @@ kripto_authstream *kripto_authstream_create
 
 	assert(key);
 	assert(key_len);
-	assert(key_len <= kripto_authstream_max_key(desc));
+	assert(key_len <= kripto_authstream_maxkey(desc));
+	assert(iv_len <= kripto_authstream_maxiv(desc));
 	if(iv_len) assert(iv);
-	assert(tag_len <= kripto_authstream_max_tag(desc));
+	assert(tag_len <= kripto_authstream_maxtag(desc));
 
-	return desc->create(key, key_len, iv, iv_len, r, tag_len);
+	return desc->create(rounds, key, key_len, iv, iv_len, tag_len);
 }
 
 kripto_authstream *kripto_authstream_recreate
 (
 	kripto_authstream *s,
+	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
 	const void *iv,
 	unsigned int iv_len,
-	unsigned int r,
 	unsigned int tag_len
 )
 {
@@ -65,10 +66,11 @@ kripto_authstream *kripto_authstream_recreate
 	assert(key);
 	assert(key_len);
 	assert(key_len <= kripto_authstream_max_key(s->desc));
+	assert(iv_len <= kripto_authstream_maxiv(s->desc));
 	if(iv_len) assert(iv);
 	assert(tag_len <= kripto_authstream_max_tag(s->desc));
 
-	return s->desc->recreate(s, key, key_len, iv, iv_len, r, tag_len);
+	return s->desc->recreate(s, rounds, key, key_len, iv, iv_len, tag_len);
 }
 
 size_t kripto_authstream_encrypt
@@ -124,24 +126,32 @@ void kripto_authstream_destroy(kripto_authstream *s)
 	s->desc->destroy(s);
 }
 
-unsigned int kripto_authstream_max_key(kripto_authstream_desc *desc)
+const kripto_authstream_desc *kripto_authstream_getdesc(const kripto_authstream *s)
 {
-	assert(desc);
-	assert(desc->max_key);
+	assert(s);
+	assert(s->desc);
 
-	return desc->max_key;
+	return s->desc;
 }
 
-unsigned int kripto_authstream_max_iv(kripto_authstream_desc *desc)
+unsigned int kripto_authstream_maxkey(const kripto_authstream_desc *desc)
 {
 	assert(desc);
+	assert(desc->maxkey);
 
-	return desc->max_iv;
+	return desc->maxkey;
 }
 
-unsigned int kripto_authstream_max_tag(kripto_authstream_desc *desc)
+unsigned int kripto_authstream_maxiv(const kripto_authstream_desc *desc)
 {
 	assert(desc);
 
-	return desc->max_tag;
+	return desc->maxiv;
+}
+
+unsigned int kripto_authstream_maxtag(const kripto_authstream_desc *desc)
+{
+	assert(desc);
+
+	return desc->maxtag;
 }

@@ -25,7 +25,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc *desc;
+	const kripto_block_desc *desc;
 	unsigned int rounds;
 	size_t size;
 	uint32_t s0[256];
@@ -478,9 +478,9 @@ static void blowfish_setup
 
 static kripto_block *blowfish_create
 (
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	kripto_block *s;
@@ -509,9 +509,9 @@ static void blowfish_destroy(kripto_block *s)
 static kripto_block *blowfish_recreate
 (
 	kripto_block *s,
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	if(!r) r = 16;
@@ -519,7 +519,7 @@ static kripto_block *blowfish_recreate
 	if(sizeof(kripto_block) + ((r + 2) << 2))
 	{
 		blowfish_destroy(s);
-		s = blowfish_create(key, key_len, r);
+		s = blowfish_create(r, key, key_len);
 	}
 	else
 	{
@@ -531,7 +531,7 @@ static kripto_block *blowfish_recreate
 	return s;
 }
 
-static const struct kripto_block_desc blowfish =
+static const kripto_block_desc blowfish =
 {
 	&blowfish_create,
 	&blowfish_recreate,
@@ -542,4 +542,4 @@ static const struct kripto_block_desc blowfish =
 	56 /* max key */
 };
 
-kripto_block_desc *const kripto_block_blowfish = &blowfish;
+const kripto_block_desc *const kripto_block_blowfish = &blowfish;

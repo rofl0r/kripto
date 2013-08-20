@@ -20,14 +20,13 @@
 
 struct kripto_mac
 {
-	kripto_mac_desc *desc;
+	const kripto_mac_desc *desc;
 };
 
 kripto_mac *kripto_mac_create
 (
-	kripto_mac_desc *desc,
-	const void *f,
-	unsigned int r,
+	const kripto_mac_desc *desc,
+	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
 	unsigned int tag_len
@@ -39,14 +38,13 @@ kripto_mac *kripto_mac_create
 	assert(key);
 	assert(key_len);
 
-	return desc->create(f, r, key, key_len, tag_len);
+	return desc->create(rounds, key, key_len, tag_len);
 }
 
 kripto_mac *kripto_mac_recreate
 (
 	kripto_mac *s,
-	const void *f,
-	unsigned int r,
+	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
 	unsigned int tag_len
@@ -59,7 +57,7 @@ kripto_mac *kripto_mac_recreate
 	assert(key);
 	assert(key_len);
 
-	return s->desc->recreate(s, f, r, key, key_len, tag_len);
+	return s->desc->recreate(s, rounds, key, key_len, tag_len);
 }
 
 void kripto_mac_input(kripto_mac *s, const void *in, size_t len)
@@ -92,8 +90,7 @@ void kripto_mac_destroy(kripto_mac *s)
 int kripto_mac_all
 (
 	kripto_mac_desc *desc,
-	const void *f,
-	unsigned int r,
+	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
 	const void *in,
@@ -106,7 +103,7 @@ int kripto_mac_all
 
 	assert(desc);
 
-	s = kripto_mac_create(desc, f, r, key, key_len, tag_len);
+	s = kripto_mac_create(desc, rounds, key, key_len, tag_len);
 	if(!s) return -1;
 
 	kripto_mac_input(s, in, in_len);
@@ -117,7 +114,7 @@ int kripto_mac_all
 	return 0;
 }
 
-kripto_mac_desc *kripto_mac_get_desc(const kripto_mac *s)
+const kripto_mac_desc *kripto_mac_getdesc(const kripto_mac *s)
 {
 	assert(s);
 	assert(s->desc);
@@ -125,10 +122,9 @@ kripto_mac_desc *kripto_mac_get_desc(const kripto_mac *s)
 	return s->desc;
 }
 
-unsigned int kripto_mac_max_tag(kripto_mac_desc *mac, const void *f)
+unsigned int kripto_mac_maxtag(const kripto_mac_desc *desc)
 {
-	assert(mac);
-	assert(mac->max_tag);
+	assert(desc);
 
-	return mac->max_tag(f);
+	return desc->maxtag;
 }

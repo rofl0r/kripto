@@ -25,7 +25,7 @@
 
 struct kripto_stream
 {
-	kripto_stream_desc *desc;
+	const kripto_stream_desc *desc;
 	unsigned int r;
 	uint32_t x[16];
 	uint8_t buf[64];
@@ -172,11 +172,11 @@ static size_t chacha_prng
 static kripto_stream *chacha_recreate
 (
 	kripto_stream *s,
+	unsigned int r,
 	const void *key,
 	unsigned int key_len,
 	const void *iv,
-	unsigned int iv_len,
-	unsigned int r
+	unsigned int iv_len
 )
 {
 	unsigned int i;
@@ -258,21 +258,24 @@ static kripto_stream *chacha_recreate
 
 static kripto_stream *chacha_create
 (
+	const kripto_stream_desc *desc,
+	unsigned int r,
 	const void *key,
 	unsigned int key_len,
 	const void *iv,
-	unsigned int iv_len,
-	unsigned int r
+	unsigned int iv_len
 )
 {
 	kripto_stream *s;
+
+	(void)desc;
 
 	s = malloc(sizeof(kripto_stream));
 	if(!s) return 0;
 
 	s->desc = kripto_stream_chacha;
 
-	(void)chacha_recreate(s, key, key_len, iv, iv_len, r);
+	(void)chacha_recreate(s, r, key, key_len, iv, iv_len);
 
 	return s;
 }
@@ -295,4 +298,4 @@ static const struct kripto_stream_desc chacha =
 	24 /* max iv */
 };
 
-kripto_stream_desc *const kripto_stream_chacha = &chacha;
+const kripto_stream_desc *const kripto_stream_chacha = &chacha;

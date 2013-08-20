@@ -28,7 +28,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc *desc;
+	const kripto_block_desc *desc;
 	unsigned int rounds;
 	uint64_t t[3];
 	uint64_t k[17];
@@ -369,9 +369,9 @@ static void threefish1024_decrypt
 static kripto_block *threefish1024_recreate
 (
 	kripto_block *s,
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	unsigned int i;
@@ -396,9 +396,9 @@ static kripto_block *threefish1024_recreate
 
 static kripto_block *threefish1024_create
 (
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	kripto_block *s;
@@ -408,7 +408,7 @@ static kripto_block *threefish1024_create
 
 	s->desc = kripto_block_threefish1024;
 
-	(void)threefish1024_recreate(s, key, key_len, r);
+	(void)threefish1024_recreate(s, r, key, key_len);
 
 	return s;
 }
@@ -419,7 +419,7 @@ static void threefish1024_destroy(kripto_block *s)
 	free(s);
 }
 
-static const struct kripto_block_desc threefish1024 =
+static const kripto_block_desc threefish1024 =
 {
 	&threefish1024_create,
 	&threefish1024_recreate,
@@ -430,4 +430,4 @@ static const struct kripto_block_desc threefish1024 =
 	128 /* max key */
 };
 
-kripto_block_desc *const kripto_block_threefish1024 = &threefish1024;
+const kripto_block_desc *const kripto_block_threefish1024 = &threefish1024;

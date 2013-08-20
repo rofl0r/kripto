@@ -3,6 +3,6 @@
 
 #include <kripto/hash.h>
 
-extern kripto_hash_desc *const kripto_hash_sha2_256;
+extern const kripto_hash_desc *const kripto_hash_sha2_256;
 
 #endif

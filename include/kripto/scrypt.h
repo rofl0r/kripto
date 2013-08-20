@@ -5,9 +5,8 @@
 
 extern int kripto_scrypt
 (
-	kripto_mac_desc *mac,
-	const void *f,
-	unsigned int rounds,
+	const kripto_mac_desc *mac,
+	unsigned int mac_rounds,
 	uint64_t n,
 	uint32_t r,
 	uint32_t p,

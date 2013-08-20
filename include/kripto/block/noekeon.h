@@ -3,6 +3,6 @@
 
 #include <kripto/block.h>
 
-extern kripto_block_desc *const kripto_block_noekeon;
+extern const kripto_block_desc *const kripto_block_noekeon;
 
 #endif

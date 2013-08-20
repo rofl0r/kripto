@@ -27,7 +27,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc *desc;
+	const kripto_block_desc *desc;
 	unsigned int rounds;
 	uint64_t kw[4];
 	uint64_t kl[6];
@@ -651,9 +651,9 @@ static void camellia_decrypt
 static kripto_block *camellia_recreate
 (
 	kripto_block *s,
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	(void)r;
@@ -668,9 +668,9 @@ static kripto_block *camellia_recreate
 
 static kripto_block *camellia_create
 (
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	kripto_block *s;
@@ -682,7 +682,7 @@ static kripto_block *camellia_create
 
 	s->desc = kripto_block_camellia;
 
-	camellia_recreate(s, key, key_len, 0);
+	camellia_recreate(s, 0, key, key_len);
 
 	return s;
 }
@@ -693,7 +693,7 @@ static void camellia_destroy(kripto_block *s)
 	free(s);
 }
 
-static const struct kripto_block_desc camellia =
+static const kripto_block_desc camellia =
 {
 	&camellia_create,
 	&camellia_recreate,
@@ -704,4 +704,4 @@ static const struct kripto_block_desc camellia =
 	32 /* max key */
 };
 
-kripto_block_desc *const kripto_block_camellia = &camellia;
+const kripto_block_desc *const kripto_block_camellia = &camellia;

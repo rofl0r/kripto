@@ -3,27 +3,27 @@
 
 #include <stddef.h>
 
+typedef struct kripto_stream_desc kripto_stream_desc;
 typedef struct kripto_stream kripto_stream;
-typedef const struct kripto_stream_desc kripto_stream_desc;
 
 extern kripto_stream *kripto_stream_create
 (
-	kripto_stream_desc *desc,
+	const kripto_stream_desc *desc,
+	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
 	const void *iv,
-	unsigned int iv_len,
-	unsigned int r
+	unsigned int iv_len
 );
 
 extern kripto_stream *kripto_stream_recreate
 (
 	kripto_stream *s,
+	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
 	const void *iv,
-	unsigned int iv_len,
-	unsigned int r
+	unsigned int iv_len
 );
 
 extern size_t kripto_stream_encrypt
@@ -51,8 +51,10 @@ extern size_t kripto_stream_prng
 
 extern void kripto_stream_destroy(kripto_stream *s);
 
-extern unsigned int kripto_stream_max_key(kripto_stream_desc *desc);
+extern const kripto_stream_desc *kripto_stream_getdesc(const kripto_stream *s);
 
-extern unsigned int kripto_stream_max_iv(kripto_stream_desc *desc);
+extern unsigned int kripto_stream_maxkey(const kripto_stream_desc *desc);
+
+extern unsigned int kripto_stream_maxiv(const kripto_stream_desc *desc);
 
 #endif

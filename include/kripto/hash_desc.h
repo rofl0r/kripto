@@ -5,10 +5,14 @@
 
 struct kripto_hash_desc
 {
-	kripto_hash *(*create)(size_t, unsigned int);
-	kripto_hash *(*recreate)(kripto_hash *, size_t, unsigned int);
+	kripto_hash *(*create)(unsigned int, size_t);
+
+	kripto_hash *(*recreate)(kripto_hash *, unsigned int, size_t);
+
 	void (*input)(kripto_hash *, const void *, size_t);
+
 	void (*output)(kripto_hash *, void *, size_t);
+
 	void (*destroy)(kripto_hash *);
 
 	int (*hash_all)
@@ -20,8 +24,8 @@ struct kripto_hash_desc
 		size_t
 	);
 
-	size_t max_output;
-	unsigned int block_size;
+	size_t maxout;
+	unsigned int blocksize;
 };
 
 #endif

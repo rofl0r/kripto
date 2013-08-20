@@ -29,7 +29,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc *desc;
+	const kripto_block_desc *desc;
 	unsigned int rounds;
 	size_t size;
 	uint32_t *k;
@@ -730,9 +730,9 @@ static void anubis_decrypt
 
 static kripto_block *anubis_create
 (
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	kripto_block *s;
@@ -766,9 +766,9 @@ static void anubis_destroy(kripto_block *s)
 static kripto_block *anubis_recreate
 (
 	kripto_block *s,
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	if(!r)
@@ -780,7 +780,7 @@ static kripto_block *anubis_recreate
 	if(sizeof(kripto_block) + ((r + 1) << 5) > s->size)
 	{
 		anubis_destroy(s);
-		s = anubis_create(key, key_len, r);
+		s = anubis_create(r, key, key_len);
 	}
 	else
 	{
@@ -791,7 +791,7 @@ static kripto_block *anubis_recreate
 	return s;
 }
 
-static const struct kripto_block_desc anubis =
+static const kripto_block_desc anubis =
 {
 	&anubis_create,
 	&anubis_recreate,
@@ -802,4 +802,4 @@ static const struct kripto_block_desc anubis =
 	40 /* max key */
 };
 
-kripto_block_desc *const kripto_block_anubis = &anubis;
+const kripto_block_desc *const kripto_block_anubis = &anubis;

@@ -19,8 +19,6 @@
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
-#include <kripto/mode.h>
-#include <kripto/mode_desc.h>
 #include <kripto/stream.h>
 #include <kripto/stream_desc.h>
 
@@ -28,9 +26,9 @@
 
 struct kripto_stream
 {
-	kripto_stream_desc *desc;
-	const kripto_block *block;
-	unsigned int block_size;
+	const kripto_stream_desc *desc;
+	kripto_block *block;
+	unsigned int blocksize;
 };
 
 static size_t ecb_encrypt
@@ -43,7 +41,7 @@ static size_t ecb_encrypt
 {
 	size_t i;
 
-	for(i = 0; i < len; i += s->block_size)
+	for(i = 0; i < len; i += s->blocksize)
 		kripto_block_encrypt(s->block, CU8(pt) + i, U8(ct) + i);
 
 	return i;
@@ -59,7 +57,7 @@ static size_t ecb_decrypt
 {
 	size_t i;
 
-	for(i = 0; i < len; i += s->block_size)
+	for(i = 0; i < len; i += s->blocksize)
 		kripto_block_decrypt(s->block, CU8(ct) + i, U8(pt) + i);
 
 	return i;
@@ -67,64 +65,93 @@ static size_t ecb_decrypt
 
 static void ecb_destroy(kripto_stream *s)
 {
-	kripto_memwipe(s, sizeof(kripto_stream)
-		+ s->block_size
-		+ sizeof(kripto_stream_desc)
-	);
-
+	kripto_block_destroy(s->block);
+	kripto_memwipe(s, sizeof(kripto_stream));
 	free(s);
 }
 
-static unsigned int ecb_max_iv(kripto_block_desc *desc)
+struct ext
 {
-	(void)desc;
+	kripto_stream_desc desc;
+	const kripto_block_desc *block;
+};
 
-	return 0;
-}
+#define EXT(X) ((struct ext *)(X))
 
 static kripto_stream *ecb_create
 (
-	const kripto_block *block,
+	const kripto_stream_desc *desc,
+	unsigned int rounds,
+	const void *key,
+	unsigned int key_len,
 	const void *iv,
 	unsigned int iv_len
 )
 {
 	kripto_stream *s;
-	kripto_block_desc *b;
-	struct kripto_stream_desc *stream;
 
 	(void)iv;
 	(void)iv_len;
 
-	b = kripto_block_get_desc(block);
+	s = malloc(sizeof(kripto_stream));
+	if(!s) return 0;
 
-	s = malloc(sizeof(kripto_stream)
-		+ sizeof(kripto_stream_desc)
-	);
+	s->desc = desc;
 
-	s->block_size = kripto_block_size(b);
+	s->blocksize = kripto_block_size(EXT(s)->block);
 
-	stream = (struct kripto_stream_desc *)
-		((uint8_t *)s + sizeof(kripto_stream));
-
-	stream->encrypt = &ecb_encrypt;
-	stream->decrypt = &ecb_decrypt;
-	stream->prng = 0;
-	stream->create = 0;
-	stream->destroy = &ecb_destroy;
-	stream->max_key = kripto_block_max_key(b);
-	stream->max_iv = 0;
-
-	s->desc = stream;
-	s->block = block;
+	/* block cipher */
+	s->block = kripto_block_create(EXT(s)->block, rounds, key, key_len);
+	if(!s->block)
+	{
+		ecb_destroy(s);
+		return 0;
+	}
 
 	return s;
 }
 
-static const kripto_mode_desc ecb =
+static kripto_stream *ecb_recreate
+(
+	kripto_stream *s,
+	unsigned int rounds,
+	const void *key,
+	unsigned int key_len,
+	const void *iv,
+	unsigned int iv_len
+)
 {
-	&ecb_create,
-	&ecb_max_iv
-};
+	(void)iv;
+	(void)iv_len;
 
-kripto_mode_desc *const kripto_mode_ecb = &ecb;
+	/* block cipher */
+	s->block = kripto_block_recreate(s->block, rounds, key, key_len);
+	if(!s->block)
+	{
+		ecb_destroy(s);
+		return 0;
+	}
+
+	return s;
+}
+
+kripto_stream_desc *kripto_stream_ecb(const kripto_block_desc *block)
+{
+	struct ext *s;
+
+	s = malloc(sizeof(struct ext));
+	if(!s) return 0;
+
+	s->block = block;
+
+	s->desc.create = &ecb_create;
+	s->desc.recreate = &ecb_recreate;
+	s->desc.encrypt = &ecb_encrypt;
+	s->desc.decrypt = &ecb_decrypt;
+	s->desc.prng = 0;
+	s->desc.destroy = &ecb_destroy;
+	s->desc.maxkey = kripto_block_maxkey(block);
+	s->desc.maxiv = 0;
+
+	return (kripto_stream_desc *)s;
+}

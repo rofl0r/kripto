@@ -5,9 +5,8 @@
 
 extern int kripto_pbkdf2
 (
-	kripto_mac_desc *mac_desc,
-	const void *f,
-	unsigned int r,
+	const kripto_mac_desc *mac,
+	unsigned int mac_rounds,
 	unsigned int iter,
 	const void *pass,
 	unsigned int pass_len,

@@ -25,15 +25,11 @@
 
 struct kripto_block
 {
-	kripto_block_desc *desc;
+	const kripto_block_desc *desc;
 	unsigned int rounds;
 	uint32_t k[4];
 	uint32_t dk[4];
 };
-
-#define NOEKEON_MAX_KEY 16
-#define NOEKEON_MAX_ROUNDS 32
-#define NOEKEON_DEFAULT_ROUNDS 16
 
 static const uint8_t rc[34] =
 {
@@ -163,7 +159,7 @@ static void noekeon_setup
 	unsigned int i;
 	uint32_t T;
 
-	if(!s->rounds) s->rounds = NOEKEON_DEFAULT_ROUNDS;
+	if(!s->rounds) s->rounds = 16;
 
 	/* direct mode */
 	s->k[0] = s->k[1] = s->k[2] = s->k[3] = 0;
@@ -181,9 +177,9 @@ static void noekeon_setup
 
 static kripto_block *noekeon_create
 (
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	kripto_block *s;
@@ -202,9 +198,9 @@ static kripto_block *noekeon_create
 static kripto_block *noekeon_recreate
 (
 	kripto_block *s,
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	s->rounds = r;
@@ -219,7 +215,7 @@ static void noekeon_destroy(kripto_block *s)
 	free(s);
 }
 
-static const struct kripto_block_desc noekeon =
+static const kripto_block_desc noekeon =
 {
 	&noekeon_create,
 	&noekeon_recreate,
@@ -230,4 +226,4 @@ static const struct kripto_block_desc noekeon =
 	16 /* max key */
 };
 
-kripto_block_desc *const kripto_block_noekeon = &noekeon;
+const kripto_block_desc *const kripto_block_noekeon = &noekeon;

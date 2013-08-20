@@ -196,9 +196,8 @@ static void smix
 
 int kripto_scrypt
 (
-	kripto_mac_desc *mac,
-	const void *f,
-	unsigned int rounds,
+	const kripto_mac_desc *mac,
+	unsigned int mac_rounds,
 	uint64_t n,
 	uint32_t r,
 	uint32_t p,
@@ -226,8 +225,7 @@ int kripto_scrypt
 	if(kripto_pbkdf2
 	(
 		mac,
-		f,
-		rounds,
+		mac_rounds,
 		1,
 		pass,
 		pass_len,
@@ -243,8 +241,7 @@ int kripto_scrypt
 	if(kripto_pbkdf2
 	(
 		mac,
-		f,
-		rounds,
+		mac_rounds,
 		1,
 		pass,
 		pass_len,

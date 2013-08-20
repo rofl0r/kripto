@@ -59,7 +59,7 @@ int main(void)
 
 	for(n = 1; n <= 16; n++)
 	{
-		s = kripto_block_create(kripto_block_xtea, k, n, 0);
+		s = kripto_block_create(kripto_block_xtea, 0, k, n);
 		if(!s) puts("error");
 
 		kripto_block_encrypt(s, pt, t);

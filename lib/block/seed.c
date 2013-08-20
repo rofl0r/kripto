@@ -24,7 +24,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc *desc;
+	const kripto_block_desc *desc;
 	unsigned int rounds;
 	size_t size;
 	uint32_t *k;
@@ -431,9 +431,9 @@ static void seed_setup
 
 static kripto_block *seed_create
 (
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	kripto_block *s;
@@ -462,9 +462,9 @@ static void seed_destroy(kripto_block *s)
 static kripto_block *seed_recreate
 (
 	kripto_block *s,
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	if(!r) r = 16;
@@ -472,7 +472,7 @@ static kripto_block *seed_recreate
 	if(sizeof(kripto_block) + (r << 3) > s->size)
 	{
 		seed_destroy(s);
-		s = seed_create(key, key_len, r);
+		s = seed_create(r, key, key_len);
 	}
 	else
 	{
@@ -483,7 +483,7 @@ static kripto_block *seed_recreate
 	return s;
 }
 
-static const struct kripto_block_desc seed =
+static const kripto_block_desc seed =
 {
 	&seed_create,
 	&seed_recreate,
@@ -494,4 +494,4 @@ static const struct kripto_block_desc seed =
 	16 /* max key */
 };
 
-kripto_block_desc *const kripto_block_seed = &seed;
+const kripto_block_desc *const kripto_block_seed = &seed;

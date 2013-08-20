@@ -26,7 +26,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc *desc;
+	const kripto_block_desc *desc;
 	unsigned int rounds;
 	size_t size;
 	uint32_t *k;
@@ -667,9 +667,9 @@ static void serpent_setup
 
 static kripto_block *serpent_create
 (
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	kripto_block *s;
@@ -698,9 +698,9 @@ static void serpent_destroy(kripto_block *s)
 static kripto_block *serpent_recreate
 (
 	kripto_block *s,
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	if(!r) r = 32;
@@ -708,7 +708,7 @@ static kripto_block *serpent_recreate
 	if(sizeof(kripto_block) + ((r + 1) << 4) > s->size)
 	{
 		serpent_destroy(s);
-		s = serpent_create(key, key_len, r);
+		s = serpent_create(r, key, key_len);
 	}
 	else
 	{
@@ -719,7 +719,7 @@ static kripto_block *serpent_recreate
 	return s;
 }
 
-static const struct kripto_block_desc serpent =
+static const kripto_block_desc serpent =
 {
 	&serpent_create,
 	&serpent_recreate,
@@ -730,4 +730,4 @@ static const struct kripto_block_desc serpent =
 	32 /* max key */
 };
 
-kripto_block_desc *const kripto_block_serpent = &serpent;
+const kripto_block_desc *const kripto_block_serpent = &serpent;

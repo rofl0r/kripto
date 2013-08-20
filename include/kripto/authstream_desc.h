@@ -9,10 +9,10 @@ struct kripto_authstream_desc
 {
 	kripto_authstream *(*create)
 	(
-		const void *,
 		unsigned int,
 		const void *,
 		unsigned int,
+		const void *,
 		unsigned int,
 		unsigned int
 	);
@@ -20,10 +20,10 @@ struct kripto_authstream_desc
 	kripto_authstream *(*recreate)
 	(
 		kripto_authstream *,
-		const void *,
 		unsigned int,
 		const void *,
 		unsigned int,
+		const void *,
 		unsigned int,
 		unsigned int
 	);
@@ -48,9 +48,9 @@ struct kripto_authstream_desc
 
 	void (*destroy)(kripto_authstream *);
 
-	unsigned int max_key;
-	unsigned int max_iv;
-	unsigned int max_tag;
+	unsigned int maxkey;
+	unsigned int maxiv;
+	unsigned int maxtag;
 };
 
 #endif

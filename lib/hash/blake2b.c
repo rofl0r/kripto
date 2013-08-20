@@ -27,7 +27,7 @@
 
 struct kripto_hash
 {
-	kripto_hash_desc *hash;
+	const kripto_hash_desc *hash;
 	unsigned int r;
 	uint64_t h[8];
 	uint64_t len[2];
@@ -61,8 +61,8 @@ static const uint64_t iv[8] =
 static kripto_hash *blake2b_recreate
 (
 	kripto_hash *s,
-	size_t len,
-	unsigned int r
+	unsigned int r,
+	size_t len
 )
 {
 	s->r = r;
@@ -235,7 +235,7 @@ static void blake2b_output(kripto_hash *s, void *out, size_t len)
 	}
 }
 
-static kripto_hash *blake2b_create(size_t len, unsigned int r)
+static kripto_hash *blake2b_create(unsigned int r, size_t len)
 {
 	kripto_hash *s;
 
@@ -244,7 +244,7 @@ static kripto_hash *blake2b_create(size_t len, unsigned int r)
 
 	s->hash = kripto_hash_blake2b;
 
-	(void)blake2b_recreate(s, len, r);
+	(void)blake2b_recreate(s, r, len);
 
 	return s;
 }
@@ -266,7 +266,7 @@ static int blake2b_hash
 {
 	kripto_hash s;
 
-	(void)blake2b_recreate(&s, out_len, r);
+	(void)blake2b_recreate(&s, r, out_len);
 	blake2b_input(&s, in, in_len);
 	blake2b_output(&s, out, out_len);
 
@@ -275,7 +275,7 @@ static int blake2b_hash
 	return 0;
 }
 
-static const struct kripto_hash_desc blake2b =
+static const kripto_hash_desc blake2b =
 {
 	&blake2b_create,
 	&blake2b_recreate,
@@ -287,4 +287,4 @@ static const struct kripto_hash_desc blake2b =
 	128 /* block_size */
 };
 
-kripto_hash_desc *const kripto_hash_blake2b = &blake2b;
+const kripto_hash_desc *const kripto_hash_blake2b = &blake2b;

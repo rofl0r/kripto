@@ -27,7 +27,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc *desc;
+	const kripto_block_desc *desc;
 	unsigned int rounds;
 	size_t size;
 	uint32_t *k;
@@ -103,9 +103,9 @@ static void xtea_decrypt(const kripto_block *s, const void *ct, void *pt)
 
 static kripto_block *xtea_create
 (
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	kripto_block *s;
@@ -134,9 +134,9 @@ static void xtea_destroy(kripto_block *s)
 static kripto_block *xtea_recreate
 (
 	kripto_block *s,
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	if(!r) r = 64;
@@ -144,7 +144,7 @@ static kripto_block *xtea_recreate
 	if(sizeof(kripto_block) + (r << 2) > s->size)
 	{
 		xtea_destroy(s);
-		s = xtea_create(key, key_len, r);
+		s = xtea_create(r, key, key_len);
 	}
 	else
 	{
@@ -155,7 +155,7 @@ static kripto_block *xtea_recreate
 	return s;
 }
 
-static const struct kripto_block_desc xtea =
+static const kripto_block_desc xtea =
 {
 	&xtea_create,
 	&xtea_recreate,
@@ -166,4 +166,4 @@ static const struct kripto_block_desc xtea =
 	16 /* max key */
 };
 
-kripto_block_desc *const kripto_block_xtea = &xtea;
+const kripto_block_desc *const kripto_block_xtea = &xtea;

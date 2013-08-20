@@ -20,15 +20,15 @@
 
 struct kripto_block
 {
-	kripto_block_desc *desc;
+	const kripto_block_desc *desc;
 };
 
 kripto_block *kripto_block_create
 (
-	kripto_block_desc *desc,
+	const kripto_block_desc *desc,
+	unsigned int rounds,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	assert(desc);
@@ -36,17 +36,17 @@ kripto_block *kripto_block_create
 
 	assert(key);
 	assert(key_len);
-	assert(key_len <= kripto_block_max_key(desc));
+	assert(key_len <= kripto_block_maxkey(desc));
 
-	return desc->create(key, key_len, r);
+	return desc->create(rounds, key, key_len);
 }
 
 kripto_block *kripto_block_recreate
 (
 	kripto_block *s,
+	unsigned int rounds,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	assert(s);
@@ -55,9 +55,9 @@ kripto_block *kripto_block_recreate
 
 	assert(key);
 	assert(key_len);
-	assert(key_len <= kripto_block_max_key(s->desc));
+	assert(key_len <= kripto_block_maxkey(s->desc));
 
-	return s->desc->recreate(s, key, key_len, r);
+	return s->desc->recreate(s, rounds, key, key_len);
 }
 
 void kripto_block_encrypt
@@ -101,7 +101,7 @@ void kripto_block_destroy(kripto_block *s)
 	s->desc->destroy(s);
 }
 
-kripto_block_desc *kripto_block_get_desc(const kripto_block *s)
+const kripto_block_desc *kripto_block_getdesc(const kripto_block *s)
 {
 	assert(s);
 	assert(s->desc);
@@ -109,18 +109,18 @@ kripto_block_desc *kripto_block_get_desc(const kripto_block *s)
 	return s->desc;
 }
 
-unsigned int kripto_block_size(kripto_block_desc *desc)
+unsigned int kripto_block_size(const kripto_block_desc *desc)
 {
 	assert(desc);
-	assert(desc->block_size);
+	assert(desc->blocksize);
 
-	return desc->block_size;
+	return desc->blocksize;
 }
 
-unsigned int kripto_block_max_key(kripto_block_desc *desc)
+unsigned int kripto_block_maxkey(const kripto_block_desc *desc)
 {
 	assert(desc);
-	assert(desc->max_key);
+	assert(desc->maxkey);
 
-	return desc->max_key;
+	return desc->maxkey;
 }

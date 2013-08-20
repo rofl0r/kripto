@@ -19,8 +19,6 @@
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
-#include <kripto/mode.h>
-#include <kripto/mode_desc.h>
 #include <kripto/stream.h>
 #include <kripto/stream_desc.h>
 
@@ -28,10 +26,10 @@
 
 struct kripto_stream
 {
-	kripto_stream_desc *desc;
-	const kripto_block *block;
+	const kripto_stream_desc *desc;
+	kripto_block *block;
 	uint8_t *prev;
-	unsigned int block_size;
+	unsigned int blocksize;
 	unsigned int used;
 };
 
@@ -47,7 +45,7 @@ static size_t ofb_crypt
 
 	for(i = 0; i < len; i++)
 	{
-		if(s->used == s->block_size)
+		if(s->used == s->blocksize)
 		{
 			kripto_block_encrypt(s->block, s->prev, s->prev);
 			s->used = 0;
@@ -70,7 +68,7 @@ static size_t ofb_prng
 
 	for(i = 0; i < len; i++)
 	{
-		if(s->used == s->block_size)
+		if(s->used == s->blocksize)
 		{
 			kripto_block_encrypt(s->block, s->prev, s->prev);
 			s->used = 0;
@@ -84,63 +82,99 @@ static size_t ofb_prng
 
 static void ofb_destroy(kripto_stream *s)
 {
-	kripto_memwipe(s, sizeof(struct kripto_stream)
-		+ sizeof(struct kripto_stream_desc)
-		+ s->block_size
-	);
-
+	kripto_block_destroy(s->block);
+	kripto_memwipe(s, sizeof(kripto_stream) + s->blocksize);
 	free(s);
 }
 
+struct ext
+{
+	kripto_stream_desc desc;
+	const kripto_block_desc *block;
+};
+
+#define EXT(X) ((struct ext *)(X))
+
 static kripto_stream *ofb_create
 (
-	const kripto_block *block,
+	const kripto_stream_desc *desc,
+	unsigned int rounds,
+	const void *key,
+	unsigned int key_len,
 	const void *iv,
 	unsigned int iv_len
 )
 {
 	kripto_stream *s;
-	kripto_block_desc *b;
-	struct kripto_stream_desc *stream;
 
-	b = kripto_block_get_desc(block);
-
-	s = malloc(sizeof(struct kripto_stream)
-		+ sizeof(struct kripto_stream_desc)
-		+ kripto_block_size(b)
-	);
+	s = malloc(sizeof(kripto_stream) + desc->maxiv);
 	if(!s) return 0;
 
-	s->block_size = kripto_block_size(b);
+	s->desc = desc;
 
-	stream = (struct kripto_stream_desc *)
-		((uint8_t *)s + sizeof(struct kripto_stream));
+	s->used = s->blocksize = desc->maxiv;
 
-	s->prev = (uint8_t *)stream + sizeof(struct kripto_stream_desc);
+	s->prev = (uint8_t *)s + sizeof(kripto_stream);
 
-	stream->encrypt = &ofb_crypt;
-	stream->decrypt = &ofb_crypt;
-	stream->prng = &ofb_prng;
-	stream->create = 0;
-	stream->destroy = &ofb_destroy;
-	stream->max_key = kripto_block_max_key(b);
-	stream->max_iv = s->block_size;
+	/* block cipher */
+	s->block = kripto_block_create(EXT(s)->block, rounds, key, key_len);
+	if(!s->block)
+	{
+		ofb_destroy(s);
+		return 0;
+	}
 
-	s->desc = stream;
-
+	/* IV */
 	if(iv_len) memcpy(s->prev, iv, iv_len);
-	memset(s->prev + iv_len, 0, s->block_size - iv_len);
-
-	s->used = s->block_size;
-	s->block = block;
+	memset(s->prev + iv_len, 0, s->blocksize - iv_len);
 
 	return s;
 }
 
-static const struct kripto_mode_desc ofb =
+static kripto_stream *ofb_recreate
+(
+	kripto_stream *s,
+	unsigned int rounds,
+	const void *key,
+	unsigned int key_len,
+	const void *iv,
+	unsigned int iv_len
+)
 {
-	&ofb_create,
-	&kripto_block_size
-};
+	/* block cipher */
+	s->block = kripto_block_recreate(s->block, rounds, key, key_len);
+	if(!s->block)
+	{
+		ofb_destroy(s);
+		return 0;
+	}
 
-kripto_mode_desc *const kripto_mode_ofb = &ofb;
+	/* IV */
+	if(iv_len) memcpy(s->prev, iv, iv_len);
+	memset(s->prev + iv_len, 0, s->blocksize - iv_len);
+
+	s->used = s->blocksize;
+
+	return s;
+}
+
+kripto_stream_desc *kripto_stream_ofb(const kripto_block_desc *block)
+{
+	struct ext *s;
+
+	s = malloc(sizeof(struct ext));
+	if(!s) return 0;
+
+	s->block = block;
+
+	s->desc.create = &ofb_create;
+	s->desc.recreate = &ofb_recreate;
+	s->desc.encrypt = &ofb_crypt;
+	s->desc.decrypt = &ofb_crypt;
+	s->desc.prng = &ofb_prng;
+	s->desc.destroy = &ofb_destroy;
+	s->desc.maxkey = kripto_block_maxkey(block);
+	s->desc.maxiv = kripto_block_size(block);
+
+	return (kripto_stream_desc *)s;
+}

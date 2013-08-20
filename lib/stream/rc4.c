@@ -27,16 +27,11 @@
 
 struct kripto_stream
 {
-	kripto_stream_desc *desc;
+	const kripto_stream_desc *desc;
 	uint8_t p[256];
 	uint8_t i;
 	uint8_t j;
 };
-
-#define RC4_DEFAULT_ROUNDS 0
-#define RC4I_DEFAULT_ROUNDS 512
-#define RC4I_MAX_KEY 256
-#define RC4I_MAX_IV 256
 
 static void improved_setup
 (
@@ -158,11 +153,11 @@ static size_t rc4_prng
 static kripto_stream *rc4i_recreate
 (
 	kripto_stream *s,
+	unsigned int r,
 	const void *key,
 	unsigned int key_len,
 	const void *iv,
-	unsigned int iv_len,
-	unsigned int r
+	unsigned int iv_len
 )
 {
 	unsigned int rounds = r;
@@ -178,11 +173,11 @@ static kripto_stream *rc4i_recreate
 static kripto_stream *rc4_recreate
 (
 	kripto_stream *s,
+	unsigned int r,
 	const void *key,
 	unsigned int key_len,
 	const void *iv,
-	unsigned int iv_len,
-	unsigned int r
+	unsigned int iv_len
 )
 {
 	unsigned int i;
@@ -201,37 +196,41 @@ static kripto_stream *rc4_recreate
 
 static kripto_stream *rc4i_create
 (
+	const kripto_stream_desc *desc,
+	unsigned int r,
 	const void *key,
 	unsigned int key_len,
 	const void *iv,
-	unsigned int iv_len,
-	unsigned int r
+	unsigned int iv_len
 )
 {
 	kripto_stream *s;
+
+	(void)desc;
 
 	s = malloc(sizeof(kripto_stream));
 	if(!s) return 0;
 
 	s->desc = kripto_stream_rc4i;
-	(void)rc4i_recreate(s, key, key_len, iv, iv_len, r);
+	(void)rc4i_recreate(s, r, key, key_len, iv, iv_len);
 
 	return s;
 }
 
 static kripto_stream *rc4_create
 (
+	const kripto_stream_desc *desc,
+	unsigned int r,
 	const void *key,
 	unsigned int key_len,
 	const void *iv,
-	unsigned int iv_len,
-	unsigned int r
+	unsigned int iv_len
 )
 {
 	kripto_stream *s;
 	unsigned int i;
 
-	s = rc4i_create(key, key_len, iv, iv_len, 256);
+	s = rc4i_create(desc, 256, key, key_len, iv, iv_len);
 	if(!s) return 0;
 
 	s->desc = kripto_stream_rc4;
@@ -263,7 +262,7 @@ static const struct kripto_stream_desc rc4_desc =
 	0 /* max iv */
 };
 
-kripto_stream_desc *const kripto_stream_rc4 = &rc4_desc;
+const kripto_stream_desc *const kripto_stream_rc4 = &rc4_desc;
 
 /* RC4i */
 static const struct kripto_stream_desc rc4i =
@@ -278,4 +277,4 @@ static const struct kripto_stream_desc rc4i =
 	256 /* max iv */
 };
 
-kripto_stream_desc *const kripto_stream_rc4i = &rc4i;
+const kripto_stream_desc *const kripto_stream_rc4i = &rc4i;

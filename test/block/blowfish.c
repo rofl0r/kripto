@@ -68,7 +68,7 @@ int main(void)
 
 	for(n = 1; n <= 24; n++)
 	{
-		s = kripto_block_create(kripto_block_blowfish, k, n, 0);
+		s = kripto_block_create(kripto_block_blowfish, 0, k, n);
 		if(!s) puts("error");
 
 		kripto_block_encrypt(s, pt, t);

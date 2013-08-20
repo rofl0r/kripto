@@ -25,7 +25,7 @@
 
 struct kripto_block
 {
-	kripto_block_desc *desc;
+	const kripto_block_desc *desc;
 	unsigned int rounds;
 	size_t size;
 	uint32_t *k;
@@ -157,9 +157,9 @@ static void rc6_decrypt(const kripto_block *s, const void *ct, void *pt)
 
 static kripto_block *rc6_create
 (
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	kripto_block *s;
@@ -188,9 +188,9 @@ static void rc6_destroy(kripto_block *s)
 static kripto_block *rc6_recreate
 (
 	kripto_block *s,
+	unsigned int r,
 	const void *key,
-	unsigned int key_len,
-	unsigned int r
+	unsigned int key_len
 )
 {
 	if(!r) r = 20;
@@ -198,7 +198,7 @@ static kripto_block *rc6_recreate
 	if(sizeof(kripto_block) + (RC6_K_LEN(r) << 2) > s->size)
 	{
 		rc6_destroy(s);
-		s = rc6_create(key, key_len, r);
+		s = rc6_create(r, key, key_len);
 	}
 	else
 	{
@@ -209,7 +209,7 @@ static kripto_block *rc6_recreate
 	return s;
 }
 
-static const struct kripto_block_desc rc6 =
+static const kripto_block_desc rc6 =
 {
 	&rc6_create,
 	&rc6_recreate,
@@ -220,4 +220,4 @@ static const struct kripto_block_desc rc6 =
 	255 /* max key */
 };
 
-kripto_block_desc *const kripto_block_rc6 = &rc6;
+const kripto_block_desc *const kripto_block_rc6 = &rc6;
