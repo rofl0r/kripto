@@ -7,6 +7,7 @@ struct kripto_mac_desc
 {
 	kripto_mac *(*create)
 	(
+		const kripto_mac_desc *,
 		unsigned int,
 		const void *,
 		unsigned int,

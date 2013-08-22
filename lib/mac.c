@@ -38,7 +38,7 @@ kripto_mac *kripto_mac_create
 	assert(key);
 	assert(key_len);
 
-	return desc->create(rounds, key, key_len, tag_len);
+	return desc->create(desc, rounds, key, key_len, tag_len);
 }
 
 kripto_mac *kripto_mac_recreate
@@ -89,7 +89,7 @@ void kripto_mac_destroy(kripto_mac *s)
 
 int kripto_mac_all
 (
-	kripto_mac_desc *desc,
+	const kripto_mac_desc *desc,
 	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,

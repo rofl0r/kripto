@@ -42,7 +42,7 @@ extern void kripto_mac_destroy(kripto_mac *s);
 
 extern int kripto_mac_all
 (
-	kripto_mac_desc *desc,
+	const kripto_mac_desc *desc,
 	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,

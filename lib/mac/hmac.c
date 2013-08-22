@@ -65,98 +65,13 @@ static int hmac_init
 		i = key_len;
 	}
 
-	memset(s->key + i, 0, s->blocksize - i);
+	memset(s->key + i, 0x36, s->blocksize - i);
 
-	for(i = 0; i < s->blocksize; i++)
-		s->key[i] ^= 0x36;
+	while(i--) s->key[i] ^= 0x36;
 
-	kripto_hash_input(s->hash, s->key, i);
+	kripto_hash_input(s->hash, s->key, s->blocksize);
 
 	return 0;
-}
-
-static void hmac_destroy(kripto_mac *s)
-{
-	kripto_hash_destroy(s->hash);
-
-	kripto_memwipe(s, s->size);
-	free(s);
-}
-
-static kripto_mac *hmac_create
-(
-	const void *hash,
-	unsigned int r,
-	const void *key,
-	unsigned int key_len,
-	unsigned int tag_len
-)
-{
-	kripto_mac *s;
-
-	s = malloc(sizeof(kripto_mac) + kripto_hash_blocksize(hash));
-	if(!s) return 0;
-
-	s->key = (uint8_t *)s + sizeof(kripto_mac);
-
-	s->desc = kripto_mac_hmac;
-	s->size = sizeof(kripto_mac) + kripto_hash_blocksize(hash);
-	s->r = r;
-	s->hash = kripto_hash_create(hash, tag_len, r);
-	if(!s->hash)
-	{
-		free(s);
-		return 0;
-	}
-
-	if(hmac_init(s, hash, key, key_len, tag_len))
-	{
-		hmac_destroy(s);
-		return 0;
-	}
-
-	return s;
-}
-
-static kripto_mac *hmac_recreate
-(
-	kripto_mac *s,
-	const void *hash,
-	unsigned int r,
-	const void *key,
-	unsigned int key_len,
-	unsigned int tag_len
-)
-{
-	if(sizeof(kripto_mac) + kripto_hash_blocksize(hash) > s->size)
-	{
-		hmac_destroy(s);
-		s = hmac_create(hash, r, key, key_len, tag_len);
-	}
-	else
-	{
-		/*if(hash == kripto_hash_getdesc(s->hash))
-			s->hash = kripto_hash_recreate(s->hash, r, tag_len);
-		else
-		{*/
-			kripto_hash_destroy(s->hash);
-			s->hash = kripto_hash_create(hash, r, tag_len);
-			if(!s->hash)
-			{
-				hmac_destroy(s);
-				return 0;
-			}
-		//}
-
-		s->r = r;
-		if(hmac_init(s, hash, key, key_len, tag_len))
-		{
-			hmac_destroy(s);
-			return 0;
-		}
-	}
-
-	return s;
 }
 
 static void hmac_input(kripto_mac *s, const void *in, size_t len)
@@ -173,25 +88,100 @@ static void hmac_tag(kripto_mac *s, void *tag, unsigned int len)
 
 	kripto_hash_output(s->hash, tag, len);
 
-	kripto_hash_recreate(s->hash, len, s->r);
+	kripto_hash_recreate(s->hash, s->r, len);
 	kripto_hash_input(s->hash, s->key, i);
 	kripto_hash_input(s->hash, tag, len);
 	kripto_hash_output(s->hash, tag, len);
 }
 
-static unsigned int hmac_max_tag(const void *hash)
+static void hmac_destroy(kripto_mac *s)
 {
-	return kripto_hash_max_output(hash);
+	kripto_hash_destroy(s->hash);
+
+	kripto_memwipe(s, s->size);
+	free(s);
 }
 
-static const struct const kripto_mac_desc hmac =
+struct ext
 {
-	&hmac_create,
-	&hmac_recreate,
-	&hmac_input,
-	&hmac_tag,
-	&hmac_destroy,
-	&hmac_max_tag
+	kripto_mac_desc desc;
+	const kripto_hash_desc *hash;
 };
 
-const kripto_mac_desc *const kripto_mac_hmac = &hmac;
+#define EXT(X) ((const struct ext *)(X))
+
+static kripto_mac *hmac_create
+(
+	const kripto_mac_desc *desc,
+	unsigned int r,
+	const void *key,
+	unsigned int key_len,
+	unsigned int tag_len
+)
+{
+	kripto_mac *s;
+
+	s = malloc(sizeof(kripto_mac) + kripto_hash_blocksize(EXT(desc)->hash));
+	if(!s) return 0;
+
+	s->key = (uint8_t *)s + sizeof(kripto_mac);
+
+	s->desc = desc;
+	s->size = sizeof(kripto_mac) + kripto_hash_blocksize(EXT(desc)->hash);
+	s->r = r;
+	s->hash = kripto_hash_create(EXT(desc)->hash, r, tag_len);
+	if(!s->hash)
+	{
+		free(s);
+		return 0;
+	}
+
+	if(hmac_init(s, EXT(desc)->hash, key, key_len, tag_len))
+	{
+		hmac_destroy(s);
+		return 0;
+	}
+
+	return s;
+}
+
+static kripto_mac *hmac_recreate
+(
+	kripto_mac *s,
+	unsigned int r,
+	const void *key,
+	unsigned int key_len,
+	unsigned int tag_len
+)
+{
+	s->hash = kripto_hash_recreate(s->hash, r, tag_len);
+
+	s->r = r;
+
+	if(hmac_init(s, EXT(s->desc)->hash, key, key_len, tag_len))
+	{
+		hmac_destroy(s);
+		return 0;
+	}
+
+	return s;
+}
+
+kripto_mac_desc *kripto_mac_hmac(const kripto_hash_desc *hash)
+{
+	struct ext *s;
+
+	s = malloc(sizeof(struct ext));
+	if(!s) return 0;
+
+	s->hash = hash;
+
+	s->desc.create = &hmac_create;
+	s->desc.recreate = &hmac_recreate;
+	s->desc.input = &hmac_input;
+	s->desc.tag = &hmac_tag;
+	s->desc.destroy = &hmac_destroy;
+	s->desc.maxtag = kripto_hash_maxout(hash);
+
+	return (kripto_mac_desc *)s;
+}

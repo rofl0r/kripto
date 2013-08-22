@@ -38,7 +38,7 @@ extern void kripto_hash_destroy(kripto_hash *s);
 
 extern int kripto_hash_all
 (
-	kripto_hash_desc *desc,
+	const kripto_hash_desc *desc,
 	unsigned int rounds,
 	const void *in,
 	size_t in_len,

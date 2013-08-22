@@ -65,10 +65,10 @@ kripto_authstream *kripto_authstream_recreate
 
 	assert(key);
 	assert(key_len);
-	assert(key_len <= kripto_authstream_max_key(s->desc));
+	assert(key_len <= kripto_authstream_maxkey(s->desc));
 	assert(iv_len <= kripto_authstream_maxiv(s->desc));
 	if(iv_len) assert(iv);
-	assert(tag_len <= kripto_authstream_max_tag(s->desc));
+	assert(tag_len <= kripto_authstream_maxtag(s->desc));
 
 	return s->desc->recreate(s, rounds, key, key_len, iv, iv_len, tag_len);
 }

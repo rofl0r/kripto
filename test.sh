@@ -2,11 +2,11 @@
 
 CFLAGS="libkripto.a -std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wbad-function-cast -Wshadow -I include/ -D_ANSI_SOURCE -D_ISOC99_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $CFLAGS"
 
-#cc test/mac/hmac.c $CFLAGS -o t
-#./t
+cc test/mac/hmac.c $CFLAGS -o t
+valgrind ./t
 
-cc test/scrypt.c $CFLAGS -o t
-./t
+#cc test/scrypt.c $CFLAGS -o t
+#./t
 
 #cc test/block/rijndael256.c $CFLAGS -o t
 #./t
