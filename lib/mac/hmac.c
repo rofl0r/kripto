@@ -155,6 +155,12 @@ static kripto_mac *hmac_recreate
 )
 {
 	s->hash = kripto_hash_recreate(s->hash, r, tag_len);
+	if(!s->hash)
+	{
+		kripto_memwipe(s, s->size);
+		free(s);
+		return 0;
+	}
 
 	s->r = r;
 

@@ -1,6 +1,6 @@
 THIS SOFTWARE IS NOT READY FOR USE!
 
-Lightweight and flexible cryptographic library written in ISO C99.
+Simple and flexible cryptographic library written in ISO C99.
 
 Run build.sh to compile. Makefile is outdated.
 
@@ -101,7 +101,7 @@ Hash functions:
 
 MAC's:
  - HMAC
- - OMAC*
+ - OMAC
  - Keccak1600*?
  - Keccak800*?
  - Skein*?
