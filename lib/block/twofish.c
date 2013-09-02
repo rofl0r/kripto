@@ -1231,6 +1231,7 @@ static const kripto_block_desc twofish =
 {
 	&twofish_create,
 	&twofish_recreate,
+	0,
 	&twofish_encrypt,
 	&twofish_decrypt,
 	&twofish_destroy,

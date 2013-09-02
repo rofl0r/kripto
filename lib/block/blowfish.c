@@ -535,6 +535,7 @@ static const kripto_block_desc blowfish =
 {
 	&blowfish_create,
 	&blowfish_recreate,
+	0,
 	&blowfish_encrypt,
 	&blowfish_decrypt,
 	&blowfish_destroy,

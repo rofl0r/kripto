@@ -336,6 +336,7 @@ static const kripto_block_desc gost =
 {
 	&gost_create,
 	&gost_recreate,
+	0,
 	&gost_encrypt,
 	&gost_decrypt,
 	&gost_destroy,

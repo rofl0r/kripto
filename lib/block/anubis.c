@@ -795,6 +795,7 @@ static const kripto_block_desc anubis =
 {
 	&anubis_create,
 	&anubis_recreate,
+	0,
 	&anubis_encrypt,
 	&anubis_decrypt,
 	&anubis_destroy,

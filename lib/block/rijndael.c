@@ -959,6 +959,7 @@ static const kripto_block_desc rijndael128 =
 {
 	&rijndael128_create,
 	&rijndael128_recreate,
+	0,
 	&rijndael128_encrypt,
 	&rijndael128_decrypt,
 	&rijndael_destroy,
@@ -1186,6 +1187,7 @@ static const kripto_block_desc rijndael256 =
 {
 	&rijndael256_create,
 	&rijndael256_recreate,
+	0,
 	&rijndael256_encrypt,
 	&rijndael256_decrypt,
 	&rijndael_destroy,

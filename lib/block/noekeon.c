@@ -219,6 +219,7 @@ static const kripto_block_desc noekeon =
 {
 	&noekeon_create,
 	&noekeon_recreate,
+	0,
 	&noekeon_encrypt,
 	&noekeon_decrypt,
 	&noekeon_destroy,

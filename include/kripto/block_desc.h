@@ -20,6 +20,13 @@ struct kripto_block_desc
 		unsigned int
 	);
 
+	void (*tweak)
+	(
+		kripto_block *,
+		const void *,
+		unsigned int
+	);
+
 	void (*encrypt)(const kripto_block *, const void *, void *);
 
 	void (*decrypt)(const kripto_block *, const void *, void *);

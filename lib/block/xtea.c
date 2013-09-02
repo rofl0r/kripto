@@ -159,6 +159,7 @@ static const kripto_block_desc xtea =
 {
 	&xtea_create,
 	&xtea_recreate,
+	0,
 	&xtea_encrypt,
 	&xtea_decrypt,
 	&xtea_destroy,

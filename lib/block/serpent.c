@@ -723,6 +723,7 @@ static const kripto_block_desc serpent =
 {
 	&serpent_create,
 	&serpent_recreate,
+	0,
 	&serpent_encrypt,
 	&serpent_decrypt,
 	&serpent_destroy,

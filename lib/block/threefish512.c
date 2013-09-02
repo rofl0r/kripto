@@ -34,8 +34,15 @@ struct kripto_block
 	uint64_t k[9];
 };
 
-void kripto_block_threefish512_tweak(kripto_block *s, const void *tweak)
+static void threefish512_tweak
+(
+	kripto_block *s,
+	const void *tweak,
+	unsigned int len
+)
 {
+	(void)len;
+
 	s->t[0] = U8TO64_LE(CU8(tweak));
 	s->t[1] = U8TO64_LE(CU8(tweak) + 8);
 	s->t[2] = s->t[0] ^ s->t[1];
@@ -285,6 +292,7 @@ static const kripto_block_desc threefish512 =
 {
 	&threefish512_create,
 	&threefish512_recreate,
+	&threefish512_tweak,
 	&threefish512_encrypt,
 	&threefish512_decrypt,
 	&threefish512_destroy,

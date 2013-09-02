@@ -697,6 +697,7 @@ static const kripto_block_desc camellia =
 {
 	&camellia_create,
 	&camellia_recreate,
+	0,
 	&camellia_encrypt,
 	&camellia_decrypt,
 	&camellia_destroy,

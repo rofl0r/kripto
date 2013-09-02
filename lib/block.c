@@ -60,6 +60,23 @@ kripto_block *kripto_block_recreate
 	return s->desc->recreate(s, rounds, key, key_len);
 }
 
+void kripto_block_tweak
+(
+	kripto_block *s,
+	const void *tweak,
+	unsigned int len
+)
+{
+	assert(s);
+	assert(s->desc);
+	assert(s->desc->tweak);
+
+	assert(tweak);
+	assert(len);
+
+	s->desc->tweak(s, tweak, len);
+}
+
 void kripto_block_encrypt
 (
 	const kripto_block *s,

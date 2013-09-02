@@ -729,6 +729,7 @@ static const kripto_block_desc aria =
 {
 	&aria_create,
 	&aria_recreate,
+	0,
 	&aria_encrypt,
 	&aria_decrypt,
 	&aria_destroy,

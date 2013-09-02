@@ -487,6 +487,7 @@ static const kripto_block_desc seed =
 {
 	&seed_create,
 	&seed_recreate,
+	0,
 	&seed_encrypt,
 	&seed_decrypt,
 	&seed_destroy,

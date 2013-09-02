@@ -20,6 +20,13 @@ extern kripto_block *kripto_block_recreate
 	unsigned int key_len
 );
 
+extern void kripto_block_tweak
+(
+	kripto_block *s,
+	const void *tweak,
+	unsigned int len
+);
+
 extern void kripto_block_encrypt
 (
 	const kripto_block *s,
