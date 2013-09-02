@@ -26,7 +26,7 @@ extern kripto_stream *kripto_stream_recreate
 	unsigned int iv_len
 );
 
-extern size_t kripto_stream_encrypt
+extern void kripto_stream_encrypt
 (
 	kripto_stream *s,
 	const void *pt,
@@ -34,7 +34,7 @@ extern size_t kripto_stream_encrypt
 	size_t len
 );
 
-extern size_t kripto_stream_decrypt
+extern void kripto_stream_decrypt
 (
 	kripto_stream *s,
 	const void *ct,
@@ -42,7 +42,7 @@ extern size_t kripto_stream_decrypt
 	size_t len
 );
 
-extern size_t kripto_stream_prng
+extern void kripto_stream_prng
 (
 	kripto_stream *s,
 	void *out,

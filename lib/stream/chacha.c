@@ -116,7 +116,7 @@ static void chacha_core
 	U32TO8_LE(x15, U8(out) + 60);
 }
 
-static size_t chacha_crypt
+static void chacha_crypt
 (
 	kripto_stream *s,
 	const void *in,
@@ -134,16 +134,14 @@ static size_t chacha_crypt
 			s->used = 0;
 
 			if(!++s->x[12])
-				if(!++s->x[13]) return i;
+				++s->x[13];
 		}
 
 		U8(out)[i] = CU8(in)[i] ^ s->buf[s->used++];
 	}
-
-	return i;
 }
 
-static size_t chacha_prng
+static void chacha_prng
 (
 	kripto_stream *s,
 	void *out,
@@ -160,13 +158,11 @@ static size_t chacha_prng
 			s->used = 0;
 
 			if(!++s->x[12])
-				if(!++s->x[13]) return i;
+				++s->x[13];
 		}
 
 		U8(out)[i] = s->buf[s->used++];
 	}
-
-	return i;
 }
 
 static kripto_stream *chacha_recreate

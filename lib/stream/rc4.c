@@ -119,7 +119,7 @@ static uint8_t rc4(kripto_stream *s)
 	return(s->p[(uint8_t)(s->p[s->i] + s->p[s->j])]);
 }
 
-static size_t rc4_crypt
+static void rc4_crypt
 (
 	kripto_stream *s,
 	const void *in,
@@ -131,11 +131,9 @@ static size_t rc4_crypt
 
 	for(i = 0; i < len; i++)
 		U8(out)[i] = CU8(in)[i] ^ rc4(s);
-
-	return i;
 }
 
-static size_t rc4_prng
+static void rc4_prng
 (
 	kripto_stream *s,
 	void *out,
@@ -146,8 +144,6 @@ static size_t rc4_prng
 
 	for(i = 0; i < len; i++)
 		U8(out)[i] = rc4(s);
-
-	return i;
 }
 
 static kripto_stream *rc4i_recreate

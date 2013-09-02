@@ -69,7 +69,7 @@ kripto_stream *kripto_stream_recreate
 	return s->desc->recreate(s, rounds, key, key_len, iv, iv_len);
 }
 
-size_t kripto_stream_encrypt
+void kripto_stream_encrypt
 (
 	kripto_stream *s,
 	const void *pt,
@@ -81,10 +81,10 @@ size_t kripto_stream_encrypt
 	assert(s->desc);
 	assert(s->desc->encrypt);
 
-	return s->desc->encrypt(s, pt, ct, len);
+	s->desc->encrypt(s, pt, ct, len);
 }
 
-size_t kripto_stream_decrypt
+void kripto_stream_decrypt
 (
 	kripto_stream *s,
 	const void *ct,
@@ -96,10 +96,10 @@ size_t kripto_stream_decrypt
 	assert(s->desc);
 	assert(s->desc->decrypt);
 
-	return s->desc->decrypt(s, ct, pt, len);
+	s->desc->decrypt(s, ct, pt, len);
 }
 
-size_t kripto_stream_prng
+void kripto_stream_prng
 (
 	kripto_stream *s,
 	void *out,
@@ -110,7 +110,7 @@ size_t kripto_stream_prng
 	assert(s->desc);
 	assert(s->desc->prng);
 
-	return s->desc->prng(s, out, len);
+	s->desc->prng(s, out, len);
 }
 
 void kripto_stream_destroy(kripto_stream *s)

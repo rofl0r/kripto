@@ -31,7 +31,7 @@ struct kripto_stream
 	unsigned int blocksize;
 };
 
-static size_t ecb_encrypt
+static void ecb_encrypt
 (
 	kripto_stream *s,
 	const void *pt,
@@ -43,11 +43,9 @@ static size_t ecb_encrypt
 
 	for(i = 0; i < len; i += s->blocksize)
 		kripto_block_encrypt(s->block, CU8(pt) + i, U8(ct) + i);
-
-	return i;
 }
 
-static size_t ecb_decrypt
+static void ecb_decrypt
 (
 	kripto_stream *s,
 	const void *ct,
@@ -59,8 +57,6 @@ static size_t ecb_decrypt
 
 	for(i = 0; i < len; i += s->blocksize)
 		kripto_block_decrypt(s->block, CU8(ct) + i, U8(pt) + i);
-
-	return i;
 }
 
 static void ecb_destroy(kripto_stream *s)
@@ -104,7 +100,8 @@ static kripto_stream *ecb_create
 	s->block = kripto_block_create(EXT(s)->block, rounds, key, key_len);
 	if(!s->block)
 	{
-		ecb_destroy(s);
+		kripto_memwipe(s, sizeof(kripto_stream));
+		free(s);
 		return 0;
 	}
 
@@ -128,7 +125,8 @@ static kripto_stream *ecb_recreate
 	s->block = kripto_block_recreate(s->block, rounds, key, key_len);
 	if(!s->block)
 	{
-		ecb_destroy(s);
+		kripto_memwipe(s, sizeof(kripto_stream));
+		free(s);
 		return 0;
 	}
 

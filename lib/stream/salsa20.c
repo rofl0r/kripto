@@ -116,7 +116,7 @@ static void salsa20_core
 	U32TO8_LE(x15, U8(out) + 60);
 }
 
-static size_t salsa20_crypt
+static void salsa20_crypt
 (
 	kripto_stream *s,
 	const void *in,
@@ -134,16 +134,14 @@ static size_t salsa20_crypt
 			s->used = 0;
 
 			if(!++s->x[8])
-				if(!++s->x[9]) return i;
+				++s->x[9];
 		}
 
 		U8(out)[i] = CU8(in)[i] ^ s->buf[s->used++];
 	}
-
-	return i;
 }
 
-static size_t salsa20_prng
+static void salsa20_prng
 (
 	kripto_stream *s,
 	void *out,
@@ -160,13 +158,11 @@ static size_t salsa20_prng
 			s->used = 0;
 
 			if(!++s->x[8])
-				if(!++s->x[9]) return i;
+				++s->x[9];
 		}
 
 		U8(out)[i] = s->buf[s->used++];
 	}
-
-	return i;
 }
 
 static kripto_stream *salsa20_recreate

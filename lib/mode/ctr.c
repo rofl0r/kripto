@@ -34,7 +34,7 @@ struct kripto_stream
 	unsigned int used;
 };
 
-static size_t ctr_crypt
+static void ctr_crypt
 (
 	kripto_stream *s,
 	const void *in,
@@ -58,11 +58,9 @@ static size_t ctr_crypt
 
 		U8(out)[i] = CU8(in)[i] ^ s->buf[s->used++];
 	}
-
-	return i;
 }
 
-static size_t ctr_prng
+static void ctr_prng
 (
 	kripto_stream *s,
 	void *out,
@@ -85,8 +83,6 @@ static size_t ctr_prng
 
 		U8(out)[i] = s->buf[s->used++];
 	}
-
-	return i;
 }
 
 static void ctr_destroy(kripto_stream *s)
@@ -130,7 +126,8 @@ static kripto_stream *ctr_create
 	s->block = kripto_block_create(EXT(s)->block, rounds, key, key_len);
 	if(!s->block)
 	{
-		ctr_destroy(s);
+		kripto_memwipe(s, sizeof(kripto_stream) + (s->blocksize << 1));
+		free(s);
 		return 0;
 	}
 
@@ -155,7 +152,8 @@ static kripto_stream *ctr_recreate
 	s->block = kripto_block_recreate(s->block, rounds, key, key_len);
 	if(!s->block)
 	{
-		ctr_destroy(s);
+		kripto_memwipe(s, sizeof(kripto_stream) + (s->blocksize << 1));
+		free(s);
 		return 0;
 	}
 

@@ -33,7 +33,7 @@ struct kripto_stream
 	uint8_t *buf;
 };
 
-static size_t cbc_encrypt
+static void cbc_encrypt
 (
 	kripto_stream *s,
 	const void *pt,
@@ -57,11 +57,9 @@ static size_t cbc_encrypt
 		CPTR_INC(pt, n);
 		PTR_INC(ct, n);
 	}
-
-	return i;
 }
 
-static size_t cbc_decrypt
+static void cbc_decrypt
 (
 	kripto_stream *s,
 	const void *ct,
@@ -88,8 +86,6 @@ static size_t cbc_decrypt
 		CPTR_INC(ct, n);
 		PTR_INC(pt, n);
 	}
-
-	return i;
 }
 
 static void cbc_destroy(kripto_stream *s)
@@ -133,7 +129,8 @@ static kripto_stream *cbc_create
 	s->block = kripto_block_create(EXT(s)->block, rounds, key, key_len);
 	if(!s->block)
 	{
-		cbc_destroy(s);
+		kripto_memwipe(s, sizeof(kripto_stream) + (s->blocksize << 1));
+		free(s);
 		return 0;
 	}
 
@@ -158,7 +155,8 @@ static kripto_stream *cbc_recreate
 	s->block = kripto_block_recreate(s->block, rounds, key, key_len);
 	if(!s->block)
 	{
-		cbc_destroy(s);
+		kripto_memwipe(s, sizeof(kripto_stream) + (s->blocksize << 1));
+		free(s);
 		return 0;
 	}
 

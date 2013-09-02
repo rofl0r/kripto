@@ -33,7 +33,7 @@ struct kripto_stream
 	unsigned int used;
 };
 
-static size_t cfb_encrypt
+static void cfb_encrypt
 (
 	kripto_stream *s,
 	const void *pt,
@@ -53,11 +53,9 @@ static size_t cfb_encrypt
 
 		U8(ct)[i] = s->prev[s->used++] ^= CU8(pt)[i];
 	}
-
-	return i;
 }
 
-static size_t cfb_decrypt
+static void cfb_decrypt
 (
 	kripto_stream *s,
 	const void *ct,
@@ -78,11 +76,9 @@ static size_t cfb_decrypt
 		U8(pt)[i] ^= CU8(ct)[i];
 		s->prev[s->used++] = CU8(ct)[i];
 	}
-
-	return i;
 }
 
-static size_t cfb_prng
+static void cfb_prng
 (
 	kripto_stream *s,
 	void *out,
@@ -101,8 +97,6 @@ static size_t cfb_prng
 
 		U8(out)[i] = s->prev[s->used++];
 	}
-
-	return i;
 }
 
 static void cfb_destroy(kripto_stream *s)
@@ -145,7 +139,8 @@ static kripto_stream *cfb_create
 	s->block = kripto_block_create(EXT(s)->block, rounds, key, key_len);
 	if(!s->block)
 	{
-		cfb_destroy(s);
+		kripto_memwipe(s, sizeof(kripto_stream) + s->blocksize);
+		free(s);
 		return 0;
 	}
 
@@ -170,7 +165,8 @@ static kripto_stream *cfb_recreate
 	s->block = kripto_block_recreate(s->block, rounds, key, key_len);
 	if(!s->block)
 	{
-		cfb_destroy(s);
+		kripto_memwipe(s, sizeof(kripto_stream) + s->blocksize);
+		free(s);
 		return 0;
 	}
 
