@@ -14,7 +14,7 @@
 
 #include <assert.h>
 
-#include <kripto/mac_desc.h>
+#include <kripto/desc/mac.h>
 
 #include <kripto/mac.h>
 

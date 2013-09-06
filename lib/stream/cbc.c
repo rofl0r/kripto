@@ -20,9 +20,9 @@
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/stream.h>
-#include <kripto/stream_desc.h>
+#include <kripto/desc/stream.h>
 
-#include <kripto/mode/cbc.h>
+#include <kripto/stream/cbc.h>
 
 struct kripto_stream
 {

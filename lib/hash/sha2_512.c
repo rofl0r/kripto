@@ -21,7 +21,7 @@
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
 #include <kripto/hash.h>
-#include <kripto/hash_desc.h>
+#include <kripto/desc/hash.h>
 
 #include <kripto/hash/sha2_512.h>
 

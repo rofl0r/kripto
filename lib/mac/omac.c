@@ -20,7 +20,7 @@
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
 #include <kripto/mac.h>
-#include <kripto/mac_desc.h>
+#include <kripto/desc/mac.h>
 #include <kripto/block.h>
 
 #include <kripto/mac/omac.h>

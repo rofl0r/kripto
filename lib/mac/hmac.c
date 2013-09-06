@@ -18,7 +18,7 @@
 
 #include <kripto/memwipe.h>
 #include <kripto/mac.h>
-#include <kripto/mac_desc.h>
+#include <kripto/desc/mac.h>
 #include <kripto/hash.h>
 
 #include <kripto/mac/hmac.h>

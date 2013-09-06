@@ -19,7 +19,7 @@
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
 #include <kripto/stream.h>
-#include <kripto/stream_desc.h>
+#include <kripto/desc/stream.h>
 
 #include <kripto/stream/chacha.h>
 

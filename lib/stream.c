@@ -15,7 +15,7 @@
 #include <assert.h>
 #include <stdint.h>
 
-#include <kripto/stream_desc.h>
+#include <kripto/desc/stream.h>
 
 #include <kripto/stream.h>
 

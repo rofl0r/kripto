@@ -30,7 +30,7 @@
 #include <kripto/macros.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
-#include <kripto/block_desc.h>
+#include <kripto/desc/block.h>
 
 #include <kripto/block/rijndael128.h>
 #include <kripto/block/aes.h>

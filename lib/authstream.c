@@ -15,7 +15,7 @@
 #include <assert.h>
 #include <stdint.h>
 
-#include <kripto/authstream_desc.h>
+#include <kripto/desc/authstream.h>
 
 #include <kripto/authstream.h>
 

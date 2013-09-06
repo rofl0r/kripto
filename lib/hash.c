@@ -14,7 +14,7 @@
 
 #include <assert.h>
 
-#include <kripto/hash_desc.h>
+#include <kripto/desc/hash.h>
 
 #include <kripto/hash.h>
 

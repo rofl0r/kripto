@@ -14,7 +14,7 @@
 
 #include <assert.h>
 
-#include <kripto/block_desc.h>
+#include <kripto/desc/block.h>
 
 #include <kripto/block.h>
 
