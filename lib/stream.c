@@ -80,6 +80,7 @@ void kripto_stream_encrypt
 	assert(s);
 	assert(s->desc);
 	assert(s->desc->encrypt);
+	assert(len % kripto_stream_multof(s->desc) == 0);
 
 	s->desc->encrypt(s, pt, ct, len);
 }
@@ -95,6 +96,7 @@ void kripto_stream_decrypt
 	assert(s);
 	assert(s->desc);
 	assert(s->desc->decrypt);
+	assert(len % kripto_stream_multof(s->desc) == 0);
 
 	s->desc->decrypt(s, ct, pt, len);
 }
@@ -128,6 +130,14 @@ const kripto_stream_desc *kripto_stream_getdesc(const kripto_stream *s)
 	assert(s->desc);
 
 	return s->desc;
+}
+
+unsigned int kripto_stream_multof(const kripto_stream_desc *desc)
+{
+	assert(desc);
+	assert(desc->multof);
+
+	return desc->multof;
 }
 
 unsigned int kripto_stream_maxkey(const kripto_stream_desc *desc)

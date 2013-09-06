@@ -48,6 +48,7 @@ struct kripto_authstream_desc
 
 	void (*destroy)(kripto_authstream *);
 
+	unsigned int multof;
 	unsigned int maxkey;
 	unsigned int maxiv;
 	unsigned int maxtag;

@@ -53,6 +53,8 @@ extern void kripto_stream_destroy(kripto_stream *s);
 
 extern const kripto_stream_desc *kripto_stream_getdesc(const kripto_stream *s);
 
+extern unsigned int kripto_stream_multof(const kripto_stream_desc *desc);
+
 extern unsigned int kripto_stream_maxkey(const kripto_stream_desc *desc);
 
 extern unsigned int kripto_stream_maxiv(const kripto_stream_desc *desc);

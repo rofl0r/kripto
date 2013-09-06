@@ -254,6 +254,7 @@ static const struct kripto_stream_desc rc4_desc =
 	&rc4_crypt,
 	&rc4_prng,
 	&rc4_destroy,
+	1,
 	256, /* max key */
 	0 /* max iv */
 };
@@ -269,6 +270,7 @@ static const struct kripto_stream_desc rc4i =
 	&rc4_crypt,
 	&rc4_prng,
 	&rc4_destroy,
+	1,
 	256, /* max key */
 	256 /* max iv */
 };

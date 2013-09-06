@@ -290,6 +290,7 @@ static const struct kripto_stream_desc chacha =
 	&chacha_crypt,
 	&chacha_prng,
 	&chacha_destroy,
+	1,
 	32, /* max key */
 	24 /* max iv */
 };

@@ -308,6 +308,7 @@ static const struct kripto_stream_desc salsa20 =
 	&salsa20_crypt,
 	&salsa20_prng,
 	&salsa20_destroy,
+	1,
 	32, /* max key */
 	24 /* max iv */
 };

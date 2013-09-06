@@ -194,6 +194,7 @@ kripto_stream_desc *kripto_stream_cfb(const kripto_block_desc *block)
 	s->desc.decrypt = &cfb_decrypt;
 	s->desc.prng = &cfb_prng;
 	s->desc.destroy = &cfb_destroy;
+	s->desc.multof = 1;
 	s->desc.maxkey = kripto_block_maxkey(block);
 	s->desc.maxiv = kripto_block_size(block);
 

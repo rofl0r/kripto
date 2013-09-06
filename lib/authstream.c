@@ -84,6 +84,7 @@ size_t kripto_authstream_encrypt
 	assert(s);
 	assert(s->desc);
 	assert(s->desc->encrypt);
+	assert(len % kripto_authstream_multof(s->desc) == 0);
 
 	return s->desc->encrypt(s, pt, ct, len);
 }
@@ -99,6 +100,7 @@ size_t kripto_authstream_decrypt
 	assert(s);
 	assert(s->desc);
 	assert(s->desc->decrypt);
+	assert(len % kripto_authstream_multof(s->desc) == 0);
 
 	return s->desc->decrypt(s, ct, pt, len);
 }
@@ -132,6 +134,14 @@ const kripto_authstream_desc *kripto_authstream_getdesc(const kripto_authstream 
 	assert(s->desc);
 
 	return s->desc;
+}
+
+unsigned int kripto_authstream_multof(const kripto_authstream_desc *desc)
+{
+	assert(desc);
+	assert(desc->multof);
+
+	return desc->multof;
 }
 
 unsigned int kripto_authstream_maxkey(const kripto_authstream_desc *desc)
