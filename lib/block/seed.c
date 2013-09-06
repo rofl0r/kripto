@@ -398,7 +398,7 @@ static void seed_setup
 	unsigned int i;
 
 	for(i = 0; i < key_len; i++)
-		k[i >> 2] = (k[i >> 2] << 8) | key[i];
+		k[i >> 2] |= key[i] << (24 - ((i & 3) << 3));
 
 	for(i = 0; i < s->rounds; i++)
 	{

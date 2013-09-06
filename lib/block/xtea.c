@@ -46,7 +46,7 @@ static void xtea_setup
 
 	/* big endian */
 	for(i = 0; i < key_len; i++)
-		k[i >> 2] = (k[i >> 2] << 8) | key[i];
+		k[i >> 2] |= key[i] << (24 - ((i & 3) << 3));
 
 	key_len = (key_len + 3) >> 2;
 	i = 0;

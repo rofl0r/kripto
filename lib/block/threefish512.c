@@ -41,10 +41,11 @@ static void threefish512_tweak
 	unsigned int len
 )
 {
-	(void)len;
+	s->t[0] = s->t[1] = 0;
 
-	s->t[0] = U8TO64_LE(CU8(tweak));
-	s->t[1] = U8TO64_LE(CU8(tweak) + 8);
+	while(--len != UINT_MAX)
+		s->t[len >> 3] = (s->t[len >> 3] << 8) | CU8(tweak)[len];
+
 	s->t[2] = s->t[0] ^ s->t[1];
 }
 

@@ -165,7 +165,7 @@ static void noekeon_setup
 	s->k[0] = s->k[1] = s->k[2] = s->k[3] = 0;
 
 	for(i = 0; i < key_len; i++)
-		s->k[i >> 2] = (s->k[i >> 2] << 8) | key[i];
+		s->k[i >> 2] |= key[i] << (24 - ((i & 3) << 3));
 
 	/* decryption key */
 	s->dk[0] = s->k[0];

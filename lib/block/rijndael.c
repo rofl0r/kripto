@@ -731,15 +731,7 @@ static void rijndael_setup
 	for(i = 0; i < n; i++) s->k[i] = 0;
 
 	for(i = 0; i < key_len; i++)
-		s->k[i >> 2] = (s->k[i >> 2] << 8) | key[i];
-
-	switch(key_len & 3)
-	{
-		case 1: s->k[n - 1] <<= 24; break;
-		case 2: s->k[n - 1] <<= 16; break;
-		case 3: s->k[n - 1] <<= 8; break;
-		default: break;
-	}
+		s->k[i >> 2] |= key[i] << (24 - ((i & 3) << 3));
 
 	for(j = n, x = 0; j < len; j += n)
 	{

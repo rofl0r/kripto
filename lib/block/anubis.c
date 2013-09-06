@@ -612,15 +612,7 @@ static void anubis_setup
 	for(r = 0; r < n; r++) kx[r] = 0;
 
 	for(r = 0; r < key_len; r++)
-		kx[r >> 2] = (kx[r >> 2] << 8) | key[r];
-
-	switch(key_len & 3)
-	{
-		case 1: kx[n - 1] <<= 24; break;
-		case 2: kx[n - 1] <<= 16; break;
-		case 3: kx[n - 1] <<= 8; break;
-		default: break;
-	}
+		kx[r >> 2] |= key[r] << (24 - ((r & 3) << 3));
 
 	/* generate s->rounds + 1 round keys  */
 	for(r = 0; r <= s->rounds; r++)

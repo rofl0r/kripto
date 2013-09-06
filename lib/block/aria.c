@@ -504,15 +504,7 @@ static void aria_setup
 	for(i = 0; i < 8; i++) k[i] = 0;
 
 	for(i = 0; i < key_len; i++)
-		k[i >> 2] = (k[i >> 2] << 8) | key[i];
-
-	switch(key_len & 3)
-	{
-		case 1: k[j - 1] <<= 24; break;
-		case 2: k[j - 1] <<= 16; break;
-		case 3: k[j - 1] <<= 8; break;
-		default: break;
-	}
+		k[i >> 2] |= key[i] << (24 - ((i & 3) << 3));
 
 	/* expand */
 	switch(j)
