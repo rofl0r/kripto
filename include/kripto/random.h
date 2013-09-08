@@ -7,7 +7,7 @@ typedef struct kripto_random kripto_random;
 
 extern kripto_random *kripto_random_create(void);
 
-extern size_t kripto_random_get
+extern size_t kripto_random_gen
 (
 	kripto_random *s,
 	void *out,
