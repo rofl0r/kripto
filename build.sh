@@ -18,7 +18,7 @@ STRIP=${STRIP:-"strip"}
 CFLAGS="-std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wbad-function-cast -Wshadow -I include/ -fPIC -D_ANSI_SOURCE -D_ISOC99_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 $CFLAGS"
 # -fstack-protector-all -fno-strict-aliasing -Werror  Wc++-compat -Wcast-align -DNDEBUG -fwhole-program -ffunction-sections -fdata-sections
 OPTIM="-O2 -D_FORTIFY_SOURCE=2 -flto -DNDEBUG $OPTIM"
-LDFLAGS="-Wall $LDFLAGS"
+LDFLAGS="-Wall -lm $LDFLAGS"
 
 SRC="lib/version.c lib/authstream.c lib/mac.c lib/mac/hmac.c lib/mac/omac.c lib/stream/salsa20.c lib/hash/blake256.c lib/hash/blake512.c lib/hash/blake2s.c lib/hash/blake2b.c lib/hash/keccak1600.c lib/hash/keccak800.c lib/block/xtea.c lib/block/threefish256.c lib/block/threefish512.c lib/block/threefish1024.c lib/stream/ecb.c lib/stream/ctr.c lib/stream/cbc.c lib/stream/ofb.c lib/stream/rc4.c lib/stream/chacha.c lib/block/rijndael.c lib/block/serpent.c lib/block/rc6.c lib/block/twofish.c lib/block/blowfish.c lib/block/anubis.c lib/block/noekeon.c lib/block/aria.c lib/block/seed.c lib/block/camellia.c lib/block/gost.c lib/hash.c lib/hash/sha1.c lib/hash/sha2_256.c lib/hash/sha2_512.c lib/memwipe.c lib/random.c lib/pkcs7.c lib/block.c lib/stream.c lib/pbkdf2.c lib/scrypt.c lib/stream/cfb.c"
 OBJ="version.o authstream.o mac.o hmac.o omac.o salsa20.o blake256.o blake512.o blake2s.o blake2b.o keccak1600.o keccak800.o xtea.o threefish256.o threefish512.o threefish1024.o ecb.o ctr.o cbc.o ofb.o rc4.o chacha.o rijndael.o serpent.o rc6.o twofish.o blowfish.o anubis.o noekeon.o aria.o seed.o camellia.o gost.o hash.o sha1.o sha2_256.o sha2_512.o memwipe.o random.o pkcs7.o block.o stream.o pbkdf2.o scrypt.o cfb.o"

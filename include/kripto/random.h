@@ -16,4 +16,6 @@ extern size_t kripto_random_gen
 
 extern void kripto_random_destroy(kripto_random *s);
 
+extern int kripto_random_test(kripto_random *s);
+
 #endif
