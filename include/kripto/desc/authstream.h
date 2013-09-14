@@ -45,6 +45,8 @@ struct kripto_authstream_desc
 		size_t
 	);
 
+	void (*header)(kripto_authstream *, const void *, size_t);
+
 	void (*tag)(kripto_authstream *, void *, unsigned int);
 
 	void (*destroy)(kripto_authstream *);

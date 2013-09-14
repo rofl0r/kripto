@@ -35,6 +35,7 @@ struct kripto_authstream
 	kripto_mac_desc *omac_desc;
 	kripto_stream *ctr;
 	kripto_mac *omac;
+	kripto_mac *header;
 	uint8_t *iv;
 	unsigned int len;
 };
@@ -63,6 +64,16 @@ static void eax_decrypt
 	kripto_stream_decrypt(s->ctr, ct, pt, len);
 }
 
+static void eax_header
+(
+	kripto_authstream *s,
+	const void *header,
+	size_t len
+)
+{
+	kripto_mac_input(s->header, header, len);
+}
+
 static void eax_tag
 (
 	kripto_authstream *s,
@@ -70,14 +81,22 @@ static void eax_tag
 	unsigned int len
 )
 {
+	unsigned int i;
+
 	kripto_mac_tag(s->omac, tag, len);
-	while(len--) U8(tag)[len] ^= s->iv[len];
+	for(i = 0; i < len; i++)
+		U8(tag)[i] ^= s->iv[i];
+
+	kripto_mac_tag(s->header, s->iv, len);
+	for(i = 0; i < len; i++)
+		U8(tag)[i] ^= s->iv[i];
 }
 
 static void eax_destroy(kripto_authstream *s)
 {
 	kripto_stream_destroy(s->ctr);
 	kripto_mac_destroy(s->omac);
+	kripto_mac_destroy(s->header);
 
 	kripto_memwipe(s->iv, s->len);
 
@@ -116,8 +135,6 @@ static kripto_authstream *eax_create
 	buf = malloc(len);
 	if(!buf) goto err0;
 
-	memset(buf, 0, len);
-
 	s = malloc(sizeof(kripto_authstream) + len);
 	if(!s) goto err1;
 
@@ -126,37 +143,44 @@ static kripto_authstream *eax_create
 	s->len = len;
 
 	/* create CTR descriptor */
-	s->ctr_desc = kripto_stream_ctr(EXT(s)->block);
+	s->ctr_desc = kripto_stream_ctr(EXT(desc)->block);
 	if(!s->ctr_desc) goto err2;
 
 	/* create OMAC descriptor */
-	s->omac_desc = kripto_mac_omac(EXT(s)->block);
+	s->omac_desc = kripto_mac_omac(EXT(desc)->block);
 	if(!s->omac_desc) goto err3;
 
-	/* create CTR */
-	s->ctr = kripto_stream_create(s->ctr_desc, rounds, key, key_len, iv, iv_len);
-	if(!s->ctr) goto err4;
-
-	/* create OMAC */
+	/* OMAC IV (nonce) */
 	s->omac = kripto_mac_create(s->omac_desc, rounds, key, key_len, len);
-	if(!s->omac) goto err5;
-
-	/* mac iv */
+	if(!s->omac) goto err4;
+	memset(buf, 0, len);
 	kripto_mac_input(s->omac, buf, len);
 	kripto_mac_input(s->omac, iv, iv_len);
-	kripto_mac_tag(s->omac, s->iv, len);
+	kripto_mac_tag(s->omac, s->iv, iv_len);
 
-	/* recreate OMAC for encryption */
+	/* recreate OMAC for encryption/decryption */
 	s->omac = kripto_mac_recreate(s->omac, rounds, key, key_len, len);
-	if(!s->omac) goto err6;
-
+	if(!s->omac) goto err5;
 	buf[len - 1] = 2;
 	kripto_mac_input(s->omac, buf, len);
 
+	/* create CTR */
+	s->ctr = kripto_stream_create(s->ctr_desc, rounds, key, key_len, s->iv, iv_len);
+	if(!s->ctr) goto err6;
+
+	/* create OMAC for header */
+	s->header = kripto_mac_create(s->omac_desc, rounds, key, key_len, len);
+	if(!s->header) goto err7;
+	buf[len - 1] = 1;
+	kripto_mac_input(s->header, buf, len);
+
+	free(buf);
+
 	return s;
 
-err6: kripto_memwipe(s->iv, s->len);
-err5: kripto_stream_destroy(s->ctr);
+err7: kripto_stream_destroy(s->ctr);
+err6: kripto_mac_destroy(s->omac);
+err5: kripto_memwipe(s->iv, len);
 err4: free(s->omac_desc);
 err3: free(s->ctr_desc);
 err2: free(s);
@@ -182,31 +206,36 @@ static kripto_authstream *eax_recreate
 	buf = malloc(s->len);
 	if(!buf) goto err0;
 
-	memset(buf, 0, s->len);
-
-	/* recreate CTR */
-	s->ctr = kripto_stream_recreate(s->ctr, rounds, key, key_len, iv, iv_len);
-	if(!s->ctr) goto err1;
-
-	/* recreate OMAC */
+	/* OMAC IV (nonce) */
 	s->omac = kripto_mac_recreate(s->omac, rounds, key, key_len, s->len);
-	if(!s->omac) goto err2;
-
-	/* mac iv */
+	if(!s->omac) goto err1;
+	memset(buf, 0, s->len);
 	kripto_mac_input(s->omac, buf, s->len);
 	kripto_mac_input(s->omac, iv, iv_len);
-	kripto_mac_tag(s->omac, s->iv, s->len);
+	kripto_mac_tag(s->omac, s->iv, iv_len);
 
-	/* recreate OMAC for encryption */
+	/* recreate OMAC for encryption/decryption */
 	s->omac = kripto_mac_recreate(s->omac, rounds, key, key_len, s->len);
-	if(!s->omac) goto err2;
-
+	if(!s->omac) goto err1;
 	buf[s->len - 1] = 2;
 	kripto_mac_input(s->omac, buf, s->len);
 
+	/* recreate CTR */
+	s->ctr = kripto_stream_recreate(s->ctr, rounds, key, key_len, s->iv, iv_len);
+	if(!s->ctr) goto err2;
+
+	/* recreate OMAC for header */
+	s->header = kripto_mac_recreate(s->header, rounds, key, key_len, s->len);
+	if(!s->header) goto err3;
+	buf[s->len - 1] = 1;
+	kripto_mac_input(s->header, buf, s->len);
+
+	free(buf);
+
 	return s;
 
-err2: kripto_stream_destroy(s->ctr);
+err3: kripto_stream_destroy(s->ctr);
+err2: kripto_mac_destroy(s->omac);
 err1: free(buf);
 err0:
 	free(s->ctr_desc);
@@ -229,6 +258,7 @@ kripto_authstream_desc *kripto_authstream_eax(const kripto_block_desc *block)
 	s->desc.recreate = &eax_recreate;
 	s->desc.encrypt = &eax_encrypt;
 	s->desc.decrypt = &eax_decrypt;
+	s->desc.header = &eax_header;
 	s->desc.tag = &eax_tag;
 	s->desc.destroy = &eax_destroy;
 	s->desc.multof = 1;

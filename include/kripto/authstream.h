@@ -44,6 +44,13 @@ extern void kripto_authstream_decrypt
 	size_t len
 );
 
+extern void kripto_authstream_header
+(
+	kripto_authstream *s,
+	const void *header,
+	size_t len
+);
+
 extern void kripto_authstream_tag
 (
 	kripto_authstream *s,

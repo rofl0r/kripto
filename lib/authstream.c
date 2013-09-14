@@ -105,6 +105,20 @@ void kripto_authstream_decrypt
 	s->desc->decrypt(s, ct, pt, len);
 }
 
+void kripto_authstream_header
+(
+	kripto_authstream *s,
+	const void *header,
+	size_t len
+)
+{
+	assert(s);
+	assert(s->desc);
+	assert(s->desc->header);
+
+	s->desc->header(s, header, len);
+}
+
 void kripto_authstream_tag
 (
 	kripto_authstream *s,

@@ -112,7 +112,7 @@ struct ext
 	const kripto_block_desc *block;
 };
 
-#define EXT(X) ((struct ext *)(X))
+#define EXT(X) ((const struct ext *)(X))
 
 static kripto_stream *cfb_create
 (
@@ -136,7 +136,7 @@ static kripto_stream *cfb_create
 	s->prev = (uint8_t *)s + sizeof(kripto_stream);
 
 	/* block cipher */
-	s->block = kripto_block_create(EXT(s)->block, rounds, key, key_len);
+	s->block = kripto_block_create(EXT(desc)->block, rounds, key, key_len);
 	if(!s->block)
 	{
 		kripto_memwipe(s, sizeof(kripto_stream) + s->blocksize);

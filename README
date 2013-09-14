@@ -11,7 +11,6 @@ There is no public-key cryptography yet!
 
 Block ciphers:
  - Rijndael128 (AES)
- - Rijndael192*?
  - Rijndael256
  - Serpent
  - Twofish
@@ -27,8 +26,8 @@ Block ciphers:
  - Blowfish
  - GOST
  - PRESENT*?
- - 3way*?
- - BaseKing*?
+ - 3way*
+ - BaseKing*
  - XTEA
  - Skipjack*?
  - Speck*?
@@ -48,8 +47,8 @@ Modes:
  - CTR
  - CBC
  - CFB
- - CFB8*
- - CFB1*
+ - CFB8*?
+ - CFB1*?
  - OFB
  - ECB
  - TBC*?
@@ -58,18 +57,18 @@ Modes:
  - F8*?
 
 Authenticated modes:
- - EAX*
+ - EAX
  - GCM*
- - CCM*
+ - CCM*?
  - OCB*
 
 Stream ciphers:
  - Salsa20 (XSalsa20)
  - ChaCha (XChaCha)
  - RC4
- - Keccak1600*?
- - Keccak800*?
- - Skein*?
+ - Keccak1600*
+ - Keccak800*
+ - Skein*
  - SEAL*?
  - Scream*?
  - SOSEMANUK*?
@@ -102,8 +101,8 @@ Hash functions:
 MAC's:
  - HMAC
  - OMAC
- - Keccak1600*?
- - Keccak800*?
+ - Keccak1600*
+ - Keccak800*
  - Skein*?
  - CMAC*
  - UMAC*
@@ -115,8 +114,8 @@ MAC's:
 
 Authenticated stream ciphers:
  - Phelix*?
- - Keccak1600*?
- - Keccak800*?
+ - Keccak1600*
+ - Keccak800*
 
 MISC
  - PKCS7
