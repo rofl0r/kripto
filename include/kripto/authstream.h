@@ -28,7 +28,7 @@ extern kripto_authstream *kripto_authstream_recreate
 	unsigned int tag_len
 );
 
-extern size_t kripto_authstream_encrypt
+extern void kripto_authstream_encrypt
 (
 	kripto_authstream *s,
 	const void *pt,
@@ -36,7 +36,7 @@ extern size_t kripto_authstream_encrypt
 	size_t len
 );
 
-extern size_t kripto_authstream_decrypt
+extern void kripto_authstream_decrypt
 (
 	kripto_authstream *s,
 	const void *ct,

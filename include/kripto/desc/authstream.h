@@ -9,6 +9,7 @@ struct kripto_authstream_desc
 {
 	kripto_authstream *(*create)
 	(
+		const kripto_authstream_desc *,
 		unsigned int,
 		const void *,
 		unsigned int,
@@ -28,7 +29,7 @@ struct kripto_authstream_desc
 		unsigned int
 	);
 
-	size_t (*encrypt)
+	void (*encrypt)
 	(
 		kripto_authstream *,
 		const void *,
@@ -36,7 +37,7 @@ struct kripto_authstream_desc
 		size_t
 	);
 
-	size_t (*decrypt)
+	void (*decrypt)
 	(
 		kripto_authstream *,
 		const void *,

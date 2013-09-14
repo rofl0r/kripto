@@ -45,7 +45,7 @@ kripto_authstream *kripto_authstream_create
 	if(iv_len) assert(iv);
 	assert(tag_len <= kripto_authstream_maxtag(desc));
 
-	return desc->create(rounds, key, key_len, iv, iv_len, tag_len);
+	return desc->create(desc, rounds, key, key_len, iv, iv_len, tag_len);
 }
 
 kripto_authstream *kripto_authstream_recreate
@@ -73,7 +73,7 @@ kripto_authstream *kripto_authstream_recreate
 	return s->desc->recreate(s, rounds, key, key_len, iv, iv_len, tag_len);
 }
 
-size_t kripto_authstream_encrypt
+void kripto_authstream_encrypt
 (
 	kripto_authstream *s,
 	const void *pt,
@@ -86,10 +86,10 @@ size_t kripto_authstream_encrypt
 	assert(s->desc->encrypt);
 	assert(len % kripto_authstream_multof(s->desc) == 0);
 
-	return s->desc->encrypt(s, pt, ct, len);
+	s->desc->encrypt(s, pt, ct, len);
 }
 
-size_t kripto_authstream_decrypt
+void kripto_authstream_decrypt
 (
 	kripto_authstream *s,
 	const void *ct,
@@ -102,7 +102,7 @@ size_t kripto_authstream_decrypt
 	assert(s->desc->decrypt);
 	assert(len % kripto_authstream_multof(s->desc) == 0);
 
-	return s->desc->decrypt(s, ct, pt, len);
+	s->desc->decrypt(s, ct, pt, len);
 }
 
 void kripto_authstream_tag
