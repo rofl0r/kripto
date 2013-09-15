@@ -32,10 +32,11 @@ Block ciphers:
  - Skipjack*?
  - Speck*?
  - Simon*?
- - DES*?
- - 3DES*?
+ - DES*
+ - 3DES*
  - IDEA*?
- - RC5*?
+ - RC5*
+ - RC2*?
  - CAST5*?
  - CAST6*?
  - SAFER*?
@@ -54,13 +55,14 @@ Modes:
  - TBC*?
  - XTS*?
  - LRW*?
- - F8*?
 
 Authenticated modes:
  - EAX
  - GCM*
  - CCM*?
+ - CWC*?
  - OCB*
+ - IAPM*?
 
 Stream ciphers:
  - Salsa20 (XSalsa20)
@@ -71,10 +73,11 @@ Stream ciphers:
  - Skein*
  - SEAL*?
  - Scream*?
- - SOSEMANUK*?
- - Rabbit*?
- - HC-256*?
+ - SOSEMANUK*
+ - Rabbit*
+ - HC-256*
  - MUGI*?
+ - Py (RCR)*?
  - Trivium*?
 
 Hash functions:
@@ -83,8 +86,10 @@ Hash functions:
  - Keccak1600 (SHA3)
  - Keccak800
  - Skein*
- - Blake
- - Blake2
+ - BLAKE-256
+ - BLAKE-512
+ - BLAKE2s
+ - BLAKE2b
  - WHIRPOOL*
  - Tiger*
  - MD5*
@@ -100,20 +105,21 @@ Hash functions:
 
 MAC's:
  - HMAC
- - OMAC
+ - OMAC (CMAC1)
+ - CMAC2*?
  - Keccak1600*
  - Keccak800*
- - Skein*?
- - CMAC*
- - UMAC*
- - VMAC*
- - PMAC*
+ - Skein*
+ - UMAC*?
+ - VMAC*?
+ - PMAC*?
  - SipHash*?
  - Poly1305*?
  - CBC-MAC*?
 
 Authenticated stream ciphers:
  - Phelix*?
+ - Helix*?
  - Keccak1600*
  - Keccak800*
 
