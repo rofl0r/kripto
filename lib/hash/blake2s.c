@@ -18,6 +18,7 @@
 #include <limits.h>
 #include <assert.h>
 
+#include <kripto/cast.h>
 #include <kripto/loadstore.h>
 #include <kripto/rotate.h>
 #include <kripto/memwipe.h>

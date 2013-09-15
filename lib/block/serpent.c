@@ -17,6 +17,7 @@
 #include <string.h>
 #include <limits.h>
 
+#include <kripto/cast.h>
 #include <kripto/loadstore.h>
 #include <kripto/rotate.h>
 #include <kripto/memwipe.h>

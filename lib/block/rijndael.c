@@ -27,6 +27,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include <kripto/cast.h>
 #include <kripto/loadstore.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>

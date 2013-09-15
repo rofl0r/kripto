@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include <kripto/cast.h>
 #include <kripto/loadstore.h>
 #include <kripto/rotate.h>
 #include <kripto/memwipe.h>
