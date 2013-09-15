@@ -18,7 +18,8 @@
 #include <limits.h>
 #include <assert.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/hash.h>
 #include <kripto/desc/hash.h>
@@ -118,22 +119,22 @@ static void blake2b_process(kripto_hash *s, const uint8_t *data)
 	unsigned int r;
 	unsigned int i;
 
-	m[0] = U8TO64_LE(data);
-	m[1] = U8TO64_LE(data + 8);
-	m[2] = U8TO64_LE(data + 16);
-	m[3] = U8TO64_LE(data + 24);
-	m[4] = U8TO64_LE(data + 32);
-	m[5] = U8TO64_LE(data + 40);
-	m[6] = U8TO64_LE(data + 48);
-	m[7] = U8TO64_LE(data + 56);
-	m[8] = U8TO64_LE(data + 64);
-	m[9] = U8TO64_LE(data + 72);
-	m[10] = U8TO64_LE(data + 80);
-	m[11] = U8TO64_LE(data + 88);
-	m[12] = U8TO64_LE(data + 96);
-	m[13] = U8TO64_LE(data + 104);
-	m[14] = U8TO64_LE(data + 112);
-	m[15] = U8TO64_LE(data + 120);
+	m[0] = LOAD64L(data);
+	m[1] = LOAD64L(data + 8);
+	m[2] = LOAD64L(data + 16);
+	m[3] = LOAD64L(data + 24);
+	m[4] = LOAD64L(data + 32);
+	m[5] = LOAD64L(data + 40);
+	m[6] = LOAD64L(data + 48);
+	m[7] = LOAD64L(data + 56);
+	m[8] = LOAD64L(data + 64);
+	m[9] = LOAD64L(data + 72);
+	m[10] = LOAD64L(data + 80);
+	m[11] = LOAD64L(data + 88);
+	m[12] = LOAD64L(data + 96);
+	m[13] = LOAD64L(data + 104);
+	m[14] = LOAD64L(data + 112);
+	m[15] = LOAD64L(data + 120);
 
 	x0 = s->h[0];
 	x1 = s->h[1];

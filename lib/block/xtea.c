@@ -18,7 +18,8 @@
 #include <stdlib.h>
 #include <limits.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
@@ -65,8 +66,8 @@ static void xtea_setup
 
 static void xtea_encrypt(const kripto_block *s, const void *pt, void *ct)
 {
-	uint32_t x0 = U8TO32_BE(CU8(pt));
-	uint32_t x1 = U8TO32_BE(CU8(pt) + 4);
+	uint32_t x0 = LOAD32B(CU8(pt));
+	uint32_t x1 = LOAD32B(CU8(pt) + 4);
 	unsigned int i = 0;
 
 	while(i < s->rounds)
@@ -78,14 +79,14 @@ static void xtea_encrypt(const kripto_block *s, const void *pt, void *ct)
 		x1 += F(x0) ^ s->k[i++];
 	}
 
-	U32TO8_BE(x0, U8(ct));
-	U32TO8_BE(x1, U8(ct) + 4);
+	STORE32B(x0, U8(ct));
+	STORE32B(x1, U8(ct) + 4);
 }
  
 static void xtea_decrypt(const kripto_block *s, const void *ct, void *pt)
 {
-	uint32_t x0 = U8TO32_BE(CU8(ct));
-	uint32_t x1 = U8TO32_BE(CU8(ct) + 4);
+	uint32_t x0 = LOAD32B(CU8(ct));
+	uint32_t x1 = LOAD32B(CU8(ct) + 4);
 	unsigned int i = s->rounds - 1;
 
 	while(i != UINT_MAX)
@@ -97,8 +98,8 @@ static void xtea_decrypt(const kripto_block *s, const void *ct, void *pt)
 		x0 -= F(x1) ^ s->k[i--];
 	}
 
-	U32TO8_BE(x0, U8(pt));
-	U32TO8_BE(x1, U8(pt) + 4);
+	STORE32B(x0, U8(pt));
+	STORE32B(x1, U8(pt) + 4);
 }
 
 static kripto_block *xtea_create

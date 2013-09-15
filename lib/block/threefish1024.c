@@ -17,7 +17,8 @@
 #include <string.h>
 #include <limits.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
@@ -56,22 +57,22 @@ static void threefish1024_encrypt
 	void *ct
 )
 {
-	uint64_t x0 = U8TO64_LE(CU8(pt)) + s->k[0];
-	uint64_t x1 = U8TO64_LE(CU8(pt) + 8) + s->k[1];
-	uint64_t x2 = U8TO64_LE(CU8(pt) + 16) + s->k[2];
-	uint64_t x3 = U8TO64_LE(CU8(pt) + 24) + s->k[3];
-	uint64_t x4 = U8TO64_LE(CU8(pt) + 32) + s->k[4];
-	uint64_t x5 = U8TO64_LE(CU8(pt) + 40) + s->k[5];
-	uint64_t x6 = U8TO64_LE(CU8(pt) + 48) + s->k[6];
-	uint64_t x7 = U8TO64_LE(CU8(pt) + 56) + s->k[7];
-	uint64_t x8 = U8TO64_LE(CU8(pt) + 64) + s->k[8];
-	uint64_t x9 = U8TO64_LE(CU8(pt) + 72) + s->k[9];
-	uint64_t x10 = U8TO64_LE(CU8(pt) + 80) + s->k[10];
-	uint64_t x11 = U8TO64_LE(CU8(pt) + 88) + s->k[11];
-	uint64_t x12 = U8TO64_LE(CU8(pt) + 96) + s->k[12];
-	uint64_t x13 = U8TO64_LE(CU8(pt) + 104) + s->k[13] + s->t[0];
-	uint64_t x14 = U8TO64_LE(CU8(pt) + 112) + s->k[14] + s->t[1];
-	uint64_t x15 = U8TO64_LE(CU8(pt) + 120) + s->k[15];
+	uint64_t x0 = LOAD64L(CU8(pt)) + s->k[0];
+	uint64_t x1 = LOAD64L(CU8(pt) + 8) + s->k[1];
+	uint64_t x2 = LOAD64L(CU8(pt) + 16) + s->k[2];
+	uint64_t x3 = LOAD64L(CU8(pt) + 24) + s->k[3];
+	uint64_t x4 = LOAD64L(CU8(pt) + 32) + s->k[4];
+	uint64_t x5 = LOAD64L(CU8(pt) + 40) + s->k[5];
+	uint64_t x6 = LOAD64L(CU8(pt) + 48) + s->k[6];
+	uint64_t x7 = LOAD64L(CU8(pt) + 56) + s->k[7];
+	uint64_t x8 = LOAD64L(CU8(pt) + 64) + s->k[8];
+	uint64_t x9 = LOAD64L(CU8(pt) + 72) + s->k[9];
+	uint64_t x10 = LOAD64L(CU8(pt) + 80) + s->k[10];
+	uint64_t x11 = LOAD64L(CU8(pt) + 88) + s->k[11];
+	uint64_t x12 = LOAD64L(CU8(pt) + 96) + s->k[12];
+	uint64_t x13 = LOAD64L(CU8(pt) + 104) + s->k[13] + s->t[0];
+	uint64_t x14 = LOAD64L(CU8(pt) + 112) + s->k[14] + s->t[1];
+	uint64_t x15 = LOAD64L(CU8(pt) + 120) + s->k[15];
 	unsigned int r = 1;
 
 	while(r <= s->rounds >> 2)
@@ -185,22 +186,22 @@ static void threefish1024_encrypt
 		r++;
 	}
 
-	U64TO8_LE(x0, U8(ct));
-	U64TO8_LE(x1, U8(ct) + 8);
-	U64TO8_LE(x2, U8(ct) + 16);
-	U64TO8_LE(x3, U8(ct) + 24);
-	U64TO8_LE(x4, U8(ct) + 32);
-	U64TO8_LE(x5, U8(ct) + 40);
-	U64TO8_LE(x6, U8(ct) + 48);
-	U64TO8_LE(x7, U8(ct) + 56);
-	U64TO8_LE(x8, U8(ct) + 64);
-	U64TO8_LE(x9, U8(ct) + 72);
-	U64TO8_LE(x10, U8(ct) + 80);
-	U64TO8_LE(x11, U8(ct) + 88);
-	U64TO8_LE(x12, U8(ct) + 96);
-	U64TO8_LE(x13, U8(ct) + 104);
-	U64TO8_LE(x14, U8(ct) + 112);
-	U64TO8_LE(x15, U8(ct) + 120);
+	STORE64L(x0, U8(ct));
+	STORE64L(x1, U8(ct) + 8);
+	STORE64L(x2, U8(ct) + 16);
+	STORE64L(x3, U8(ct) + 24);
+	STORE64L(x4, U8(ct) + 32);
+	STORE64L(x5, U8(ct) + 40);
+	STORE64L(x6, U8(ct) + 48);
+	STORE64L(x7, U8(ct) + 56);
+	STORE64L(x8, U8(ct) + 64);
+	STORE64L(x9, U8(ct) + 72);
+	STORE64L(x10, U8(ct) + 80);
+	STORE64L(x11, U8(ct) + 88);
+	STORE64L(x12, U8(ct) + 96);
+	STORE64L(x13, U8(ct) + 104);
+	STORE64L(x14, U8(ct) + 112);
+	STORE64L(x15, U8(ct) + 120);
 }
 
 static void threefish1024_decrypt
@@ -210,22 +211,22 @@ static void threefish1024_decrypt
 	void *pt
 )
 {
-	uint64_t x0 = U8TO64_LE(CU8(ct));
-	uint64_t x1 = U8TO64_LE(CU8(ct) + 8);
-	uint64_t x2 = U8TO64_LE(CU8(ct) + 16);
-	uint64_t x3 = U8TO64_LE(CU8(ct) + 24);
-	uint64_t x4 = U8TO64_LE(CU8(ct) + 32);
-	uint64_t x5 = U8TO64_LE(CU8(ct) + 40);
-	uint64_t x6 = U8TO64_LE(CU8(ct) + 48);
-	uint64_t x7 = U8TO64_LE(CU8(ct) + 56);
-	uint64_t x8 = U8TO64_LE(CU8(ct) + 64);
-	uint64_t x9 = U8TO64_LE(CU8(ct) + 72);
-	uint64_t x10 = U8TO64_LE(CU8(ct) + 80);
-	uint64_t x11 = U8TO64_LE(CU8(ct) + 88);
-	uint64_t x12 = U8TO64_LE(CU8(ct) + 96);
-	uint64_t x13 = U8TO64_LE(CU8(ct) + 104);
-	uint64_t x14 = U8TO64_LE(CU8(ct) + 112);
-	uint64_t x15 = U8TO64_LE(CU8(ct) + 120);
+	uint64_t x0 = LOAD64L(CU8(ct));
+	uint64_t x1 = LOAD64L(CU8(ct) + 8);
+	uint64_t x2 = LOAD64L(CU8(ct) + 16);
+	uint64_t x3 = LOAD64L(CU8(ct) + 24);
+	uint64_t x4 = LOAD64L(CU8(ct) + 32);
+	uint64_t x5 = LOAD64L(CU8(ct) + 40);
+	uint64_t x6 = LOAD64L(CU8(ct) + 48);
+	uint64_t x7 = LOAD64L(CU8(ct) + 56);
+	uint64_t x8 = LOAD64L(CU8(ct) + 64);
+	uint64_t x9 = LOAD64L(CU8(ct) + 72);
+	uint64_t x10 = LOAD64L(CU8(ct) + 80);
+	uint64_t x11 = LOAD64L(CU8(ct) + 88);
+	uint64_t x12 = LOAD64L(CU8(ct) + 96);
+	uint64_t x13 = LOAD64L(CU8(ct) + 104);
+	uint64_t x14 = LOAD64L(CU8(ct) + 112);
+	uint64_t x15 = LOAD64L(CU8(ct) + 120);
 	unsigned int r = s->rounds >> 2;
 
 	while(r > 1)
@@ -356,22 +357,22 @@ static void threefish1024_decrypt
 	x14 -= s->k[14] + s->t[1];
 	x15 -= s->k[15];
 
-	U64TO8_LE(x0, U8(pt));
-	U64TO8_LE(x1, U8(pt) + 8);
-	U64TO8_LE(x2, U8(pt) + 16);
-	U64TO8_LE(x3, U8(pt) + 24);
-	U64TO8_LE(x4, U8(pt) + 32);
-	U64TO8_LE(x5, U8(pt) + 40);
-	U64TO8_LE(x6, U8(pt) + 48);
-	U64TO8_LE(x7, U8(pt) + 56);
-	U64TO8_LE(x8, U8(pt) + 64);
-	U64TO8_LE(x9, U8(pt) + 72);
-	U64TO8_LE(x10, U8(pt) + 80);
-	U64TO8_LE(x11, U8(pt) + 88);
-	U64TO8_LE(x12, U8(pt) + 96);
-	U64TO8_LE(x13, U8(pt) + 104);
-	U64TO8_LE(x14, U8(pt) + 112);
-	U64TO8_LE(x15, U8(pt) + 120);
+	STORE64L(x0, U8(pt));
+	STORE64L(x1, U8(pt) + 8);
+	STORE64L(x2, U8(pt) + 16);
+	STORE64L(x3, U8(pt) + 24);
+	STORE64L(x4, U8(pt) + 32);
+	STORE64L(x5, U8(pt) + 40);
+	STORE64L(x6, U8(pt) + 48);
+	STORE64L(x7, U8(pt) + 56);
+	STORE64L(x8, U8(pt) + 64);
+	STORE64L(x9, U8(pt) + 72);
+	STORE64L(x10, U8(pt) + 80);
+	STORE64L(x11, U8(pt) + 88);
+	STORE64L(x12, U8(pt) + 96);
+	STORE64L(x13, U8(pt) + 104);
+	STORE64L(x14, U8(pt) + 112);
+	STORE64L(x15, U8(pt) + 120);
 }
 
 static kripto_block *threefish1024_recreate

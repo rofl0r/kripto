@@ -16,7 +16,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <kripto/macros.h>
+#include <kripto/cast.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/stream.h>
@@ -54,8 +54,8 @@ static void cbc_encrypt
 		for(n = 0; n < s->blocksize; n++)
 			s->iv[n] = U8(ct)[n];
 
-		CPTR_INC(pt, n);
-		PTR_INC(ct, n);
+		pt = CU8(pt) + n;
+		ct = U8(ct) + n;
 	}
 }
 
@@ -83,8 +83,8 @@ static void cbc_decrypt
 			s->iv[n] = s->buf[n];
 		}
 
-		CPTR_INC(ct, n);
-		PTR_INC(pt, n);
+		ct = CU8(ct) + n;
+		pt = U8(pt) + n;
 	}
 }
 

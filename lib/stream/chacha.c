@@ -16,7 +16,8 @@
 #include <stdlib.h>
 #include <limits.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/stream.h>
 #include <kripto/desc/stream.h>
@@ -98,22 +99,22 @@ static void chacha_core
 	x14 += x[14];
 	x15 += x[15];
 
-	U32TO8_LE(x0, U8(out));
-	U32TO8_LE(x1, U8(out) + 4);
-	U32TO8_LE(x2, U8(out) + 8);
-	U32TO8_LE(x3, U8(out) + 12);
-	U32TO8_LE(x4, U8(out) + 16);
-	U32TO8_LE(x5, U8(out) + 20);
-	U32TO8_LE(x6, U8(out) + 24);
-	U32TO8_LE(x7, U8(out) + 28);
-	U32TO8_LE(x8, U8(out) + 32);
-	U32TO8_LE(x9, U8(out) + 36);
-	U32TO8_LE(x10, U8(out) + 40);
-	U32TO8_LE(x11, U8(out) + 44);
-	U32TO8_LE(x12, U8(out) + 48);
-	U32TO8_LE(x13, U8(out) + 52);
-	U32TO8_LE(x14, U8(out) + 56);
-	U32TO8_LE(x15, U8(out) + 60);
+	STORE32L(x0, U8(out));
+	STORE32L(x1, U8(out) + 4);
+	STORE32L(x2, U8(out) + 8);
+	STORE32L(x3, U8(out) + 12);
+	STORE32L(x4, U8(out) + 16);
+	STORE32L(x5, U8(out) + 20);
+	STORE32L(x6, U8(out) + 24);
+	STORE32L(x7, U8(out) + 28);
+	STORE32L(x8, U8(out) + 32);
+	STORE32L(x9, U8(out) + 36);
+	STORE32L(x10, U8(out) + 40);
+	STORE32L(x11, U8(out) + 44);
+	STORE32L(x12, U8(out) + 48);
+	STORE32L(x13, U8(out) + 52);
+	STORE32L(x14, U8(out) + 56);
+	STORE32L(x15, U8(out) + 60);
 }
 
 static void chacha_crypt
@@ -182,10 +183,10 @@ static kripto_stream *chacha_recreate
 	constant[7] += key_len / 10;
 	constant[8] += key_len % 10;
 
-	s->x[0] = U8TO32_LE(constant);
-	s->x[1] = U8TO32_LE(constant + 4);
-	s->x[2] = U8TO32_LE(constant + 8);
-	s->x[3] = U8TO32_LE(constant + 12);
+	s->x[0] = LOAD32L(constant);
+	s->x[1] = LOAD32L(constant + 4);
+	s->x[2] = LOAD32L(constant + 8);
+	s->x[3] = LOAD32L(constant + 12);
 
 	for(i = 4; i < 12; i++)
 	{
@@ -233,10 +234,10 @@ static kripto_stream *chacha_recreate
 			QR(s->x[3], s->x[4], s->x[9], s->x[14]);
 		}
 
-		s->x[4] = s->x[0]; s->x[0] = U8TO32_LE(constant);
-		s->x[5] = s->x[1]; s->x[1] = U8TO32_LE(constant + 4);
-		s->x[6] = s->x[2]; s->x[2] = U8TO32_LE(constant + 8);
-		s->x[7] = s->x[3]; s->x[3] = U8TO32_LE(constant + 12);
+		s->x[4] = s->x[0]; s->x[0] = LOAD32L(constant);
+		s->x[5] = s->x[1]; s->x[1] = LOAD32L(constant + 4);
+		s->x[6] = s->x[2]; s->x[2] = LOAD32L(constant + 8);
+		s->x[7] = s->x[3]; s->x[3] = LOAD32L(constant + 12);
 
 		s->x[8] = s->x[12]; s->x[12] = 0;
 		s->x[9] = s->x[13]; s->x[13] = 0;

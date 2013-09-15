@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
 #include <kripto/memwipe.h>
 #include <kripto/mac.h>
 #include <kripto/desc/mac.h>

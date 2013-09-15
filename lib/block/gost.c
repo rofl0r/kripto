@@ -16,7 +16,8 @@
 #include <stdlib.h>
 #include <limits.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
@@ -210,8 +211,8 @@ static void gost_encrypt
 	uint32_t r;
 	unsigned int i;
 
-	l = U8TO32_LE(CU8(pt));
-	r = U8TO32_LE(CU8(pt) + 4);
+	l = LOAD32L(CU8(pt));
+	r = LOAD32L(CU8(pt) + 4);
 
 	for(i = 0; i < s->rounds;)
 	{
@@ -219,8 +220,8 @@ static void gost_encrypt
 		l ^= F(r + s->k[i++]);
 	}
 
-	U32TO8_LE(r, U8(ct));
-	U32TO8_LE(l, U8(ct) + 4);
+	STORE32L(r, U8(ct));
+	STORE32L(l, U8(ct) + 4);
 }
 
 static void gost_decrypt
@@ -234,8 +235,8 @@ static void gost_decrypt
 	uint32_t r;
 	unsigned int i;
 
-	l = U8TO32_LE(CU8(ct));
-	r = U8TO32_LE(CU8(ct) + 4);
+	l = LOAD32L(CU8(ct));
+	r = LOAD32L(CU8(ct) + 4);
 
 	for(i = s->rounds; i;)
 	{
@@ -243,8 +244,8 @@ static void gost_decrypt
 		l ^= F(r + s->k[--i]);
 	}
 
-	U32TO8_LE(r, U8(pt));
-	U32TO8_LE(l, U8(pt) + 4);
+	STORE32L(r, U8(pt));
+	STORE32L(l, U8(pt) + 4);
 }
 
 static void gost_setup

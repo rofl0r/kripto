@@ -17,7 +17,7 @@
 #include <limits.h>
 #include <assert.h>
 
-#include <kripto/macros.h>
+#include <kripto/cast.h>
 #include <kripto/memwipe.h>
 #include <kripto/stream.h>
 #include <kripto/desc/stream.h>

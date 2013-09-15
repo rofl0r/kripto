@@ -16,7 +16,8 @@
 #include <stdlib.h>
 #include <limits.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
@@ -378,10 +379,10 @@ static void aria_crypt
 	uint32_t d;
 	unsigned int i;
 
-	a = U8TO32_BE(CU8(in));
-	b = U8TO32_BE(CU8(in) + 4);
-	c = U8TO32_BE(CU8(in) + 8);
-	d = U8TO32_BE(CU8(in) + 12);
+	a = LOAD32B(CU8(in));
+	b = LOAD32B(CU8(in) + 4);
+	c = LOAD32B(CU8(in) + 8);
+	d = LOAD32B(CU8(in) + 12);
 
 	for(i = 0, r = (r - 1) << 2; i < r;)
 	{
@@ -416,10 +417,10 @@ static void aria_crypt
 	c = SWL(c) ^ k[i++];
 	d = SWL(d) ^ k[i];
 
-	U32TO8_BE(a, U8(out));
-	U32TO8_BE(b, U8(out) + 4);
-	U32TO8_BE(c, U8(out) + 8);
-	U32TO8_BE(d, U8(out) + 12);
+	STORE32B(a, U8(out));
+	STORE32B(b, U8(out) + 4);
+	STORE32B(c, U8(out) + 8);
+	STORE32B(d, U8(out) + 12);
 }
 
 static void aria_encrypt

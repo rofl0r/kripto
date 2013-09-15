@@ -18,7 +18,8 @@
 #include <string.h>
 #include <limits.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/hash.h>
 #include <kripto/desc/hash.h>
@@ -65,31 +66,31 @@ static const uint64_t rc[48] =
 
 static void keccak1600_F(kripto_hash *s)
 {
-	uint64_t a0 = U8TO64_LE(s->s);
-	uint64_t a1 = U8TO64_LE(s->s + 8);
-	uint64_t a2 = U8TO64_LE(s->s + 16);
-	uint64_t a3 = U8TO64_LE(s->s + 24);
-	uint64_t a4 = U8TO64_LE(s->s + 32);
-	uint64_t a5 = U8TO64_LE(s->s + 40);
-	uint64_t a6 = U8TO64_LE(s->s + 48);
-	uint64_t a7 = U8TO64_LE(s->s + 56);
-	uint64_t a8 = U8TO64_LE(s->s + 64);
-	uint64_t a9 = U8TO64_LE(s->s + 72);
-	uint64_t a10 = U8TO64_LE(s->s + 80);
-	uint64_t a11 = U8TO64_LE(s->s + 88);
-	uint64_t a12 = U8TO64_LE(s->s + 96);
-	uint64_t a13 = U8TO64_LE(s->s + 104);
-	uint64_t a14 = U8TO64_LE(s->s + 112);
-	uint64_t a15 = U8TO64_LE(s->s + 120);
-	uint64_t a16 = U8TO64_LE(s->s + 128);
-	uint64_t a17 = U8TO64_LE(s->s + 136);
-	uint64_t a18 = U8TO64_LE(s->s + 144);
-	uint64_t a19 = U8TO64_LE(s->s + 152);
-	uint64_t a20 = U8TO64_LE(s->s + 160);
-	uint64_t a21 = U8TO64_LE(s->s + 168);
-	uint64_t a22 = U8TO64_LE(s->s + 176);
-	uint64_t a23 = U8TO64_LE(s->s + 184);
-	uint64_t a24 = U8TO64_LE(s->s + 192);
+	uint64_t a0 = LOAD64L(s->s);
+	uint64_t a1 = LOAD64L(s->s + 8);
+	uint64_t a2 = LOAD64L(s->s + 16);
+	uint64_t a3 = LOAD64L(s->s + 24);
+	uint64_t a4 = LOAD64L(s->s + 32);
+	uint64_t a5 = LOAD64L(s->s + 40);
+	uint64_t a6 = LOAD64L(s->s + 48);
+	uint64_t a7 = LOAD64L(s->s + 56);
+	uint64_t a8 = LOAD64L(s->s + 64);
+	uint64_t a9 = LOAD64L(s->s + 72);
+	uint64_t a10 = LOAD64L(s->s + 80);
+	uint64_t a11 = LOAD64L(s->s + 88);
+	uint64_t a12 = LOAD64L(s->s + 96);
+	uint64_t a13 = LOAD64L(s->s + 104);
+	uint64_t a14 = LOAD64L(s->s + 112);
+	uint64_t a15 = LOAD64L(s->s + 120);
+	uint64_t a16 = LOAD64L(s->s + 128);
+	uint64_t a17 = LOAD64L(s->s + 136);
+	uint64_t a18 = LOAD64L(s->s + 144);
+	uint64_t a19 = LOAD64L(s->s + 152);
+	uint64_t a20 = LOAD64L(s->s + 160);
+	uint64_t a21 = LOAD64L(s->s + 168);
+	uint64_t a22 = LOAD64L(s->s + 176);
+	uint64_t a23 = LOAD64L(s->s + 184);
+	uint64_t a24 = LOAD64L(s->s + 192);
 
 	uint64_t b0;
 	uint64_t b1;
@@ -257,31 +258,31 @@ static void keccak1600_F(kripto_hash *s)
 		a24 = b24;
 	}
 
-	U64TO8_LE(a0, s->s);
-	U64TO8_LE(a1, s->s + 8);
-	U64TO8_LE(a2, s->s + 16);
-	U64TO8_LE(a3, s->s + 24);
-	U64TO8_LE(a4, s->s + 32);
-	U64TO8_LE(a5, s->s + 40);
-	U64TO8_LE(a6, s->s + 48);
-	U64TO8_LE(a7, s->s + 56);
-	U64TO8_LE(a8, s->s + 64);
-	U64TO8_LE(a9, s->s + 72);
-	U64TO8_LE(a10, s->s + 80);
-	U64TO8_LE(a11, s->s + 88);
-	U64TO8_LE(a12, s->s + 96);
-	U64TO8_LE(a13, s->s + 104);
-	U64TO8_LE(a14, s->s + 112);
-	U64TO8_LE(a15, s->s + 120);
-	U64TO8_LE(a16, s->s + 128);
-	U64TO8_LE(a17, s->s + 136);
-	U64TO8_LE(a18, s->s + 144);
-	U64TO8_LE(a19, s->s + 152);
-	U64TO8_LE(a20, s->s + 160);
-	U64TO8_LE(a21, s->s + 168);
-	U64TO8_LE(a22, s->s + 176);
-	U64TO8_LE(a23, s->s + 184);
-	U64TO8_LE(a24, s->s + 192);
+	STORE64L(a0, s->s);
+	STORE64L(a1, s->s + 8);
+	STORE64L(a2, s->s + 16);
+	STORE64L(a3, s->s + 24);
+	STORE64L(a4, s->s + 32);
+	STORE64L(a5, s->s + 40);
+	STORE64L(a6, s->s + 48);
+	STORE64L(a7, s->s + 56);
+	STORE64L(a8, s->s + 64);
+	STORE64L(a9, s->s + 72);
+	STORE64L(a10, s->s + 80);
+	STORE64L(a11, s->s + 88);
+	STORE64L(a12, s->s + 96);
+	STORE64L(a13, s->s + 104);
+	STORE64L(a14, s->s + 112);
+	STORE64L(a15, s->s + 120);
+	STORE64L(a16, s->s + 128);
+	STORE64L(a17, s->s + 136);
+	STORE64L(a18, s->s + 144);
+	STORE64L(a19, s->s + 152);
+	STORE64L(a20, s->s + 160);
+	STORE64L(a21, s->s + 168);
+	STORE64L(a22, s->s + 176);
+	STORE64L(a23, s->s + 184);
+	STORE64L(a24, s->s + 192);
 }
 
 static kripto_hash *keccak1600_recreate

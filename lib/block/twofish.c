@@ -18,7 +18,8 @@
 #include <stdlib.h>
 #include <limits.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
@@ -939,7 +940,7 @@ static void rs(const uint8_t *in, uint8_t *out)
 	t = rs0[in[0]] ^ rs1[in[1]] ^ rs2[in[2]] ^ rs3[in[3]] ^
 		rs4[in[4]] ^ rs5[in[5]] ^ rs6[in[6]] ^ rs7[in[7]];
 
-	U32TO8_LE(t, U8(out));
+	STORE32L(t, U8(out));
 }
 
 static uint32_t h
@@ -1091,10 +1092,10 @@ static void twofish_encrypt
 	uint32_t *k;
 	unsigned int r;
 
-	x0 = U8TO32_LE(CU8(pt)) ^ s->k[0];
-	x1 = U8TO32_LE(CU8(pt) + 4) ^ s->k[1];
-	x2 = U8TO32_LE(CU8(pt) + 8) ^ s->k[2];
-	x3 = U8TO32_LE(CU8(pt) + 12) ^ s->k[3];
+	x0 = LOAD32L(CU8(pt)) ^ s->k[0];
+	x1 = LOAD32L(CU8(pt) + 4) ^ s->k[1];
+	x2 = LOAD32L(CU8(pt) + 8) ^ s->k[2];
+	x3 = LOAD32L(CU8(pt) + 12) ^ s->k[3];
 
 	k = s->k + 8;
 	for(r = (s->rounds >> 1); r; r--)
@@ -1118,10 +1119,10 @@ static void twofish_encrypt
 	x0 ^= s->k[6];
 	x1 ^= s->k[7];
 
-	U32TO8_LE(x2, U8(ct));
-	U32TO8_LE(x3, U8(ct) + 4);
-	U32TO8_LE(x0, U8(ct) + 8);
-	U32TO8_LE(x1, U8(ct) + 12);
+	STORE32L(x2, U8(ct));
+	STORE32L(x3, U8(ct) + 4);
+	STORE32L(x0, U8(ct) + 8);
+	STORE32L(x1, U8(ct) + 12);
 }
 
 static void twofish_decrypt
@@ -1141,10 +1142,10 @@ static void twofish_decrypt
 	unsigned int r;
 
 	/* swapped */
-	x0 = U8TO32_LE(CU8(ct) + 8) ^ s->k[6];
-	x1 = U8TO32_LE(CU8(ct) + 12) ^ s->k[7];
-	x2 = U8TO32_LE(CU8(ct)) ^ s->k[4];
-	x3 = U8TO32_LE(CU8(ct) + 4) ^ s->k[5];
+	x0 = LOAD32L(CU8(ct) + 8) ^ s->k[6];
+	x1 = LOAD32L(CU8(ct) + 12) ^ s->k[7];
+	x2 = LOAD32L(CU8(ct)) ^ s->k[4];
+	x3 = LOAD32L(CU8(ct) + 4) ^ s->k[5];
 
 	k = s->k + 4 + (s->rounds << 1);
 	for(r = (s->rounds >> 1); r; r--)
@@ -1167,10 +1168,10 @@ static void twofish_decrypt
 	x2 ^= s->k[2];
 	x3 ^= s->k[3];
 
-	U32TO8_LE(x0, U8(pt));
-	U32TO8_LE(x1, U8(pt) + 4);
-	U32TO8_LE(x2, U8(pt) + 8);
-	U32TO8_LE(x3, U8(pt) + 12);
+	STORE32L(x0, U8(pt));
+	STORE32L(x1, U8(pt) + 4);
+	STORE32L(x2, U8(pt) + 8);
+	STORE32L(x3, U8(pt) + 12);
 }
 
 static kripto_block *twofish_create

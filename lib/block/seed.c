@@ -15,7 +15,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
@@ -341,18 +342,18 @@ static void seed_encrypt
 	uint32_t t1;
 	unsigned int i;
 
-	l0 = U8TO32_BE(CU8(pt));
-	l1 = U8TO32_BE(CU8(pt) + 4);
-	r0 = U8TO32_BE(CU8(pt) + 8);
-	r1 = U8TO32_BE(CU8(pt) + 12);
+	l0 = LOAD32B(CU8(pt));
+	l1 = LOAD32B(CU8(pt) + 4);
+	r0 = LOAD32B(CU8(pt) + 8);
+	r1 = LOAD32B(CU8(pt) + 12);
 
 	for(i = 0; i < s->rounds << 1; i += 2)
 		R(l0, l1, r0, r1, s->k + i);
 
-	U32TO8_BE(r0, U8(ct));
-	U32TO8_BE(r1, U8(ct) + 4);
-	U32TO8_BE(l0, U8(ct) + 8);
-	U32TO8_BE(l1, U8(ct) + 12);
+	STORE32B(r0, U8(ct));
+	STORE32B(r1, U8(ct) + 4);
+	STORE32B(l0, U8(ct) + 8);
+	STORE32B(l1, U8(ct) + 12);
 }
 
 static void seed_decrypt
@@ -370,18 +371,18 @@ static void seed_decrypt
 	uint32_t t1;
 	unsigned int i;
 
-	l0 = U8TO32_BE(CU8(ct));
-	l1 = U8TO32_BE(CU8(ct) + 4);
-	r0 = U8TO32_BE(CU8(ct) + 8);
-	r1 = U8TO32_BE(CU8(ct) + 12);
+	l0 = LOAD32B(CU8(ct));
+	l1 = LOAD32B(CU8(ct) + 4);
+	r0 = LOAD32B(CU8(ct) + 8);
+	r1 = LOAD32B(CU8(ct) + 12);
 
 	for(i = (s->rounds << 1) - 2; i + 2; i -= 2)
 		R(l0, l1, r0, r1, s->k + i);
 
-	U32TO8_BE(l0, U8(pt));
-	U32TO8_BE(l1, U8(pt) + 4);
-	U32TO8_BE(r0, U8(pt) + 8);
-	U32TO8_BE(r1, U8(pt) + 12);
+	STORE32B(l0, U8(pt));
+	STORE32B(l1, U8(pt) + 4);
+	STORE32B(r0, U8(pt) + 8);
+	STORE32B(r1, U8(pt) + 12);
 }
 
 static void seed_setup

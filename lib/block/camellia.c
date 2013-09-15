@@ -18,7 +18,8 @@
 #include <stdlib.h>
 #include <limits.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
@@ -405,22 +406,22 @@ static void camellia_setup
 	for(i = 32; i < 48; i++) t[i] = t[i - 32] ^ t[i - 16];
 
 	/* first two rounds */
-	a = U8TO64_BE(t + 32);
-	b = U8TO64_BE(t + 40);
+	a = LOAD64B(t + 32);
+	b = LOAD64B(t + 40);
 	b ^= F(a ^ 0xA09E667F3BCC908B);
 	a ^= F(b ^ 0xB67AE8584CAA73B2);
-	U64TO8_BE(a, t + 32);
-	U64TO8_BE(b, t + 40);
+	STORE64B(a, t + 32);
+	STORE64B(b, t + 40);
 
 	for(i = 0; i < 16; i++) t[i + 32] ^= kl[i];
 
 	/* second two rounds */
-	a = U8TO64_BE(t + 32);
-	b = U8TO64_BE(t + 40);
+	a = LOAD64B(t + 32);
+	b = LOAD64B(t + 40);
 	b ^= F(a ^ 0xC6EF372FE94F82BE);
 	a ^= F(b ^ 0x54FF53A5F1D36F1C);
-	U64TO8_BE(a, t + 32);
-	U64TO8_BE(b, t + 40);
+	STORE64B(a, t + 32);
+	STORE64B(b, t + 40);
 
 	for(i = 0; i < 16; i++)
 	{
@@ -428,133 +429,133 @@ static void camellia_setup
 		t[i + 32] ^= kr[i];
 	}
 
-	s->kw[0] = U8TO64_BE(kl);
-	s->kw[1] = U8TO64_BE(kl + 8);
+	s->kw[0] = LOAD64B(kl);
+	s->kw[1] = LOAD64B(kl + 8);
 
 	if(key_len <= 16)
 	{
-		s->k[0] = U8TO64_BE(ka);
-		s->k[1] = U8TO64_BE(ka + 8); 
+		s->k[0] = LOAD64B(ka);
+		s->k[1] = LOAD64B(ka + 8); 
 
 		rot128(kl, t + 32, 15);
-		s->k[2] = U8TO64_BE(t + 32);
-		s->k[3] = U8TO64_BE(t + 40);
+		s->k[2] = LOAD64B(t + 32);
+		s->k[3] = LOAD64B(t + 40);
 
 		rot128(ka, t + 32, 15);
-		s->k[4] = U8TO64_BE(t + 32);
-		s->k[5] = U8TO64_BE(t + 40);
+		s->k[4] = LOAD64B(t + 32);
+		s->k[5] = LOAD64B(t + 40);
 
 		rot128(ka, t + 32, 30);
-		s->kl[0] = U8TO64_BE(t + 32);
-		s->kl[1] = U8TO64_BE(t + 40);
+		s->kl[0] = LOAD64B(t + 32);
+		s->kl[1] = LOAD64B(t + 40);
 
 		rot128(kl, t + 32, 45);
-		s->k[6] = U8TO64_BE(t + 32);
-		s->k[7] = U8TO64_BE(t + 40);
+		s->k[6] = LOAD64B(t + 32);
+		s->k[7] = LOAD64B(t + 40);
 
 		rot128(ka, t + 32, 45);
-		s->k[8] = U8TO64_BE(t + 32);
+		s->k[8] = LOAD64B(t + 32);
 		rot128(kl, t + 32, 60);
-		s->k[9] = U8TO64_BE(t + 40);
+		s->k[9] = LOAD64B(t + 40);
 
 		rot128(ka, t + 32, 60);
-		s->k[10] = U8TO64_BE(t + 32);
-		s->k[11] = U8TO64_BE(t + 40);
+		s->k[10] = LOAD64B(t + 32);
+		s->k[11] = LOAD64B(t + 40);
 
 		rot128(kl, t + 32, 77);
-		s->kl[2] = U8TO64_BE(t + 32);
-		s->kl[3] = U8TO64_BE(t + 40);
+		s->kl[2] = LOAD64B(t + 32);
+		s->kl[3] = LOAD64B(t + 40);
 
 		rot128(kl, t + 32, 94);
-		s->k[12] = U8TO64_BE(t + 32);
-		s->k[13] = U8TO64_BE(t + 40);
+		s->k[12] = LOAD64B(t + 32);
+		s->k[13] = LOAD64B(t + 40);
 
 		rot128(ka, t + 32, 94);
-		s->k[14] = U8TO64_BE(t + 32);
-		s->k[15] = U8TO64_BE(t + 40);
+		s->k[14] = LOAD64B(t + 32);
+		s->k[15] = LOAD64B(t + 40);
 
 		rot128(kl, t + 32, 111);
-		s->k[16] = U8TO64_BE(t + 32);
-		s->k[17] = U8TO64_BE(t + 40);
+		s->k[16] = LOAD64B(t + 32);
+		s->k[17] = LOAD64B(t + 40);
 
 		rot128(ka, t + 32, 111);
-		s->kw[2] = U8TO64_BE(t + 32);
-		s->kw[3] = U8TO64_BE(t + 40);
+		s->kw[2] = LOAD64B(t + 32);
+		s->kw[3] = LOAD64B(t + 40);
 	}
 	else
 	{
 		/* third two rounds */
-		a = U8TO64_BE(t + 32);
-		b = U8TO64_BE(t + 40);
+		a = LOAD64B(t + 32);
+		b = LOAD64B(t + 40);
 		b ^= F(a ^ 0x10E527FADE682D1D);
 		a ^= F(b ^ 0xB05688C2B3E6C1FD);
-		U64TO8_BE(a, t + 32);
-		U64TO8_BE(b, t + 40);
+		STORE64B(a, t + 32);
+		STORE64B(b, t + 40);
 
 		for(i = 0; i < 16; i++) kb[i] = t[i + 32];
 
-		s->k[0] = U8TO64_BE(kb);
-		s->k[1] = U8TO64_BE(kb + 8);
+		s->k[0] = LOAD64B(kb);
+		s->k[1] = LOAD64B(kb + 8);
 
 		rot128(kr, t + 32, 15);
-		s->k[2] = U8TO64_BE(t + 32);
-		s->k[3] = U8TO64_BE(t + 40);
+		s->k[2] = LOAD64B(t + 32);
+		s->k[3] = LOAD64B(t + 40);
 
 		rot128(ka, t + 32, 15);
-		s->k[4] = U8TO64_BE(t + 32);
-		s->k[5] = U8TO64_BE(t + 40);
+		s->k[4] = LOAD64B(t + 32);
+		s->k[5] = LOAD64B(t + 40);
 
 		rot128(kr, t + 32, 30);
-		s->kl[0] = U8TO64_BE(t + 32);
-		s->kl[1] = U8TO64_BE(t + 40);
+		s->kl[0] = LOAD64B(t + 32);
+		s->kl[1] = LOAD64B(t + 40);
 
 		rot128(kb, t + 32, 30);
-		s->k[6] = U8TO64_BE(t + 32);
-		s->k[7] = U8TO64_BE(t + 40);
+		s->k[6] = LOAD64B(t + 32);
+		s->k[7] = LOAD64B(t + 40);
 
 		rot128(kl, t + 32, 45);
-		s->k[8] = U8TO64_BE(t + 32);
-		s->k[9] = U8TO64_BE(t + 40);
+		s->k[8] = LOAD64B(t + 32);
+		s->k[9] = LOAD64B(t + 40);
 
 		rot128(ka, t + 32, 45);
-		s->k[10] = U8TO64_BE(t + 32);
-		s->k[11] = U8TO64_BE(t + 40);
+		s->k[10] = LOAD64B(t + 32);
+		s->k[11] = LOAD64B(t + 40);
 
 		rot128(kl, t + 32, 60);
-		s->kl[2] = U8TO64_BE(t + 32);
-		s->kl[3] = U8TO64_BE(t + 40);
+		s->kl[2] = LOAD64B(t + 32);
+		s->kl[3] = LOAD64B(t + 40);
 
 		rot128(kr, t + 32, 60);
-		s->k[12] = U8TO64_BE(t + 32);
-		s->k[13] = U8TO64_BE(t + 40);
+		s->k[12] = LOAD64B(t + 32);
+		s->k[13] = LOAD64B(t + 40);
 
 		rot128(kb, t + 32, 60);
-		s->k[14] = U8TO64_BE(t + 32);
-		s->k[15] = U8TO64_BE(t + 40);
+		s->k[14] = LOAD64B(t + 32);
+		s->k[15] = LOAD64B(t + 40);
 
 		rot128(kl, t + 32, 77);
-		s->k[16] = U8TO64_BE(t + 32);
-		s->k[17] = U8TO64_BE(t + 40);
+		s->k[16] = LOAD64B(t + 32);
+		s->k[17] = LOAD64B(t + 40);
 
 		rot128(ka, t + 32, 77);
-		s->kl[4] = U8TO64_BE(t + 32);
-		s->kl[5] = U8TO64_BE(t + 40);
+		s->kl[4] = LOAD64B(t + 32);
+		s->kl[5] = LOAD64B(t + 40);
 
 		rot128(kr, t + 32, 94);
-		s->k[18] = U8TO64_BE(t + 32);
-		s->k[19] = U8TO64_BE(t + 40);
+		s->k[18] = LOAD64B(t + 32);
+		s->k[19] = LOAD64B(t + 40);
 
 		rot128(ka, t + 32, 94);
-		s->k[20] = U8TO64_BE(t + 32);
-		s->k[21] = U8TO64_BE(t + 40);
+		s->k[20] = LOAD64B(t + 32);
+		s->k[21] = LOAD64B(t + 40);
 
 		rot128(kl, t + 32, 111);
-		s->k[22] = U8TO64_BE(t + 32);
-		s->k[23] = U8TO64_BE(t + 40);
+		s->k[22] = LOAD64B(t + 32);
+		s->k[23] = LOAD64B(t + 40);
 
 		rot128(kb, t + 32, 111);
-		s->kw[2] = U8TO64_BE(t + 32);
-		s->kw[3] = U8TO64_BE(t + 40);
+		s->kw[2] = LOAD64B(t + 32);
+		s->kw[3] = LOAD64B(t + 40);
 	}
 
 	kripto_memwipe(t, 48);
@@ -578,8 +579,8 @@ static void camellia_encrypt
 	unsigned int i = 0;
 	unsigned int j = 0;
 
-	l = U8TO64_BE(CU8(pt));
-	r = U8TO64_BE(CU8(pt) + 8);
+	l = LOAD64B(CU8(pt));
+	r = LOAD64B(CU8(pt) + 8);
 
 	l ^= s->kw[0];
 	r ^= s->kw[1];
@@ -603,8 +604,8 @@ static void camellia_encrypt
 	r ^= s->kw[2];
 	l ^= s->kw[3];
 
-	U64TO8_BE(r, U8(ct));
-	U64TO8_BE(l, U8(ct) + 8);
+	STORE64B(r, U8(ct));
+	STORE64B(l, U8(ct) + 8);
 }
 
 static void camellia_decrypt
@@ -619,8 +620,8 @@ static void camellia_decrypt
 	unsigned int i = s->rounds;
 	unsigned int j = s->rounds >> 2;
 
-	r = U8TO64_BE(CU8(ct));
-	l = U8TO64_BE(CU8(ct) + 8);
+	r = LOAD64B(CU8(ct));
+	l = LOAD64B(CU8(ct) + 8);
 
 	l ^= s->kw[3];
 	r ^= s->kw[2];
@@ -644,8 +645,8 @@ static void camellia_decrypt
 	l ^= s->kw[1];
 	r ^= s->kw[0];
 
-	U64TO8_BE(r, U8(pt));
-	U64TO8_BE(l, U8(pt) + 8);
+	STORE64B(r, U8(pt));
+	STORE64B(l, U8(pt) + 8);
 }
 
 static kripto_block *camellia_recreate

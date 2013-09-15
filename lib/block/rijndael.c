@@ -27,7 +27,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
@@ -805,10 +805,10 @@ static void rijndael128_encrypt
 	uint32_t t3;
 	unsigned int i;
 
-	x0 = U8TO32_BE(CU8(pt)) ^ s->k[0];
-	x1 = U8TO32_BE(CU8(pt) + 4) ^ s->k[1];
-	x2 = U8TO32_BE(CU8(pt) + 8) ^ s->k[2];
-	x3 = U8TO32_BE(CU8(pt) + 12) ^ s->k[3];
+	x0 = LOAD32B(CU8(pt)) ^ s->k[0];
+	x1 = LOAD32B(CU8(pt) + 4) ^ s->k[1];
+	x2 = LOAD32B(CU8(pt) + 8) ^ s->k[2];
+	x3 = LOAD32B(CU8(pt) + 12) ^ s->k[3];
 
 	/* - 1 full rounds */
 	for(i = 4; i < (s->rounds << 2);)
@@ -830,10 +830,10 @@ static void rijndael128_encrypt
 	t2 = EL(x2, x3, x0, x1) ^ s->k[i++];
 	t3 = EL(x3, x0, x1, x2) ^ s->k[i];
 
-	U32TO8_BE(t0, U8(ct));
-	U32TO8_BE(t1, U8(ct) + 4);
-	U32TO8_BE(t2, U8(ct) + 8);
-	U32TO8_BE(t3, U8(ct) + 12);
+	STORE32B(t0, U8(ct));
+	STORE32B(t1, U8(ct) + 4);
+	STORE32B(t2, U8(ct) + 8);
+	STORE32B(t3, U8(ct) + 12);
 }
 
 static void rijndael128_decrypt
@@ -853,10 +853,10 @@ static void rijndael128_decrypt
 	uint32_t t3;
 	unsigned int i;
 
-	x0 = U8TO32_BE(CU8(ct)) ^ s->dk[0];
-	x1 = U8TO32_BE(CU8(ct) + 4) ^ s->dk[1];
-	x2 = U8TO32_BE(CU8(ct) + 8) ^ s->dk[2];
-	x3 = U8TO32_BE(CU8(ct) + 12) ^ s->dk[3];
+	x0 = LOAD32B(CU8(ct)) ^ s->dk[0];
+	x1 = LOAD32B(CU8(ct) + 4) ^ s->dk[1];
+	x2 = LOAD32B(CU8(ct) + 8) ^ s->dk[2];
+	x3 = LOAD32B(CU8(ct) + 12) ^ s->dk[3];
 
 	/* - 1 full rounds */
 	for(i = 4; i < (s->rounds << 2);)
@@ -878,10 +878,10 @@ static void rijndael128_decrypt
 	t2 = DL(x2, x1, x0, x3) ^ s->dk[i++];
 	t3 = DL(x3, x2, x1, x0) ^ s->dk[i];
 
-	U32TO8_BE(t0, U8(pt));
-	U32TO8_BE(t1, U8(pt) + 4);
-	U32TO8_BE(t2, U8(pt) + 8);
-	U32TO8_BE(t3, U8(pt) + 12);
+	STORE32B(t0, U8(pt));
+	STORE32B(t1, U8(pt) + 4);
+	STORE32B(t2, U8(pt) + 8);
+	STORE32B(t3, U8(pt) + 12);
 }
 
 static kripto_block *rijndael128_create
@@ -991,14 +991,14 @@ static void rijndael256_encrypt
 	uint32_t t7;
 	unsigned int i;
 
-	x0 = U8TO32_BE(CU8(pt)) ^ s->k[0];
-	x1 = U8TO32_BE(CU8(pt) + 4) ^ s->k[1];
-	x2 = U8TO32_BE(CU8(pt) + 8) ^ s->k[2];
-	x3 = U8TO32_BE(CU8(pt) + 12) ^ s->k[3];
-	x4 = U8TO32_BE(CU8(pt) + 16) ^ s->k[4];
-	x5 = U8TO32_BE(CU8(pt) + 20) ^ s->k[5];
-	x6 = U8TO32_BE(CU8(pt) + 24) ^ s->k[6];
-	x7 = U8TO32_BE(CU8(pt) + 28) ^ s->k[7];
+	x0 = LOAD32B(CU8(pt)) ^ s->k[0];
+	x1 = LOAD32B(CU8(pt) + 4) ^ s->k[1];
+	x2 = LOAD32B(CU8(pt) + 8) ^ s->k[2];
+	x3 = LOAD32B(CU8(pt) + 12) ^ s->k[3];
+	x4 = LOAD32B(CU8(pt) + 16) ^ s->k[4];
+	x5 = LOAD32B(CU8(pt) + 20) ^ s->k[5];
+	x6 = LOAD32B(CU8(pt) + 24) ^ s->k[6];
+	x7 = LOAD32B(CU8(pt) + 28) ^ s->k[7];
 
 	/* - 1 full rounds */
 	for(i = 8; i < (s->rounds << 3);)
@@ -1032,14 +1032,14 @@ static void rijndael256_encrypt
 	t6 = EL(x6, x7, x1, x2) ^ s->k[i++];
 	t7 = EL(x7, x0, x2, x3) ^ s->k[i];
 
-	U32TO8_BE(t0, U8(ct));
-	U32TO8_BE(t1, U8(ct) + 4);
-	U32TO8_BE(t2, U8(ct) + 8);
-	U32TO8_BE(t3, U8(ct) + 12);
-	U32TO8_BE(t4, U8(ct) + 16);
-	U32TO8_BE(t5, U8(ct) + 20);
-	U32TO8_BE(t6, U8(ct) + 24);
-	U32TO8_BE(t7, U8(ct) + 28);
+	STORE32B(t0, U8(ct));
+	STORE32B(t1, U8(ct) + 4);
+	STORE32B(t2, U8(ct) + 8);
+	STORE32B(t3, U8(ct) + 12);
+	STORE32B(t4, U8(ct) + 16);
+	STORE32B(t5, U8(ct) + 20);
+	STORE32B(t6, U8(ct) + 24);
+	STORE32B(t7, U8(ct) + 28);
 }
 
 static void rijndael256_decrypt
@@ -1067,14 +1067,14 @@ static void rijndael256_decrypt
 	uint32_t t7;
 	unsigned int i;
 
-	x0 = U8TO32_BE(CU8(ct)) ^ s->dk[0];
-	x1 = U8TO32_BE(CU8(ct) + 4) ^ s->dk[1];
-	x2 = U8TO32_BE(CU8(ct) + 8) ^ s->dk[2];
-	x3 = U8TO32_BE(CU8(ct) + 12) ^ s->dk[3];
-	x4 = U8TO32_BE(CU8(ct) + 16) ^ s->dk[4];
-	x5 = U8TO32_BE(CU8(ct) + 20) ^ s->dk[5];
-	x6 = U8TO32_BE(CU8(ct) + 24) ^ s->dk[6];
-	x7 = U8TO32_BE(CU8(ct) + 28) ^ s->dk[7];
+	x0 = LOAD32B(CU8(ct)) ^ s->dk[0];
+	x1 = LOAD32B(CU8(ct) + 4) ^ s->dk[1];
+	x2 = LOAD32B(CU8(ct) + 8) ^ s->dk[2];
+	x3 = LOAD32B(CU8(ct) + 12) ^ s->dk[3];
+	x4 = LOAD32B(CU8(ct) + 16) ^ s->dk[4];
+	x5 = LOAD32B(CU8(ct) + 20) ^ s->dk[5];
+	x6 = LOAD32B(CU8(ct) + 24) ^ s->dk[6];
+	x7 = LOAD32B(CU8(ct) + 28) ^ s->dk[7];
 
 	/* - 1 full rounds */
 	for(i = 8; i < (s->rounds << 3);)
@@ -1108,14 +1108,14 @@ static void rijndael256_decrypt
 	t6 = DL(x6, x5, x3, x2) ^ s->dk[i++];
 	t7 = DL(x7, x6, x4, x3) ^ s->dk[i];
 
-	U32TO8_BE(t0, U8(pt));
-	U32TO8_BE(t1, U8(pt) + 4);
-	U32TO8_BE(t2, U8(pt) + 8);
-	U32TO8_BE(t3, U8(pt) + 12);
-	U32TO8_BE(t4, U8(pt) + 16);
-	U32TO8_BE(t5, U8(pt) + 20);
-	U32TO8_BE(t6, U8(pt) + 24);
-	U32TO8_BE(t7, U8(pt) + 28);
+	STORE32B(t0, U8(pt));
+	STORE32B(t1, U8(pt) + 4);
+	STORE32B(t2, U8(pt) + 8);
+	STORE32B(t3, U8(pt) + 12);
+	STORE32B(t4, U8(pt) + 16);
+	STORE32B(t5, U8(pt) + 20);
+	STORE32B(t6, U8(pt) + 24);
+	STORE32B(t7, U8(pt) + 28);
 }
 
 static kripto_block *rijndael256_create

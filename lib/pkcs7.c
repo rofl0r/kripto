@@ -14,7 +14,7 @@
 
 #include <stddef.h>
 
-#include <kripto/macros.h>
+#include <kripto/cast.h>
 
 #include <kripto/pkcs7.h>
 

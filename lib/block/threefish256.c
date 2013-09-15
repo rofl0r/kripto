@@ -17,7 +17,8 @@
 #include <string.h>
 #include <limits.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
@@ -56,10 +57,10 @@ static void threefish256_encrypt
 	void *ct
 )
 {
-	uint64_t x0 = U8TO64_LE(CU8(pt)) + s->k[0];
-	uint64_t x1 = U8TO64_LE(CU8(pt) + 8) + s->k[1] + s->t[0];
-	uint64_t x2 = U8TO64_LE(CU8(pt) + 16) + s->k[2] + s->t[1];
-	uint64_t x3 = U8TO64_LE(CU8(pt) + 24) + s->k[3];
+	uint64_t x0 = LOAD64L(CU8(pt)) + s->k[0];
+	uint64_t x1 = LOAD64L(CU8(pt) + 8) + s->k[1] + s->t[0];
+	uint64_t x2 = LOAD64L(CU8(pt) + 16) + s->k[2] + s->t[1];
+	uint64_t x3 = LOAD64L(CU8(pt) + 24) + s->k[3];
 	unsigned int r = 1;
 
 	while(r <= s->rounds >> 2)
@@ -101,10 +102,10 @@ static void threefish256_encrypt
 		r++;
 	}
 
-	U64TO8_LE(x0, U8(ct));
-	U64TO8_LE(x1, U8(ct) + 8);
-	U64TO8_LE(x2, U8(ct) + 16);
-	U64TO8_LE(x3, U8(ct) + 24);
+	STORE64L(x0, U8(ct));
+	STORE64L(x1, U8(ct) + 8);
+	STORE64L(x2, U8(ct) + 16);
+	STORE64L(x3, U8(ct) + 24);
 }
 
 static void threefish256_decrypt
@@ -114,10 +115,10 @@ static void threefish256_decrypt
 	void *pt
 )
 {
-	uint64_t x0 = U8TO64_LE(CU8(ct));
-	uint64_t x1 = U8TO64_LE(CU8(ct) + 8);
-	uint64_t x2 = U8TO64_LE(CU8(ct) + 16);
-	uint64_t x3 = U8TO64_LE(CU8(ct) + 24);
+	uint64_t x0 = LOAD64L(CU8(ct));
+	uint64_t x1 = LOAD64L(CU8(ct) + 8);
+	uint64_t x2 = LOAD64L(CU8(ct) + 16);
+	uint64_t x3 = LOAD64L(CU8(ct) + 24);
 	unsigned int r = s->rounds >> 2;
 
 	while(r > 1)
@@ -164,10 +165,10 @@ static void threefish256_decrypt
 	x2 -= s->k[2] + s->t[1];
 	x3 -= s->k[3];
 
-	U64TO8_LE(x0, U8(pt));
-	U64TO8_LE(x1, U8(pt) + 8);
-	U64TO8_LE(x2, U8(pt) + 16);
-	U64TO8_LE(x3, U8(pt) + 24);
+	STORE64L(x0, U8(pt));
+	STORE64L(x1, U8(pt) + 8);
+	STORE64L(x2, U8(pt) + 16);
+	STORE64L(x3, U8(pt) + 24);
 }
 
 static kripto_block *threefish256_recreate

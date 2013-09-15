@@ -18,7 +18,8 @@
 #include <limits.h>
 #include <assert.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/hash.h>
 #include <kripto/desc/hash.h>
@@ -135,22 +136,22 @@ static void blake256_process(kripto_hash *s, const uint8_t *data)
 	unsigned int r;
 	unsigned int i;
 
-	m[0] = U8TO32_BE(data);
-	m[1] = U8TO32_BE(data + 4);
-	m[2] = U8TO32_BE(data + 8);
-	m[3] = U8TO32_BE(data + 12);
-	m[4] = U8TO32_BE(data + 16);
-	m[5] = U8TO32_BE(data + 20);
-	m[6] = U8TO32_BE(data + 24);
-	m[7] = U8TO32_BE(data + 28);
-	m[8] = U8TO32_BE(data + 32);
-	m[9] = U8TO32_BE(data + 36);
-	m[10] = U8TO32_BE(data + 40);
-	m[11] = U8TO32_BE(data + 44);
-	m[12] = U8TO32_BE(data + 48);
-	m[13] = U8TO32_BE(data + 52);
-	m[14] = U8TO32_BE(data + 56);
-	m[15] = U8TO32_BE(data + 60);
+	m[0] = LOAD32B(data);
+	m[1] = LOAD32B(data + 4);
+	m[2] = LOAD32B(data + 8);
+	m[3] = LOAD32B(data + 12);
+	m[4] = LOAD32B(data + 16);
+	m[5] = LOAD32B(data + 20);
+	m[6] = LOAD32B(data + 24);
+	m[7] = LOAD32B(data + 28);
+	m[8] = LOAD32B(data + 32);
+	m[9] = LOAD32B(data + 36);
+	m[10] = LOAD32B(data + 40);
+	m[11] = LOAD32B(data + 44);
+	m[12] = LOAD32B(data + 48);
+	m[13] = LOAD32B(data + 52);
+	m[14] = LOAD32B(data + 56);
+	m[15] = LOAD32B(data + 60);
 
 	x0 = s->h[0];
 	x1 = s->h[1];
@@ -244,8 +245,8 @@ static void blake256_finish(kripto_hash *s)
 	if(s->o > 28) s->buf[55] ^= 0x01; /* 256 */
 
 	/* add length */
-	U32TO8_BE(s->len[1], s->buf + 56);
-	U32TO8_BE(s->len[0], s->buf + 60);
+	STORE32B(s->len[1], s->buf + 56);
+	STORE32B(s->len[0], s->buf + 60);
 
 	if(!s->i) s->len[0] = s->len[1] = 0;
 

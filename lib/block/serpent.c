@@ -17,7 +17,8 @@
 #include <string.h>
 #include <limits.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
@@ -462,10 +463,10 @@ static void serpent_encrypt
 	void *ct
 )
 {
-	uint32_t a = U8TO32_LE(CU8(pt));
-	uint32_t b = U8TO32_LE(CU8(pt) + 4);
-	uint32_t c = U8TO32_LE(CU8(pt) + 8);
-	uint32_t d = U8TO32_LE(CU8(pt) + 12);
+	uint32_t a = LOAD32L(CU8(pt));
+	uint32_t b = LOAD32L(CU8(pt) + 4);
+	uint32_t c = LOAD32L(CU8(pt) + 8);
+	uint32_t d = LOAD32L(CU8(pt) + 12);
 	uint32_t t;
 	unsigned int i;
 
@@ -511,10 +512,10 @@ static void serpent_encrypt
 
 	K(a, b, c, d, s->k + i);
 
-	U32TO8_LE(a, U8(ct));
-	U32TO8_LE(b, U8(ct) + 4);
-	U32TO8_LE(c, U8(ct) + 8);
-	U32TO8_LE(d, U8(ct) + 12);
+	STORE32L(a, U8(ct));
+	STORE32L(b, U8(ct) + 4);
+	STORE32L(c, U8(ct) + 8);
+	STORE32L(d, U8(ct) + 12);
 }
 
 static void serpent_decrypt
@@ -524,10 +525,10 @@ static void serpent_decrypt
 	void *pt
 )
 {
-	uint32_t a = U8TO32_LE(CU8(ct));
-	uint32_t b = U8TO32_LE(CU8(ct) + 4);
-	uint32_t c = U8TO32_LE(CU8(ct) + 8);
-	uint32_t d = U8TO32_LE(CU8(ct) + 12);
+	uint32_t a = LOAD32L(CU8(ct));
+	uint32_t b = LOAD32L(CU8(ct) + 4);
+	uint32_t c = LOAD32L(CU8(ct) + 8);
+	uint32_t d = LOAD32L(CU8(ct) + 12);
 	uint32_t t;
 	unsigned int i = s->rounds << 2;
 
@@ -573,10 +574,10 @@ static void serpent_decrypt
 		ILT(a, b, c, d);
 	}
 
-	U32TO8_LE(a, U8(pt));
-	U32TO8_LE(b, U8(pt) + 4);
-	U32TO8_LE(c, U8(pt) + 8);
-	U32TO8_LE(d, U8(pt) + 12);
+	STORE32L(a, U8(pt));
+	STORE32L(b, U8(pt) + 4);
+	STORE32L(c, U8(pt) + 8);
+	STORE32L(d, U8(pt) + 12);
 }
 
 static void serpent_setup

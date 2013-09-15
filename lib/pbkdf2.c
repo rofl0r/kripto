@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include <kripto/macros.h>
+#include <kripto/cast.h>
 #include <kripto/memwipe.h>
 #include <kripto/mac.h>
 
@@ -84,7 +84,7 @@ int kripto_pbkdf2
 		}
 
 		/* output */
-		for(y = 0; y < x && out_len; y++, out_len--, PTR_INC(out, 1))
+		for(y = 0; y < x && out_len; y++, out_len--, out = U8(out) + 1)
 			*U8(out) = buf1[y];
 
 		if(!out_len) break;

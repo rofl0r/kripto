@@ -18,7 +18,8 @@
 #include <limits.h>
 #include <assert.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/hash.h>
 #include <kripto/desc/hash.h>
@@ -135,22 +136,22 @@ static void sha2_256_process(kripto_hash *s, const uint8_t *data)
 	uint32_t w[128];
 	unsigned int i;
 
-	w[0] = U8TO32_BE(data);
-	w[1] = U8TO32_BE(data + 4);
-	w[2] = U8TO32_BE(data + 8);
-	w[3] = U8TO32_BE(data + 12);
-	w[4] = U8TO32_BE(data + 16);
-	w[5] = U8TO32_BE(data + 20);
-	w[6] = U8TO32_BE(data + 24);
-	w[7] = U8TO32_BE(data + 28);
-	w[8] = U8TO32_BE(data + 32);
-	w[9] = U8TO32_BE(data + 36);
-	w[10] = U8TO32_BE(data + 40);
-	w[11] = U8TO32_BE(data + 44);
-	w[12] = U8TO32_BE(data + 48);
-	w[13] = U8TO32_BE(data + 52);
-	w[14] = U8TO32_BE(data + 56);
-	w[15] = U8TO32_BE(data + 60);
+	w[0] = LOAD32B(data);
+	w[1] = LOAD32B(data + 4);
+	w[2] = LOAD32B(data + 8);
+	w[3] = LOAD32B(data + 12);
+	w[4] = LOAD32B(data + 16);
+	w[5] = LOAD32B(data + 20);
+	w[6] = LOAD32B(data + 24);
+	w[7] = LOAD32B(data + 28);
+	w[8] = LOAD32B(data + 32);
+	w[9] = LOAD32B(data + 36);
+	w[10] = LOAD32B(data + 40);
+	w[11] = LOAD32B(data + 44);
+	w[12] = LOAD32B(data + 48);
+	w[13] = LOAD32B(data + 52);
+	w[14] = LOAD32B(data + 56);
+	w[15] = LOAD32B(data + 60);
 
 	for(i = 16; i < s->r; i++)
 		w[i] = w[i - 16] + S0(w[i - 15]) +  w[i - 7] + S1(w[i - 2]);
@@ -222,7 +223,7 @@ static void sha2_256_finish(kripto_hash *s)
 
 	/* add length */
 	//s->len << 3;
-	U64TO8_BE(s->len, s->buf + 56);
+	STORE64B(s->len, s->buf + 56);
 
 	sha2_256_process(s, s->buf);
 

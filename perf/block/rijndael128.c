@@ -12,12 +12,12 @@
  * issues arising in any way out of dealing in the work.
  */
 
-/* gcc -Wall -Wextra -ansi -pedantic aes.c -Iinclude libkripto.a */
+/* gcc -Wall -Wextra -ansi -pedantic perf/block/rijndael128.c -Iinclude libkripto.a -O2 */
 #include <stdint.h>
 #include <time.h>
 #include <stdio.h>
 
-#include <kripto/block_aes.h>
+#include <kripto/block/rijndael128.h>
 
 #ifndef CPU
 #define CPU 2000
@@ -29,14 +29,16 @@
 
 int main(void)
 {
-	kripto_block_t s;
+	kripto_block *s;
 	unsigned int i;
 	unsigned int n;
-	uint8_t t[16] = {
+	uint8_t t[16] =
+	{
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	};
-	const uint8_t k[32] = {
+	const uint8_t k[32] =
+	{
 		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 		0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
 		0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
@@ -44,11 +46,11 @@ int main(void)
 	};
 	clock_t c;
 
-	puts("kripto_block: AES");
+	puts("kripto_block: rijndael128");
 
-	for(n = 1; n <= 32; n++)
+	for(n = 16; n <= 32; n += 4)
 	{
-		s = kripto_block_create(kripto_block_aes, k, n, 0);
+		s = kripto_block_create(kripto_block_rijndael128, 0, k, n);
 		if(!s) puts("error");
 
 		c = clock();

@@ -16,7 +16,8 @@
 #include <stdlib.h>
 #include <limits.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
@@ -84,10 +85,10 @@ static void rc6_encrypt(const kripto_block *s, const void *pt, void *ct)
 	uint32_t t;
 	unsigned int i = 2;
 
-	a = U8TO32_LE(CU8(pt));
-	b = U8TO32_LE(CU8(pt) + 4);
-	c = U8TO32_LE(CU8(pt) + 8);
-	d = U8TO32_LE(CU8(pt) + 12);
+	a = LOAD32L(CU8(pt));
+	b = LOAD32L(CU8(pt) + 4);
+	c = LOAD32L(CU8(pt) + 8);
+	d = LOAD32L(CU8(pt) + 12);
 
 	b += s->k[0];
 	d += s->k[1];
@@ -107,10 +108,10 @@ static void rc6_encrypt(const kripto_block *s, const void *pt, void *ct)
 	a += s->k[i];
 	c += s->k[i + 1];
 
-	U32TO8_LE(a, U8(ct));
-	U32TO8_LE(b, U8(ct) + 4);
-	U32TO8_LE(c, U8(ct) + 8);
-	U32TO8_LE(d, U8(ct) + 12);
+	STORE32L(a, U8(ct));
+	STORE32L(b, U8(ct) + 4);
+	STORE32L(c, U8(ct) + 8);
+	STORE32L(d, U8(ct) + 12);
 }
 
 static void rc6_decrypt(const kripto_block *s, const void *ct, void *pt)
@@ -124,10 +125,10 @@ static void rc6_decrypt(const kripto_block *s, const void *ct, void *pt)
 	uint32_t t;
 	unsigned int i = s->rounds << 1;
 
-	a = U8TO32_LE(CU8(ct));
-	b = U8TO32_LE(CU8(ct) + 4);
-	c = U8TO32_LE(CU8(ct) + 8);
-	d = U8TO32_LE(CU8(ct) + 12);
+	a = LOAD32L(CU8(ct));
+	b = LOAD32L(CU8(ct) + 4);
+	c = LOAD32L(CU8(ct) + 8);
+	d = LOAD32L(CU8(ct) + 12);
 
 	a -= s->k[i + 2];
 	c -= s->k[i + 3];
@@ -149,10 +150,10 @@ static void rc6_decrypt(const kripto_block *s, const void *ct, void *pt)
 	b -= s->k[0];
 	d -= s->k[1];
 
-	U32TO8_LE(a, U8(pt));
-	U32TO8_LE(b, U8(pt) + 4);
-	U32TO8_LE(c, U8(pt) + 8);
-	U32TO8_LE(d, U8(pt) + 12);
+	STORE32L(a, U8(pt));
+	STORE32L(b, U8(pt) + 4);
+	STORE32L(c, U8(pt) + 8);
+	STORE32L(d, U8(pt) + 12);
 }
 
 static kripto_block *rc6_create

@@ -18,7 +18,9 @@
 #include <assert.h>
 
 #include <kripto/memwipe.h>
-#include <kripto/macros.h>
+#include <kripto/cast.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/mac.h>
 #include <kripto/pbkdf2.h>
 
@@ -169,7 +171,7 @@ static void smix
 	uint64_t j;
 
 	for(i = 0; i < (r << 5); i++)
-		t1[i] = U8TO32_LE(b + (i << 2));
+		t1[i] = LOAD32L(b + (i << 2));
 
 	for(i = 0; i < n; i++)
 	{
@@ -191,7 +193,7 @@ static void smix
 	}
 
 	for(i = 0; i < (r << 5); i++)
-		U32TO8_LE(t1[i], b + (i << 2));
+		STORE32L(t1[i], b + (i << 2));
 }
 
 int kripto_scrypt

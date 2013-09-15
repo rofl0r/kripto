@@ -18,7 +18,8 @@
 #include <string.h>
 #include <limits.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/hash.h>
 #include <kripto/desc/hash.h>
@@ -51,31 +52,31 @@ static const uint32_t rc[40] =
 
 static void keccak800_F(kripto_hash *s)
 {
-	uint32_t a0 = U8TO32_LE(s->s);
-	uint32_t a1 = U8TO32_LE(s->s + 8);
-	uint32_t a2 = U8TO32_LE(s->s + 16);
-	uint32_t a3 = U8TO32_LE(s->s + 24);
-	uint32_t a4 = U8TO32_LE(s->s + 32);
-	uint32_t a5 = U8TO32_LE(s->s + 40);
-	uint32_t a6 = U8TO32_LE(s->s + 48);
-	uint32_t a7 = U8TO32_LE(s->s + 56);
-	uint32_t a8 = U8TO32_LE(s->s + 64);
-	uint32_t a9 = U8TO32_LE(s->s + 72);
-	uint32_t a10 = U8TO32_LE(s->s + 80);
-	uint32_t a11 = U8TO32_LE(s->s + 88);
-	uint32_t a12 = U8TO32_LE(s->s + 96);
-	uint32_t a13 = U8TO32_LE(s->s + 104);
-	uint32_t a14 = U8TO32_LE(s->s + 112);
-	uint32_t a15 = U8TO32_LE(s->s + 120);
-	uint32_t a16 = U8TO32_LE(s->s + 128);
-	uint32_t a17 = U8TO32_LE(s->s + 136);
-	uint32_t a18 = U8TO32_LE(s->s + 144);
-	uint32_t a19 = U8TO32_LE(s->s + 152);
-	uint32_t a20 = U8TO32_LE(s->s + 160);
-	uint32_t a21 = U8TO32_LE(s->s + 168);
-	uint32_t a22 = U8TO32_LE(s->s + 176);
-	uint32_t a23 = U8TO32_LE(s->s + 184);
-	uint32_t a24 = U8TO32_LE(s->s + 192);
+	uint32_t a0 = LOAD32L(s->s);
+	uint32_t a1 = LOAD32L(s->s + 8);
+	uint32_t a2 = LOAD32L(s->s + 16);
+	uint32_t a3 = LOAD32L(s->s + 24);
+	uint32_t a4 = LOAD32L(s->s + 32);
+	uint32_t a5 = LOAD32L(s->s + 40);
+	uint32_t a6 = LOAD32L(s->s + 48);
+	uint32_t a7 = LOAD32L(s->s + 56);
+	uint32_t a8 = LOAD32L(s->s + 64);
+	uint32_t a9 = LOAD32L(s->s + 72);
+	uint32_t a10 = LOAD32L(s->s + 80);
+	uint32_t a11 = LOAD32L(s->s + 88);
+	uint32_t a12 = LOAD32L(s->s + 96);
+	uint32_t a13 = LOAD32L(s->s + 104);
+	uint32_t a14 = LOAD32L(s->s + 112);
+	uint32_t a15 = LOAD32L(s->s + 120);
+	uint32_t a16 = LOAD32L(s->s + 128);
+	uint32_t a17 = LOAD32L(s->s + 136);
+	uint32_t a18 = LOAD32L(s->s + 144);
+	uint32_t a19 = LOAD32L(s->s + 152);
+	uint32_t a20 = LOAD32L(s->s + 160);
+	uint32_t a21 = LOAD32L(s->s + 168);
+	uint32_t a22 = LOAD32L(s->s + 176);
+	uint32_t a23 = LOAD32L(s->s + 184);
+	uint32_t a24 = LOAD32L(s->s + 192);
 
 	uint32_t b0;
 	uint32_t b1;
@@ -243,31 +244,31 @@ static void keccak800_F(kripto_hash *s)
 		a24 = b24;
 	}
 
-	U32TO8_LE(a0, s->s);
-	U32TO8_LE(a1, s->s + 8);
-	U32TO8_LE(a2, s->s + 16);
-	U32TO8_LE(a3, s->s + 24);
-	U32TO8_LE(a4, s->s + 32);
-	U32TO8_LE(a5, s->s + 40);
-	U32TO8_LE(a6, s->s + 48);
-	U32TO8_LE(a7, s->s + 56);
-	U32TO8_LE(a8, s->s + 64);
-	U32TO8_LE(a9, s->s + 72);
-	U32TO8_LE(a10, s->s + 80);
-	U32TO8_LE(a11, s->s + 88);
-	U32TO8_LE(a12, s->s + 96);
-	U32TO8_LE(a13, s->s + 104);
-	U32TO8_LE(a14, s->s + 112);
-	U32TO8_LE(a15, s->s + 120);
-	U32TO8_LE(a16, s->s + 128);
-	U32TO8_LE(a17, s->s + 136);
-	U32TO8_LE(a18, s->s + 144);
-	U32TO8_LE(a19, s->s + 152);
-	U32TO8_LE(a20, s->s + 160);
-	U32TO8_LE(a21, s->s + 168);
-	U32TO8_LE(a22, s->s + 176);
-	U32TO8_LE(a23, s->s + 184);
-	U32TO8_LE(a24, s->s + 192);
+	STORE32L(a0, s->s);
+	STORE32L(a1, s->s + 8);
+	STORE32L(a2, s->s + 16);
+	STORE32L(a3, s->s + 24);
+	STORE32L(a4, s->s + 32);
+	STORE32L(a5, s->s + 40);
+	STORE32L(a6, s->s + 48);
+	STORE32L(a7, s->s + 56);
+	STORE32L(a8, s->s + 64);
+	STORE32L(a9, s->s + 72);
+	STORE32L(a10, s->s + 80);
+	STORE32L(a11, s->s + 88);
+	STORE32L(a12, s->s + 96);
+	STORE32L(a13, s->s + 104);
+	STORE32L(a14, s->s + 112);
+	STORE32L(a15, s->s + 120);
+	STORE32L(a16, s->s + 128);
+	STORE32L(a17, s->s + 136);
+	STORE32L(a18, s->s + 144);
+	STORE32L(a19, s->s + 152);
+	STORE32L(a20, s->s + 160);
+	STORE32L(a21, s->s + 168);
+	STORE32L(a22, s->s + 176);
+	STORE32L(a23, s->s + 184);
+	STORE32L(a24, s->s + 192);
 }
 
 static kripto_hash *keccak800_recreate

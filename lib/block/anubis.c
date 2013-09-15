@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
@@ -522,10 +522,10 @@ static void anubis_crypt
 	uint32_t t3;
 	unsigned int i;
 
-	x0 = U8TO32_BE(CU8(in)) ^ k[0];
-	x1 = U8TO32_BE(CU8(in) + 4) ^ k[1];
-	x2 = U8TO32_BE(CU8(in) + 8) ^ k[2];
-	x3 = U8TO32_BE(CU8(in) + 12) ^ k[3];
+	x0 = LOAD32B(CU8(in)) ^ k[0];
+	x1 = LOAD32B(CU8(in) + 4) ^ k[1];
+	x2 = LOAD32B(CU8(in) + 8) ^ k[2];
+	x3 = LOAD32B(CU8(in) + 12) ^ k[3];
 
 	/* r - 1 full rounds */
 	for(i = 4; i < (r << 2);)
@@ -585,10 +585,10 @@ static void anubis_crypt
 		(s3[x3 & 0xFF] & 0x000000FF)) ^
 		k[i++];
 
-	U32TO8_BE(t0, U8(out));
-	U32TO8_BE(t1, U8(out) + 4);
-	U32TO8_BE(t2, U8(out) + 8);
-	U32TO8_BE(t3, U8(out) + 12);
+	STORE32B(t0, U8(out));
+	STORE32B(t1, U8(out) + 4);
+	STORE32B(t2, U8(out) + 8);
+	STORE32B(t3, U8(out) + 12);
 }
 
 static void anubis_setup

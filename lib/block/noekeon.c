@@ -16,7 +16,8 @@
 #include <stdlib.h>
 #include <limits.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
+#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
@@ -91,10 +92,10 @@ static void noekeon_encrypt
 	uint32_t T;
 	unsigned int r;
 
-	x0 = U8TO32_BE(CU8(pt));
-	x1 = U8TO32_BE(CU8(pt) + 4);
-	x2 = U8TO32_BE(CU8(pt) + 8);
-	x3 = U8TO32_BE(CU8(pt) + 12);
+	x0 = LOAD32B(CU8(pt));
+	x1 = LOAD32B(CU8(pt) + 4);
+	x2 = LOAD32B(CU8(pt) + 8);
+	x3 = LOAD32B(CU8(pt) + 12);
 
 	for(r = 0; r < s->rounds; r++)
 	{
@@ -107,10 +108,10 @@ static void noekeon_encrypt
 	x0 ^= rc[r];
 	THETA(x0, x1, x2, x3, s->k[0], s->k[1], s->k[2], s->k[3]);
 
-	U32TO8_BE(x0, U8(ct));
-	U32TO8_BE(x1, U8(ct) + 4);
-	U32TO8_BE(x2, U8(ct) + 8);
-	U32TO8_BE(x3, U8(ct) + 12);
+	STORE32B(x0, U8(ct));
+	STORE32B(x1, U8(ct) + 4);
+	STORE32B(x2, U8(ct) + 8);
+	STORE32B(x3, U8(ct) + 12);
 }
 
 static void noekeon_decrypt
@@ -127,10 +128,10 @@ static void noekeon_decrypt
 	uint32_t T;
 	unsigned int r;
 
-	x0 = U8TO32_BE(CU8(ct));
-	x1 = U8TO32_BE(CU8(ct) + 4);
-	x2 = U8TO32_BE(CU8(ct) + 8);
-	x3 = U8TO32_BE(CU8(ct) + 12);
+	x0 = LOAD32B(CU8(ct));
+	x1 = LOAD32B(CU8(ct) + 4);
+	x2 = LOAD32B(CU8(ct) + 8);
+	x3 = LOAD32B(CU8(ct) + 12);
 
 	for(r = s->rounds; r; r--)
 	{
@@ -143,10 +144,10 @@ static void noekeon_decrypt
 	THETA(x0, x1, x2, x3, s->dk[0], s->dk[1], s->dk[2], s->dk[3]);
 	x0 ^= rc[r];
 
-	U32TO8_BE(x0, U8(pt));
-	U32TO8_BE(x1, U8(pt) + 4);
-	U32TO8_BE(x2, U8(pt) + 8);
-	U32TO8_BE(x3, U8(pt) + 12);
+	STORE32B(x0, U8(pt));
+	STORE32B(x1, U8(pt) + 4);
+	STORE32B(x2, U8(pt) + 8);
+	STORE32B(x3, U8(pt) + 12);
 }
 
 static void noekeon_setup

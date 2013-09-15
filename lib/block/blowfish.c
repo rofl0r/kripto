@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <kripto/macros.h>
+#include <kripto/loadstore.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
@@ -323,8 +323,8 @@ static void blowfish_encrypt
 	uint32_t r;
 	unsigned int i;
 
-	l = U8TO32_BE(CU8(pt));
-	r = U8TO32_BE(CU8(pt) + 4);
+	l = LOAD32B(CU8(pt));
+	r = LOAD32B(CU8(pt) + 4);
 
 	for(i = 0; i < s->rounds;)
 	{
@@ -336,8 +336,8 @@ static void blowfish_encrypt
 			r ^= s->p[i++];
 			l ^= s->p[i];
 
-			U32TO8_BE(l, U8(ct));
-			U32TO8_BE(r, U8(ct) + 4);
+			STORE32B(l, U8(ct));
+			STORE32B(r, U8(ct) + 4);
 
 			return;
 		}
@@ -349,8 +349,8 @@ static void blowfish_encrypt
 	l ^= s->p[i++];
 	r ^= s->p[i];
 
-	U32TO8_BE(r, U8(ct));
-	U32TO8_BE(l, U8(ct) + 4);
+	STORE32B(r, U8(ct));
+	STORE32B(l, U8(ct) + 4);
 }
 
 static void blowfish_decrypt
@@ -364,8 +364,8 @@ static void blowfish_decrypt
 	uint32_t r;
 	unsigned int i;
 
-	l = U8TO32_BE(CU8(ct));
-	r = U8TO32_BE(CU8(ct) + 4);
+	l = LOAD32B(CU8(ct));
+	r = LOAD32B(CU8(ct) + 4);
 
 	for(i = s->rounds + 1; i > 1;)
 	{
@@ -377,8 +377,8 @@ static void blowfish_decrypt
 			r ^= s->p[i--];
 			l ^= s->p[i];
 
-			U32TO8_BE(l, U8(pt));
-			U32TO8_BE(r, U8(pt) + 4);
+			STORE32B(l, U8(pt));
+			STORE32B(r, U8(pt) + 4);
 
 			return;
 		}
@@ -390,8 +390,8 @@ static void blowfish_decrypt
 	l ^= s->p[i--];
 	r ^= s->p[i];
 
-	U32TO8_BE(r, U8(pt));
-	U32TO8_BE(l, U8(pt) + 4);
+	STORE32B(r, U8(pt));
+	STORE32B(l, U8(pt) + 4);
 }
 
 static void blowfish_setup
@@ -434,41 +434,41 @@ static void blowfish_setup
 	for(i = 0; i < s->rounds + 2;)
 	{
 		blowfish_encrypt(s, b, b);
-		s->p[i++] = U8TO32_BE(b);
+		s->p[i++] = LOAD32B(b);
 		if(i == s->rounds + 2) break;
-		s->p[i++] = U8TO32_BE(b + 4);
+		s->p[i++] = LOAD32B(b + 4);
 	}
 
 	/* encrypt S-Box 0 */
 	for(i = 0; i < 256;)
 	{
 		blowfish_encrypt(s, b, b);
-		s->s0[i++] = U8TO32_BE(b);
-		s->s0[i++] = U8TO32_BE(b + 4);
+		s->s0[i++] = LOAD32B(b);
+		s->s0[i++] = LOAD32B(b + 4);
 	}
 
 	/* encrypt S-Box 1 */
 	for(i = 0; i < 256;)
 	{
 		blowfish_encrypt(s, b, b);
-		s->s1[i++] = U8TO32_BE(b);
-		s->s1[i++] = U8TO32_BE(b + 4);
+		s->s1[i++] = LOAD32B(b);
+		s->s1[i++] = LOAD32B(b + 4);
 	}
 
 	/* encrypt S-Box 2 */
 	for(i = 0; i < 256;)
 	{
 		blowfish_encrypt(s, b, b);
-		s->s2[i++] = U8TO32_BE(b);
-		s->s2[i++] = U8TO32_BE(b + 4);
+		s->s2[i++] = LOAD32B(b);
+		s->s2[i++] = LOAD32B(b + 4);
 	}
 
 	/* encrypt S-Box 3 */
 	for(i = 0; i < 256;)
 	{
 		blowfish_encrypt(s, b, b);
-		s->s3[i++] = U8TO32_BE(b);
-		s->s3[i++] = U8TO32_BE(b + 4);
+		s->s3[i++] = LOAD32B(b);
+		s->s3[i++] = LOAD32B(b + 4);
 	}
 
 	/* wipe temporary values */

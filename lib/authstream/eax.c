@@ -16,7 +16,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <kripto/macros.h>
+#include <kripto/cast.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/stream.h>
