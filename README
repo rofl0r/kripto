@@ -35,7 +35,7 @@ Block ciphers:
  - DES*
  - 3DES*
  - IDEA*?
- - RC5*
+ - RC5
  - RC2*?
  - CAST5*?
  - CAST6*?
