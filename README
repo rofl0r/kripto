@@ -29,9 +29,9 @@ Block ciphers:
  - 3way*
  - BaseKing*
  - XTEA
- - Skipjack*?
- - Speck*?
- - Simon*?
+ - Skipjack*
+ - Speck*
+ - Simon
  - DES*
  - 3DES*
  - IDEA*?
