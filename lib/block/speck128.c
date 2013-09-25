@@ -23,7 +23,7 @@
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
 
-#include <kripto/block/simon128.h>
+#include <kripto/block/speck128.h>
 
 struct kripto_block
 {
@@ -33,9 +33,19 @@ struct kripto_block
 	uint64_t *k;
 };
 
-#define F(X) ((ROL64(X, 1) & ROL64(X, 8)) ^ ROL64(X, 2))
+#define R(A, B, K)				\
+{								\
+	A = (ROR64(A, 8) + B) ^ K;	\
+	B = ROL64(B, 3) ^ A;		\
+}
 
-static void simon128_encrypt
+#define IR(A, B, K)				\
+{								\
+	B = ROR64(B ^ A, 3);		\
+	A = ROL64((A ^ K) - B, 8);	\
+}
+
+static void speck128_encrypt
 (
 	const kripto_block *s,
 	const void *pt,
@@ -44,30 +54,19 @@ static void simon128_encrypt
 {
 	uint64_t a;
 	uint64_t b;
-	unsigned int i = 0;
+	unsigned int i;
 
 	a = LOAD64B(CU8(pt));
 	b = LOAD64B(CU8(pt) + 8);
 
-	while(i < s->rounds)
-	{
-		b ^= F(a) ^ s->k[i++];
-
-		if(i == s->rounds)
-		{
-			STORE64B(b, U8(ct));
-			STORE64B(a, U8(ct) + 8);
-			return;
-		}
-
-		a ^= F(b) ^ s->k[i++];
-	}
+	for(i = 0; i < s->rounds; i++)
+		R(a, b, s->k[i]);
 
 	STORE64B(a, U8(ct));
 	STORE64B(b, U8(ct) + 8);
 }
 
-static void simon128_decrypt
+static void speck128_decrypt
 (
 	const kripto_block *s,
 	const void *ct,
@@ -76,37 +75,19 @@ static void simon128_decrypt
 {
 	uint64_t a;
 	uint64_t b;
-	unsigned int i = s->rounds;
+	unsigned int i;
 
 	a = LOAD64B(CU8(ct));
 	b = LOAD64B(CU8(ct) + 8);
 
-	while(i)
-	{
-		a ^= F(b) ^ s->k[--i];
-
-		if(!i)
-		{
-			STORE64B(b, U8(pt));
-			STORE64B(a, U8(pt) + 8);
-			return;
-		}
-
-		b ^= F(a) ^ s->k[--i];
-	}
+	for(i = s->rounds; i--;)
+		IR(a, b, s->k[i]);
 
 	STORE64B(a, U8(pt));
 	STORE64B(b, U8(pt) + 8);
 }
 
-static const uint64_t z[3] =
-{
-	0x3369F885192C0EF5,
-	0x3C2CE51207A635DB,
-	0x3DC94C3A046D678B
-};
-
-static void simon128_setup
+static void speck128_setup
 (
 	kripto_block *s,
 	const uint8_t *key,
@@ -115,29 +96,25 @@ static void simon128_setup
 {
 	unsigned int i;
 	unsigned int m;
-	uint64_t t;
+	uint64_t k[4] = {0, 0, 0, 0};
 
-	m = (len + 7) >> 3;
-
-	for(i = 0; i < m; i++)
-		s->k[i] = 0;
+	m = ((len + 7) >> 3) - 1;
 
 	for(i = 0; i < len; i++)
-		s->k[m - 1 - (i >> 3)] |=
-			(uint64_t)key[i] << (56 - ((i & 7) << 3));
+		k[m - (i >> 3)] |= (uint64_t)key[i] << (56 - ((i & 7) << 3));
 
-	for(i = m; i < s->rounds; i++)
+	s->k[0] = k[0];
+
+	for(i = 0; i < s->rounds - 1;)
 	{
-		t = ROR64(s->k[i - 1], 3);
-		if(m == 4) t ^= s->k[i - 3];
-		t ^= ROR64(t, 1) ^ ~s->k[i - m] ^ 3;
-		s->k[i] = t ^ ((z[m - 2] >> ((i - m) % 62)) & 1);
+		R(k[(i % m) + 1], k[0], i);
+		s->k[++i] = k[0];
 	}
 
-	kripto_memwipe(&t, sizeof(uint64_t));
+	kripto_memwipe(k, 32);
 }
 
-static kripto_block *simon128_create
+static kripto_block *speck128_create
 (
 	unsigned int r,
 	const void *key,
@@ -146,36 +123,28 @@ static kripto_block *simon128_create
 {
 	kripto_block *s;
 
-	if(!r)
-	{
-		switch((key_len + 7) >> 3)
-		{
-			case 3: r = 69; break;
-			case 4: r = 72; break;
-			default: r = 68; break;
-		}
-	}
+	if(!r) r = 30 + ((key_len + 7) >> 3);
 
 	s = malloc(sizeof(kripto_block) + (r << 3));
 	if(!s) return 0;
 
-	s->desc = kripto_block_simon128;
+	s->desc = kripto_block_speck128;
 	s->size = sizeof(kripto_block) + (r << 3);
 	s->k = (uint64_t *)(((uint8_t *)s) + sizeof(kripto_block));
 	s->rounds = r;
 
-	simon128_setup(s, key, key_len);
+	speck128_setup(s, key, key_len);
 
 	return s;
 }
 
-static void simon128_destroy(kripto_block *s)
+static void speck128_destroy(kripto_block *s)
 {
 	kripto_memwipe(s, s->size);
 	free(s);
 }
 
-static kripto_block *simon128_recreate
+static kripto_block *speck128_recreate
 (
 	kripto_block *s,
 	unsigned int r,
@@ -183,40 +152,32 @@ static kripto_block *simon128_recreate
 	unsigned int key_len
 )
 {
-	if(!r)
-	{
-		switch((key_len + 7) >> 3)
-		{
-			case 3: r = 69; break;
-			case 4: r = 72; break;
-			default: r = 68; break;
-		}
-	}
+	if(!r) r = 30 + ((key_len + 7) >> 3);
 
 	if(sizeof(kripto_block) + (r << 3) > s->size)
 	{
-		simon128_destroy(s);
-		s = simon128_create(r, key, key_len);
+		speck128_destroy(s);
+		s = speck128_create(r, key, key_len);
 	}
 	else
 	{
 		s->rounds = r;
-		simon128_setup(s, key, key_len);
+		speck128_setup(s, key, key_len);
 	}
 
 	return s;
 }
 
-static const kripto_block_desc simon128 =
+static const kripto_block_desc speck128 =
 {
-	&simon128_create,
-	&simon128_recreate,
+	&speck128_create,
+	&speck128_recreate,
 	0,
-	&simon128_encrypt,
-	&simon128_decrypt,
-	&simon128_destroy,
+	&speck128_encrypt,
+	&speck128_decrypt,
+	&speck128_destroy,
 	16, /* block size */
 	32 /* max key */
 };
 
-const kripto_block_desc *const kripto_block_simon128 = &simon128;
+const kripto_block_desc *const kripto_block_speck128 = &speck128;

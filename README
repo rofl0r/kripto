@@ -30,8 +30,8 @@ Block ciphers:
  - BaseKing*
  - XTEA
  - Skipjack*
- - Speck*
- - Simon
+ - Speck128
+ - Simon128
  - DES*
  - 3DES*
  - IDEA*?
