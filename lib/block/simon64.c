@@ -23,31 +23,31 @@
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
 
-#include <kripto/block/simon128.h>
+#include <kripto/block/simon64.h>
 
 struct kripto_block
 {
 	const kripto_block_desc *desc;
 	unsigned int rounds;
 	size_t size;
-	uint64_t *k;
+	uint32_t *k;
 };
 
-#define F(X) ((ROL64(X, 1) & ROL64(X, 8)) ^ ROL64(X, 2))
+#define F(X) ((ROL32(X, 1) & ROL32(X, 8)) ^ ROL32(X, 2))
 
-static void simon128_encrypt
+static void simon64_encrypt
 (
 	const kripto_block *s,
 	const void *pt,
 	void *ct
 )
 {
-	uint64_t a;
-	uint64_t b;
+	uint32_t a;
+	uint32_t b;
 	unsigned int i = 0;
 
-	a = LOAD64B(CU8(pt));
-	b = LOAD64B(CU8(pt) + 8);
+	a = LOAD32B(CU8(pt));
+	b = LOAD32B(CU8(pt) + 4);
 
 	while(i < s->rounds)
 	{
@@ -55,31 +55,31 @@ static void simon128_encrypt
 
 		if(i == s->rounds)
 		{
-			STORE64B(a, U8(ct) + 8);
-			STORE64B(b, U8(ct));
+			STORE32B(a, U8(ct) + 4);
+			STORE32B(b, U8(ct));
 			return;
 		}
 
 		a ^= F(b) ^ s->k[i++];
 	}
 
-	STORE64B(a, U8(ct));
-	STORE64B(b, U8(ct) + 8);
+	STORE32B(a, U8(ct));
+	STORE32B(b, U8(ct) + 4);
 }
 
-static void simon128_decrypt
+static void simon64_decrypt
 (
 	const kripto_block *s,
 	const void *ct,
 	void *pt
 )
 {
-	uint64_t a;
-	uint64_t b;
+	uint32_t a;
+	uint32_t b;
 	unsigned int i = s->rounds;
 
-	a = LOAD64B(CU8(ct));
-	b = LOAD64B(CU8(ct) + 8);
+	a = LOAD32B(CU8(ct));
+	b = LOAD32B(CU8(ct) + 4);
 
 	while(i)
 	{
@@ -87,26 +87,25 @@ static void simon128_decrypt
 
 		if(!i)
 		{
-			STORE64B(a, U8(pt) + 8);
-			STORE64B(b, U8(pt));
+			STORE32B(a, U8(pt) + 4);
+			STORE32B(b, U8(pt));
 			return;
 		}
 
 		b ^= F(a) ^ s->k[--i];
 	}
 
-	STORE64B(a, U8(pt));
-	STORE64B(b, U8(pt) + 8);
+	STORE32B(a, U8(pt));
+	STORE32B(b, U8(pt) + 4);
 }
 
-static const uint64_t z[3] =
+static const uint64_t z[2] =
 {
 	0x3369F885192C0EF5,
-	0x3C2CE51207A635DB,
-	0x3DC94C3A046D678B
+	0x3C2CE51207A635DB
 };
 
-static void simon128_setup
+static void simon64_setup
 (
 	kripto_block *s,
 	const uint8_t *key,
@@ -115,30 +114,30 @@ static void simon128_setup
 {
 	unsigned int i;
 	unsigned int m;
-	uint64_t t;
+	uint32_t t;
 
-	m = (len + 7) >> 3;
-	if(m < 2) m = 2;
+	m = (len + 3) >> 2;
+	if(m < 3) m = 3;
 
 	for(i = 0; i < m; i++)
 		s->k[i] = 0;
 
 	for(i = 0; i < len; i++)
-		s->k[m - 1 - (i >> 3)] |=
-			(uint64_t)key[i] << (56 - ((i & 7) << 3));
+		s->k[m - 1 - (i >> 2)] |=
+			(uint32_t)key[i] << (24 - ((i & 3) << 3));
 
 	for(i = m; i < s->rounds; i++)
 	{
-		t = ROR64(s->k[i - 1], 3);
+		t = ROR32(s->k[i - 1], 3);
 		if(m == 4) t ^= s->k[i - 3];
-		t ^= ROR64(t, 1) ^ ~s->k[i - m] ^ 3;
-		s->k[i] = t ^ ((z[m - 2] >> ((i - m) % 62)) & 1);
+		t ^= ROR32(t, 1) ^ ~s->k[i - m] ^ 3;
+		s->k[i] = t ^ ((z[m - 3] >> ((i - m) % 62)) & 1);
 	}
 
-	kripto_memwipe(&t, sizeof(uint64_t));
+	kripto_memwipe(&t, sizeof(uint32_t));
 }
 
-static kripto_block *simon128_create
+static kripto_block *simon64_create
 (
 	unsigned int r,
 	const void *key,
@@ -147,36 +146,28 @@ static kripto_block *simon128_create
 {
 	kripto_block *s;
 
-	if(!r)
-	{
-		switch((key_len + 7) >> 3)
-		{
-			case 3: r = 69; break;
-			case 4: r = 72; break;
-			default: r = 68; break;
-		}
-	}
+	if(!r) r = 36 + (((key_len + 3) >> 2) << 1);
 
-	s = malloc(sizeof(kripto_block) + (r << 3));
+	s = malloc(sizeof(kripto_block) + (r << 2));
 	if(!s) return 0;
 
-	s->desc = kripto_block_simon128;
-	s->size = sizeof(kripto_block) + (r << 3);
-	s->k = (uint64_t *)(((uint8_t *)s) + sizeof(kripto_block));
+	s->desc = kripto_block_simon64;
+	s->size = sizeof(kripto_block) + (r << 2);
+	s->k = (uint32_t *)(((uint8_t *)s) + sizeof(kripto_block));
 	s->rounds = r;
 
-	simon128_setup(s, key, key_len);
+	simon64_setup(s, key, key_len);
 
 	return s;
 }
 
-static void simon128_destroy(kripto_block *s)
+static void simon64_destroy(kripto_block *s)
 {
 	kripto_memwipe(s, s->size);
 	free(s);
 }
 
-static kripto_block *simon128_recreate
+static kripto_block *simon64_recreate
 (
 	kripto_block *s,
 	unsigned int r,
@@ -184,40 +175,32 @@ static kripto_block *simon128_recreate
 	unsigned int key_len
 )
 {
-	if(!r)
-	{
-		switch((key_len + 7) >> 3)
-		{
-			case 3: r = 69; break;
-			case 4: r = 72; break;
-			default: r = 68; break;
-		}
-	}
+	if(!r) r = 36 + (((key_len + 3) >> 2) << 1);
 
-	if(sizeof(kripto_block) + (r << 3) > s->size)
+	if(sizeof(kripto_block) + (r << 2) > s->size)
 	{
-		simon128_destroy(s);
-		s = simon128_create(r, key, key_len);
+		simon64_destroy(s);
+		s = simon64_create(r, key, key_len);
 	}
 	else
 	{
 		s->rounds = r;
-		simon128_setup(s, key, key_len);
+		simon64_setup(s, key, key_len);
 	}
 
 	return s;
 }
 
-static const kripto_block_desc simon128 =
+static const kripto_block_desc simon64 =
 {
-	&simon128_create,
-	&simon128_recreate,
+	&simon64_create,
+	&simon64_recreate,
 	0,
-	&simon128_encrypt,
-	&simon128_decrypt,
-	&simon128_destroy,
-	16, /* block size */
-	32 /* max key */
+	&simon64_encrypt,
+	&simon64_decrypt,
+	&simon64_destroy,
+	8, /* block size */
+	16 /* max key */
 };
 
-const kripto_block_desc *const kripto_block_simon128 = &simon128;
+const kripto_block_desc *const kripto_block_simon64 = &simon64;

@@ -31,7 +31,9 @@ Block ciphers:
  - XTEA
  - Skipjack*
  - Speck128
+ - Speck64
  - Simon128
+ - Simon64
  - DES*
  - 3DES*
  - IDEA*?
