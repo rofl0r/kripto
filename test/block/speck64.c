@@ -51,9 +51,7 @@ int main(void)
 	if(!s) puts("error");
 
 	kripto_block_encrypt(s, pt96, t);
-	for(i = 0; i < 8; i++)
-	if(t[i]
-	!= ct96[i])
+	for(i = 0; i < 8; i++) if(t[i] != ct96[i])
 	{
 		puts("96-bit key encrypt: FAIL");
 		break;

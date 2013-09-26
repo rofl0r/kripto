@@ -26,8 +26,8 @@ Block ciphers:
  - Blowfish
  - GOST
  - PRESENT*?
- - 3way*
- - BaseKing*
+ - 3way*?
+ - BaseKing*?
  - XTEA
  - Skipjack*
  - Speck128
@@ -36,12 +36,12 @@ Block ciphers:
  - Simon64
  - DES*
  - 3DES*
- - IDEA*?
+ - IDEA*
  - RC5
  - RC2*?
  - CAST5*?
  - CAST6*?
- - SAFER*?
+ - SAFER
  - SAFER+*?
  - SAFER++*?
  - MARS*?
