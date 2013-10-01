@@ -35,7 +35,7 @@ cc test/block/safer.c $CFLAGS -o t
 #cc test/block/threefish.c $CFLAGS -o t
 #./t
 
-#cc test/hash/whirlpool.c $CFLAGS -o t
+#cc test/hash/md5.c $CFLAGS -o t
 #./t
 
 #cc test/hash/blake256.c $CFLAGS -o t

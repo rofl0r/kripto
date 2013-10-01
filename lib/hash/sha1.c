@@ -151,7 +151,7 @@ static void sha1_process(kripto_hash *s, const uint8_t *data)
 		G3(b, c, d, e, a, w[i++]);
 	}
 
-	kripto_memwipe(w, 80);
+	kripto_memwipe(w, 320);
 
 	s->h[0] += a;
 	s->h[1] += b;

@@ -92,9 +92,9 @@ Hash functions:
  - BLAKE-512
  - BLAKE2s
  - BLAKE2b
- - WHIRPOOL*
+ - WHIRPOOL
  - Tiger*
- - MD5*
+ - MD5
  - RIPEMD*?
  - BMW*?
  - CubeHash*?
