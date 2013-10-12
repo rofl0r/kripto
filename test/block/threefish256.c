@@ -14,14 +14,21 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
-#include <kripto/block_threefish256.h>
+#include <kripto/block/threefish256.h>
+
+#ifdef VERBOSE
+#define DPRINT(...) printf(__VA_ARGS__)
+#else
+#define DPRINT()
+#endif
 
 int main(void)
 {
 	kripto_block *s;
 	unsigned int i;
-	unsigned int n;
+	int fail = 0;
 	uint8_t t[32];
 	const uint8_t k[32] =
 	{
@@ -238,33 +245,37 @@ int main(void)
 		}
 	};
 
-	puts("kripto_block_threefish256");
+	DPRINT("kripto_block_threefish256\n");
 
-	for(n = 1; n <= 32; n++)
+	for(i = 1; i <= 32; i++)
 	{
-		s = kripto_block_create(kripto_block_threefish256, 0, k, n);
-		if(!s) puts("error");
+		s = kripto_block_create(kripto_block_threefish256, 0, k, i);
+		if(!s)
+		{
+			perror("Error");
+			return -1;
+		}
 
-		kripto_block_threefish256_tweak(s, tweak);
+		kripto_block_tweak(s, tweak, 16);
 
 		kripto_block_encrypt(s, pt, t);
-		for(i = 0; i < 32; i++) if(t[i] != ct[n - 1][i])
+		if(memcmp(t, ct[i - 1], 32))
 		{
-			printf("%u-bit key encrypt: FAIL\n", n * 8);
-			break;
+			fail = 1;
+			DPRINT("%u-bit key encrypt: FAIL\n", i * 8);
 		}
-		if(i == 32) printf("%u-bit key encrypt: OK\n", n * 8);
+		else DPRINT("%u-bit key encrypt: OK\n", i * 8);
 
-		kripto_block_decrypt(s, ct[n - 1], t);
-		for(i = 0; i < 32; i++) if(t[i] != pt[i])
+		kripto_block_decrypt(s, ct[i - 1], t);
+		if(memcmp(t, pt, 32))
 		{
-			printf("%u-bit key decrypt: FAIL\n", n * 8);
-			break;
+			fail = 1;
+			DPRINT("%u-bit key decrypt: FAIL\n", i * 8);
 		}
-		if(i == 32) printf("%u-bit key decrypt: OK\n", n * 8);
+		else DPRINT("%u-bit key decrypt: OK\n", i * 8);
 
 		kripto_block_destroy(s);
 	}
 
-	return 0;
+	return fail;
 }
