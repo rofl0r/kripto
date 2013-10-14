@@ -149,11 +149,7 @@ static void skein256_finish(kripto_hash *s)
 	}
 
 	memset(s->buf + s->i, 0, 32 - s->i);
-
-	if(s->tweak[15] == 0x70) /* if still first */
-		s->tweak[15] = 0xF0; /* type MSG, first, final */
-	else s->tweak[15] = 0xB0; /* type MSG, final */
-
+	s->tweak[15] ^= 0x80; /* add final */
 	skein256_process(s);
 
 	memset(s->buf, 0, 32);
