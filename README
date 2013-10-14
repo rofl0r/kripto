@@ -87,7 +87,9 @@ Hash functions:
  - SHA1
  - Keccak1600 (SHA3)
  - Keccak800
- - Skein*
+ - Skein256
+ - Skein512*
+ - Skein1024*
  - BLAKE-256
  - BLAKE-512
  - BLAKE2s
@@ -111,7 +113,9 @@ MAC's:
  - CMAC2*?
  - Keccak1600*
  - Keccak800*
- - Skein*
+ - Skein256*
+ - Skein512*
+ - Skein1024*
  - UMAC*?
  - VMAC*?
  - PMAC*?
