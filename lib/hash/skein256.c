@@ -149,7 +149,7 @@ static void skein256_finish(kripto_hash *s)
 	}
 
 	memset(s->buf + s->i, 0, 32 - s->i);
-	s->tweak[15] ^= 0x80; /* add final */
+	s->tweak[15] |= 0x80; /* add final */
 	skein256_process(s);
 
 	memset(s->buf, 0, 32);
