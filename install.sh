@@ -1,5 +1,5 @@
 #!/bin/sh
 
 cp -r include/kripto/ /usr/include/kripto/
-cp *.a /usr/lib
-cp *.so* /usr/lib
+cp lib/*.a /usr/lib
+cp lib/*.so* /usr/lib

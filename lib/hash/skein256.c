@@ -65,9 +65,11 @@ static kripto_hash *skein256_recreate
 	s->i = 0;
 	s->f = 0;
 	memset(s->h, 0, 32);
+	memset(s->tweak, 0, 16);
 
 	t = len << 3;
 
+	/* CFG */
 	s->buf[0] = 'S';
 	s->buf[1] = 'H';
 	s->buf[2] = 'A';
@@ -78,12 +80,11 @@ static kripto_hash *skein256_recreate
 	s->buf[7] = 0;
 	STORE64L(t, s->buf + 8);
 	memset(s->buf + 16, 0, 16);
-
-	memset(s->tweak, 0, 16);
 	s->tweak[0] = 32;
 	s->tweak[15] = 0xC4; /* type CFG, first, final */
 	skein256_process(s);
 
+	/* MSG */
 	s->tweak[0] = 0;
 	s->tweak[15] = 0x70; /* type MSG, first */
 
