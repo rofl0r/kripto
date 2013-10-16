@@ -20,7 +20,6 @@
 
 #include <kripto/cast.h>
 #include <kripto/loadstore.h>
-#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/block/threefish256.h>
@@ -40,6 +39,26 @@ struct kripto_mac
 	uint8_t buf[32];
 	uint8_t tweak[16];
 };
+
+#define POS_ADD(TWEAK, ADD)	\
+{							\
+	TWEAK[0] += ADD;		\
+	if(!TWEAK[0])			\
+	if(!++TWEAK[1])			\
+	if(!++TWEAK[2])			\
+	if(!++TWEAK[3])			\
+	if(!++TWEAK[4])			\
+	if(!++TWEAK[5])			\
+	if(!++TWEAK[6])			\
+	if(!++TWEAK[7])			\
+	if(!++TWEAK[8])			\
+	if(!++TWEAK[9])			\
+	if(!++TWEAK[10])		\
+	{						\
+		TWEAK[11]++;		\
+		assert(TWEAK[11]);	\
+	}						\
+}
 
 static void skein256_process(kripto_mac *s) 
 {
@@ -62,6 +81,7 @@ static kripto_mac *skein256_recreate
 )
 {
 	uint64_t t;
+	unsigned int block;
 
 	s->r = r;
 	s->i = 0;
@@ -72,11 +92,26 @@ static kripto_mac *skein256_recreate
 	t = tag_len << 3;
 
 	/* KEY */
-	memcpy(s->buf, key, key_len);
-	memset(s->buf, 0, 32 - key_len);
-	s->tweak[0] = key_len;
-	s->tweak[15] = 0xC0; /* type KEY, first, final */
-	skein256_process(s);
+	s->tweak[15] = 0x40; /* type KEY, first */
+
+	while(key_len)
+	{
+		if(key_len > 32) block = 32;
+		else block = key_len;
+
+		memcpy(s->buf, key, block);
+		memset(s->buf, 0, 32 - block);
+
+		POS_ADD(s->tweak, block);
+
+		key_len -= block;
+
+		if(!key_len) s->tweak[15] |= 0x80; /* add final */
+
+		skein256_process(s);
+
+		s->tweak[15] &= 0xBF; /* remove first */
+	}
 
 	/* CFG */
 	s->buf[0] = 'S';
@@ -115,22 +150,7 @@ static void skein256_input
 
 		if(s->i == 32)
 		{
-			s->tweak[0] += 32;
-			if(!s->tweak[0])
-			if(!++s->tweak[1])
-			if(!++s->tweak[2])
-			if(!++s->tweak[3])
-			if(!++s->tweak[4])
-			if(!++s->tweak[5])
-			if(!++s->tweak[6])
-			if(!++s->tweak[7])
-			if(!++s->tweak[8])
-			if(!++s->tweak[9])
-			if(!++s->tweak[10])
-			{
-				s->tweak[11]++;
-				assert(s->tweak[11]);
-			}
+			POS_ADD(s->tweak, 32);
 
 			skein256_process(s);
 			s->tweak[15] = 0x30; /* type MSG */
@@ -141,22 +161,7 @@ static void skein256_input
 
 static void skein256_finish(kripto_mac *s)
 {
-	s->tweak[0] += s->i;
-	if(!s->tweak[0])
-	if(!++s->tweak[1])
-	if(!++s->tweak[2])
-	if(!++s->tweak[3])
-	if(!++s->tweak[4])
-	if(!++s->tweak[5])
-	if(!++s->tweak[6])
-	if(!++s->tweak[7])
-	if(!++s->tweak[8])
-	if(!++s->tweak[9])
-	if(!++s->tweak[10])
-	{
-		s->tweak[11]++;
-		assert(s->tweak[11]);
-	}
+	POS_ADD(s->tweak, s->i);
 
 	memset(s->buf + s->i, 0, 32 - s->i);
 	s->tweak[15] |= 0x80; /* add final */
