@@ -161,8 +161,8 @@ static kripto_stream *skein256_recreate
 	/* final setup */
 	(void)kripto_block_recreate(s->block, s->r, k, 32);
 	memset(tweak, 0, 12);
-	tweak[0] = 0x8;
-	tweak[15] = 0xFF;
+	tweak[0] = 8; /* 8 byte counter */
+	tweak[15] = 0xFF; /* type OUTPUT, first, final */
 	kripto_block_tweak(s->block, tweak, 16);
 
 	kripto_memwipe(k, 32);

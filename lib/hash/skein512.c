@@ -144,7 +144,7 @@ static void skein512_finish(kripto_hash *s)
 
 	memset(s->buf, 0, 64);
 	memset(s->tweak, 0, 12);
-	s->tweak[0] = 0x8;
+	s->tweak[0] = 8; /* 8 byte counter */
 	s->tweak[15] = 0xFF; /* type OUT, first, final */
 	skein512_process(s);
 

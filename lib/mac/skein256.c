@@ -169,7 +169,7 @@ static void skein256_finish(kripto_mac *s)
 
 	memset(s->buf, 0, 32);
 	memset(s->tweak, 0, 12);
-	s->tweak[0] = 0x8;
+	s->tweak[0] = 8; /* 8 byte counter */
 	s->tweak[15] = 0xFF; /* type OUT, first, final */
 	skein256_process(s);
 
