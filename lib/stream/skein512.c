@@ -22,11 +22,11 @@
 #include <kripto/loadstore.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
-#include <kripto/block/threefish256.h>
+#include <kripto/block/threefish512.h>
 #include <kripto/stream.h>
 #include <kripto/desc/stream.h>
 
-#include <kripto/stream/skein256.h>
+#include <kripto/stream/skein512.h>
 
 struct kripto_stream
 {
@@ -34,8 +34,8 @@ struct kripto_stream
 	kripto_block *block;
 	unsigned int r;
 	unsigned int i;
-	uint8_t ctr[32];
-	uint8_t buf[32];
+	uint8_t ctr[64];
+	uint8_t buf[64];
 };
 
 #define POS_ADD(TWEAK, ADD)	\
@@ -58,7 +58,7 @@ struct kripto_stream
 	}						\
 }
 
-static kripto_stream *skein256_recreate
+static kripto_stream *skein512_recreate
 (
 	kripto_stream *s,
 	unsigned int r,
@@ -69,14 +69,14 @@ static kripto_stream *skein256_recreate
 )
 {
 	uint8_t tweak[16];
-	uint8_t k[32];
+	uint8_t k[64];
 	unsigned int block;
 	unsigned int i;
 
 	s->r = r;
 	s->i = 0;
-	memset(k, 0, 32);
-	memset(s->ctr, 0, 32);
+	memset(k, 0, 64);
+	memset(s->ctr, 0, 64);
 
 	/* KEY */
 	memset(tweak, 0, 16);
@@ -84,11 +84,11 @@ static kripto_stream *skein256_recreate
 
 	while(key_len)
 	{
-		if(key_len > 32) block = 32;
+		if(key_len > 64) block = 64;
 		else block = key_len;
 
 		memcpy(s->buf, key, block);
-		memset(s->buf, 0, 32 - block);
+		memset(s->buf, 0, 64 - block);
 
 		POS_ADD(tweak, block);
 
@@ -97,10 +97,10 @@ static kripto_stream *skein256_recreate
 		if(!key_len) tweak[15] |= 0x80; /* add final */
 
 		/* process */
-		(void)kripto_block_recreate(s->block, s->r, k, 32);
+		(void)kripto_block_recreate(s->block, s->r, k, 64);
 		kripto_block_tweak(s->block, tweak, 16);
 		kripto_block_encrypt(s->block, s->buf, k);
-		for(i = 0; i < 32; i++) k[i] ^= s->buf[i];
+		for(i = 0; i < 64; i++) k[i] ^= s->buf[i];
 
 		tweak[15] &= 0xBF; /* remove first */
 	}
@@ -115,16 +115,16 @@ static kripto_stream *skein256_recreate
 	s->buf[6] = 0;
 	s->buf[7] = 0;
 	memset(s->buf + 8, 0xFF, 8); /* output UINT64_MAX */
-	memset(s->buf + 16, 0, 16);
+	memset(s->buf + 16, 0, 48);
 	memset(tweak, 0, 12);
 	tweak[0] = 32;
 	tweak[15] = 0xC4; /* type CFG, first, final */
 
 	/* process */
-	(void)kripto_block_recreate(s->block, s->r, k, 32);
+	(void)kripto_block_recreate(s->block, s->r, k, 64);
 	kripto_block_tweak(s->block, tweak, 16);
 	kripto_block_encrypt(s->block, s->buf, k);
-	for(i = 0; i < 32; i++) k[i] ^= s->buf[i];
+	for(i = 0; i < 64; i++) k[i] ^= s->buf[i];
 
 	/* NONCE */
 	memset(tweak, 0, 12);
@@ -132,11 +132,11 @@ static kripto_stream *skein256_recreate
 
 	while(iv_len)
 	{
-		if(iv_len > 32) block = 32;
+		if(iv_len > 64) block = 64;
 		else block = iv_len;
 
 		memcpy(s->buf, iv, block);
-		memset(s->buf, 0, 32 - block);
+		memset(s->buf, 0, 64 - block);
 
 		POS_ADD(tweak, block);
 
@@ -145,27 +145,27 @@ static kripto_stream *skein256_recreate
 		if(!iv_len) tweak[15] |= 0x80; /* add final */
 
 		/* process */
-		(void)kripto_block_recreate(s->block, s->r, k, 32);
+		(void)kripto_block_recreate(s->block, s->r, k, 64);
 		kripto_block_tweak(s->block, tweak, 16);
 		kripto_block_encrypt(s->block, s->buf, k);
-		for(i = 0; i < 32; i++) k[i] ^= s->buf[i];
+		for(i = 0; i < 64; i++) k[i] ^= s->buf[i];
 
 		tweak[15] &= 0xBF; /* remove first */
 	}
 
 	/* final setup */
-	(void)kripto_block_recreate(s->block, s->r, k, 32);
+	(void)kripto_block_recreate(s->block, s->r, k, 64);
 	memset(tweak, 0, 12);
 	tweak[0] = 8; /* 8 byte counter */
 	tweak[15] = 0xFF; /* type OUTPUT, first, final */
 	kripto_block_tweak(s->block, tweak, 16);
 
-	kripto_memwipe(k, 32);
+	kripto_memwipe(k, 64);
 
 	return s;
 }
 
-static void skein256_crypt
+static void skein512_crypt
 (
 	kripto_stream *s,
 	const void *in,
@@ -177,10 +177,10 @@ static void skein256_crypt
 
 	for(i = 0; i < len; i++)
 	{
-		if(s->i == 32)
+		if(s->i == 64)
 		{
 			kripto_block_encrypt(s->block, s->ctr, s->buf);
-			for(s->i = 0; s->i < 32; s->i++)
+			for(s->i = 0; s->i < 64; s->i++)
 				s->buf[s->i] ^= s->ctr[s->i];
 
 			if(!++s->ctr[0])
@@ -202,16 +202,16 @@ static void skein256_crypt
 	}
 }
 
-static void skein256_prng(kripto_stream *s, void *out, size_t len)
+static void skein512_prng(kripto_stream *s, void *out, size_t len)
 {
 	size_t i;
 
 	for(i = 0; i < len; i++)
 	{
-		if(s->i == 32)
+		if(s->i == 64)
 		{
 			kripto_block_encrypt(s->block, s->ctr, s->buf);
-			for(s->i = 0; s->i < 32; s->i++)
+			for(s->i = 0; s->i < 64; s->i++)
 				s->buf[s->i] ^= s->ctr[s->i];
 
 			if(!++s->ctr[0])
@@ -233,7 +233,7 @@ static void skein256_prng(kripto_stream *s, void *out, size_t len)
 	}
 }
 
-static kripto_stream *skein256_create
+static kripto_stream *skein512_create
 (
 	const kripto_stream_desc *desc,
 	unsigned int r,
@@ -250,38 +250,38 @@ static kripto_stream *skein256_create
 	s = malloc(sizeof(kripto_stream));
 	if(!s) return 0;
 
-	s->stream = kripto_stream_skein256;
+	s->stream = kripto_stream_skein512;
 
-	s->block = kripto_block_create(kripto_block_threefish256, r, "", 1);
+	s->block = kripto_block_create(kripto_block_threefish512, r, "", 1);
 	if(!s->block)
 	{
 		free(s);
 		return 0;
 	}
 
-	(void)skein256_recreate(s, r, key, key_len, iv, iv_len);
+	(void)skein512_recreate(s, r, key, key_len, iv, iv_len);
 
 	return s;
 }
 
-static void skein256_destroy(kripto_stream *s)
+static void skein512_destroy(kripto_stream *s)
 {
 	kripto_block_destroy(s->block);
 	kripto_memwipe(s, sizeof(kripto_stream));
 	free(s);
 }
 
-static const kripto_stream_desc skein256 =
+static const kripto_stream_desc skein512 =
 {
-	&skein256_create,
-	&skein256_recreate,
-	&skein256_crypt,
-	&skein256_crypt,
-	&skein256_prng,
-	&skein256_destroy,
+	&skein512_create,
+	&skein512_recreate,
+	&skein512_crypt,
+	&skein512_crypt,
+	&skein512_prng,
+	&skein512_destroy,
 	1,
 	UINT_MAX, /* max key */
 	UINT_MAX /* max iv */
 };
 
-const kripto_stream_desc *const kripto_stream_skein256 = &skein256;
+const kripto_stream_desc *const kripto_stream_skein512 = &skein512;

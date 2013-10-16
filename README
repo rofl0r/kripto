@@ -73,8 +73,8 @@ Stream ciphers:
  - Keccak1600*
  - Keccak800*
  - Skein256
- - Skein512*?
- - Skein1024*?
+ - Skein512
+ - Skein1024
  - SEAL*?
  - Scream*?
  - SOSEMANUK*
