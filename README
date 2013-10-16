@@ -90,7 +90,7 @@ Hash functions:
  - Keccak1600 (SHA3)
  - Keccak800
  - Skein256
- - Skein512*
+ - Skein512
  - Skein1024*
  - BLAKE-256
  - BLAKE-512
@@ -116,7 +116,7 @@ MAC's:
  - Keccak1600*
  - Keccak800*
  - Skein256
- - Skein512*
+ - Skein512
  - Skein1024*
  - UMAC*?
  - VMAC*?
