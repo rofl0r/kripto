@@ -23,6 +23,7 @@
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
+#include <kripto/object/block.h>
 
 #include <kripto/block/threefish256.h>
 
@@ -30,7 +31,7 @@
 
 struct kripto_block
 {
-	const kripto_block_desc *desc;
+	struct kripto_block_object obj;
 	unsigned int rounds;
 	uint64_t t[3];
 	uint64_t k[5];
@@ -209,7 +210,7 @@ static kripto_block *threefish256_create
 	s = malloc(sizeof(kripto_block));
 	if(!s) return 0;
 
-	s->desc = kripto_block_threefish256;
+	s->obj.desc = kripto_block_threefish256;
 
 	(void)threefish256_recreate(s, r, key, key_len);
 

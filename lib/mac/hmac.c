@@ -17,15 +17,16 @@
 #include <stdlib.h>
 
 #include <kripto/memwipe.h>
+#include <kripto/hash.h>
 #include <kripto/mac.h>
 #include <kripto/desc/mac.h>
-#include <kripto/hash.h>
+#include <kripto/object/mac.h>
 
 #include <kripto/mac/hmac.h>
 
 struct kripto_mac
 {
-	const kripto_mac_desc *desc;
+	struct kripto_mac_object obj;
 	kripto_hash *hash;
 	size_t size;
 	unsigned int r;
@@ -126,7 +127,7 @@ static kripto_mac *hmac_create
 
 	s->key = (uint8_t *)s + sizeof(kripto_mac);
 
-	s->desc = desc;
+	s->obj.desc = desc;
 	s->size = sizeof(kripto_mac) + kripto_hash_blocksize(EXT(desc)->hash);
 	s->r = r;
 	s->hash = kripto_hash_create(EXT(desc)->hash, r, tag_len);
@@ -164,7 +165,7 @@ static kripto_mac *hmac_recreate
 
 	s->r = r;
 
-	if(hmac_init(s, EXT(s->desc)->hash, key, key_len, tag_len))
+	if(hmac_init(s, EXT(s->obj.desc)->hash, key, key_len, tag_len))
 	{
 		hmac_destroy(s);
 		return 0;

@@ -23,13 +23,14 @@
 #include <kripto/hash/keccak800.h>
 #include <kripto/stream.h>
 #include <kripto/desc/stream.h>
+#include <kripto/object/stream.h>
 
 #include <kripto/stream/keccak1600.h>
 #include <kripto/stream/keccak800.h>
 
 struct kripto_stream
 {
-	const kripto_stream_desc *stream;
+	struct kripto_stream_object obj;
 	kripto_hash *hash;
 };
 
@@ -110,7 +111,7 @@ static kripto_stream *keccak1600_create
 	s = malloc(sizeof(kripto_stream));
 	if(!s) return 0;
 
-	s->stream = kripto_stream_keccak1600;
+	s->obj.desc = kripto_stream_keccak1600;
 
 	s->hash = kripto_hash_create(kripto_hash_keccak1600, r, key_len);
 	if(!s->hash)
@@ -158,7 +159,7 @@ static kripto_stream *keccak800_create
 	s = malloc(sizeof(kripto_stream));
 	if(!s) return 0;
 
-	s->stream = kripto_stream_keccak800;
+	s->obj.desc = kripto_stream_keccak800;
 
 	s->hash = kripto_hash_create(kripto_hash_keccak800, r, key_len);
 	if(!s->hash)

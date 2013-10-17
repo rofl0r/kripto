@@ -33,12 +33,13 @@
 #include <kripto/memwipe.h>
 #include <kripto/hash.h>
 #include <kripto/desc/hash.h>
+#include <kripto/object/hash.h>
 
 #include <kripto/hash/whirlpool.h>
 
 struct kripto_hash
 {
-	const kripto_hash_desc *hash;
+	struct kripto_hash_object obj;
 	unsigned int r;
 	uint64_t h[8];
 	uint8_t buf[64];
@@ -994,7 +995,7 @@ static kripto_hash *whirlpool_create(unsigned int r, size_t len)
 	s = malloc(sizeof(kripto_hash));
 	if(!s) return 0;
 
-	s->hash = kripto_hash_whirlpool;
+	s->obj.desc = kripto_hash_whirlpool;
 
 	(void)whirlpool_recreate(s, r, len);
 

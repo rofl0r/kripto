@@ -21,12 +21,13 @@
 #include <kripto/memwipe.h>
 #include <kripto/stream.h>
 #include <kripto/desc/stream.h>
+#include <kripto/object/stream.h>
 
 #include <kripto/stream/chacha.h>
 
 struct kripto_stream
 {
-	const kripto_stream_desc *desc;
+	struct kripto_stream_object obj;
 	unsigned int r;
 	uint32_t x[16];
 	uint8_t buf[64];
@@ -270,7 +271,7 @@ static kripto_stream *chacha_create
 	s = malloc(sizeof(kripto_stream));
 	if(!s) return 0;
 
-	s->desc = kripto_stream_chacha;
+	s->obj.desc = kripto_stream_chacha;
 
 	(void)chacha_recreate(s, r, key, key_len, iv, iv_len);
 

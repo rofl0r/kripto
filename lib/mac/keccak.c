@@ -23,13 +23,14 @@
 #include <kripto/hash/keccak800.h>
 #include <kripto/mac.h>
 #include <kripto/desc/mac.h>
+#include <kripto/object/mac.h>
 
 #include <kripto/mac/keccak1600.h>
 #include <kripto/mac/keccak800.h>
 
 struct kripto_mac
 {
-	const kripto_mac_desc *mac;
+	struct kripto_mac_object obj;
 	kripto_hash *hash;
 };
 
@@ -80,7 +81,7 @@ static kripto_mac *keccak1600_create
 	s = malloc(sizeof(kripto_mac));
 	if(!s) return 0;
 
-	s->mac = kripto_mac_keccak1600;
+	s->obj.desc = kripto_mac_keccak1600;
 
 	s->hash = kripto_hash_create(kripto_hash_keccak1600, r, tag_len);
 	if(!s->hash)
@@ -110,7 +111,7 @@ static kripto_mac *keccak800_create
 	s = malloc(sizeof(kripto_mac));
 	if(!s) return 0;
 
-	s->mac = kripto_mac_keccak800;
+	s->obj.desc = kripto_mac_keccak800;
 
 	s->hash = kripto_hash_create(kripto_hash_keccak800, r, tag_len);
 	if(!s->hash)

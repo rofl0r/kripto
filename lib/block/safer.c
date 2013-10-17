@@ -23,9 +23,18 @@
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
+#include <kripto/object/block.h>
 
 #include <kripto/block/safer.h>
 #include <kripto/block/safer_sk.h>
+
+struct kripto_block
+{
+	struct kripto_block_object obj;
+	unsigned int rounds;
+	size_t size;
+	uint8_t *k;
+};
 
 static const uint8_t exp_tab[256] =
 {
@@ -101,14 +110,6 @@ static const uint8_t log_tab[256] =
 
 #define EXP(X) exp_tab[(uint8_t)(X)]
 #define LOG(X) log_tab[(uint8_t)(X)]
-
-struct kripto_block
-{
-	const kripto_block_desc *desc;
-	unsigned int rounds;
-	size_t size;
-	uint8_t *k;
-};
 
 static void safer_encrypt
 (
@@ -327,7 +328,7 @@ static kripto_block *safer_create
 	s = malloc(sizeof(kripto_block) + (r << 4) + 8);
 	if(!s) return 0;
 
-	s->desc = kripto_block_safer;
+	s->obj.desc = kripto_block_safer;
 	s->size = sizeof(kripto_block) + (r << 4) + 8;
 	s->rounds = r;
 	s->k = (uint8_t *)s + sizeof(kripto_block);
@@ -384,7 +385,7 @@ static kripto_block *safer_sk_create
 	s = malloc(sizeof(kripto_block) + (r << 4) + 8);
 	if(!s) return 0;
 
-	s->desc = kripto_block_safer_sk;
+	s->obj.desc = kripto_block_safer_sk;
 	s->size = sizeof(kripto_block) + (r << 4) + 8;
 	s->rounds = r;
 	s->k = (uint8_t *)s + sizeof(kripto_block);

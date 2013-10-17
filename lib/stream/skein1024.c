@@ -25,12 +25,13 @@
 #include <kripto/block/threefish1024.h>
 #include <kripto/stream.h>
 #include <kripto/desc/stream.h>
+#include <kripto/object/stream.h>
 
 #include <kripto/stream/skein1024.h>
 
 struct kripto_stream
 {
-	const kripto_stream_desc *stream;
+	struct kripto_stream_object obj;
 	kripto_block *block;
 	unsigned int r;
 	unsigned int i;
@@ -250,7 +251,7 @@ static kripto_stream *skein1024_create
 	s = malloc(sizeof(kripto_stream));
 	if(!s) return 0;
 
-	s->stream = kripto_stream_skein1024;
+	s->obj.desc = kripto_stream_skein1024;
 
 	s->block = kripto_block_create(kripto_block_threefish1024, r, "", 1);
 	if(!s->block)

@@ -24,12 +24,13 @@
 #include <kripto/memwipe.h>
 #include <kripto/hash.h>
 #include <kripto/desc/hash.h>
+#include <kripto/object/hash.h>
 
 #include <kripto/hash/sha2_256.h>
 
 struct kripto_hash
 {
-	const kripto_hash_desc *hash;
+	struct kripto_hash_object obj;
 	uint64_t len;
 	uint32_t h[8];
 	uint8_t buf[64];
@@ -250,7 +251,7 @@ static kripto_hash *sha2_256_create(unsigned int r, size_t len)
 	s = malloc(sizeof(kripto_hash));
 	if(!s) return 0;
 
-	s->hash = kripto_hash_sha2_256;
+	s->obj.desc = kripto_hash_sha2_256;
 
 	(void)sha2_256_recreate(s, r, len);
 

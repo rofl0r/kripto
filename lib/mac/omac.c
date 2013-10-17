@@ -19,15 +19,16 @@
 
 #include <kripto/loadstore.h>
 #include <kripto/memwipe.h>
+#include <kripto/block.h>
 #include <kripto/mac.h>
 #include <kripto/desc/mac.h>
-#include <kripto/block.h>
+#include <kripto/object/mac.h>
 
 #include <kripto/mac/omac.h>
 
 struct kripto_mac
 {
-	const kripto_mac_desc *desc;
+	struct kripto_mac_object obj;
 	kripto_block *block;
 	uint8_t *lu;
 	uint8_t *lu2;
@@ -450,7 +451,7 @@ static kripto_mac *omac_create
 	s = malloc(sizeof(kripto_mac) + desc->maxtag * 4);
 	if(!s) return 0;
 
-	s->desc = desc;
+	s->obj.desc = desc;
 	s->len = desc->maxtag;
 	s->prev = (uint8_t *)s + sizeof(kripto_mac);
 	s->buf = s->prev + s->len;
@@ -482,7 +483,7 @@ static kripto_mac *omac_recreate
 	s->block = kripto_block_recreate(s->block, r, key, key_len);
 	if(!s->block)
 	{
-		kripto_memwipe(s, sizeof(kripto_mac) + s->desc->maxtag * 4);
+		kripto_memwipe(s, sizeof(kripto_mac) + s->obj.desc->maxtag * 4);
 		free(s);
 		return 0;
 	}

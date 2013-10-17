@@ -32,6 +32,7 @@
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
+#include <kripto/object/block.h>
 
 #include <kripto/block/rijndael128.h>
 #include <kripto/block/aes.h>
@@ -39,7 +40,7 @@
 
 struct kripto_block
 {
-	const kripto_block_desc *desc;
+	struct kripto_block_object obj;
 	unsigned int rounds;
 	size_t size;
 	uint32_t *k;
@@ -903,7 +904,7 @@ static kripto_block *rijndael128_create
 	s = malloc(sizeof(kripto_block) + ((r + 1) << 5));
 	if(!s) return 0;
 
-	s->desc = kripto_block_rijndael128;
+	s->obj.desc = kripto_block_rijndael128;
 	s->size = sizeof(kripto_block) + ((r + 1) << 5);
 	s->rounds = r;
 	s->k = (uint32_t *)((uint8_t *)s + sizeof(kripto_block));
@@ -1137,7 +1138,7 @@ static kripto_block *rijndael256_create
 	s = malloc(sizeof(kripto_block) + ((r + 1) << 6));
 	if(!s) return 0;
 
-	s->desc = kripto_block_rijndael256;
+	s->obj.desc = kripto_block_rijndael256;
 	s->size = sizeof(kripto_block) + ((r + 1) << 6);
 	s->rounds = r;
 	s->k = (uint32_t *)((uint8_t *)s + sizeof(kripto_block));

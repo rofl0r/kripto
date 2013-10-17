@@ -25,12 +25,13 @@
 #include <kripto/mac/omac.h>
 #include <kripto/authstream.h>
 #include <kripto/desc/authstream.h>
+#include <kripto/object/authstream.h>
 
 #include <kripto/authstream/eax.h>
 
 struct kripto_authstream
 {
-	const kripto_authstream_desc *desc;
+	struct kripto_authstream_object obj;
 	kripto_stream_desc *ctr_desc;
 	kripto_mac_desc *omac_desc;
 	kripto_stream *ctr;
@@ -138,7 +139,7 @@ static kripto_authstream *eax_create
 	s = malloc(sizeof(kripto_authstream) + len);
 	if(!s) goto err1;
 
-	s->desc = desc;
+	s->obj.desc = desc;
 	s->iv = (uint8_t *)s + sizeof(kripto_authstream);
 	s->len = len;
 

@@ -22,12 +22,13 @@
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
+#include <kripto/object/block.h>
 
 #include <kripto/block/gost.h>
 
 struct kripto_block
 {
-	const kripto_block_desc *desc;
+	struct kripto_block_object obj;
 	unsigned int rounds;
 	size_t size;
 	uint32_t *k;
@@ -294,7 +295,7 @@ static kripto_block *gost_create
 	s = malloc(sizeof(kripto_block) + (r << 2));
 	if(!s) return 0;
 
-	s->desc = kripto_block_gost;
+	s->obj.desc = kripto_block_gost;
 	s->size = sizeof(kripto_block) + (r << 2);
 	s->k = (uint32_t *)(((uint8_t *)s) + sizeof(kripto_block));
 	s->rounds = r;

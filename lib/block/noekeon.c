@@ -22,12 +22,13 @@
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
+#include <kripto/object/block.h>
 
 #include <kripto/block/noekeon.h>
 
 struct kripto_block
 {
-	const kripto_block_desc *desc;
+	struct kripto_block_object obj;
 	unsigned int rounds;
 	uint32_t k[4];
 	uint32_t dk[4];
@@ -189,7 +190,7 @@ static kripto_block *noekeon_create
 	s = malloc(sizeof(kripto_block));
 	if(!s) return 0;
 
-	s->desc = kripto_block_noekeon;
+	s->obj.desc = kripto_block_noekeon;
 	s->rounds = r;
 
 	noekeon_setup(s, key, key_len);

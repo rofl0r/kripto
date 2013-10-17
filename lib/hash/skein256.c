@@ -25,12 +25,13 @@
 #include <kripto/block/threefish256.h>
 #include <kripto/hash.h>
 #include <kripto/desc/hash.h>
+#include <kripto/object/hash.h>
 
 #include <kripto/hash/skein256.h>
 
 struct kripto_hash
 {
-	const kripto_hash_desc *hash;
+	struct kripto_hash_object obj;
 	kripto_block *block;
 	unsigned int r;
 	unsigned int i;
@@ -169,7 +170,7 @@ static kripto_hash *skein256_create(unsigned int r, size_t len)
 	s = malloc(sizeof(kripto_hash));
 	if(!s) return 0;
 
-	s->hash = kripto_hash_skein256;
+	s->obj.desc = kripto_hash_skein256;
 
 	s->block = kripto_block_create(kripto_block_threefish256, r, "", 1);
 	if(!s->block)

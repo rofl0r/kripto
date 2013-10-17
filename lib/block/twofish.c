@@ -24,12 +24,13 @@
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
+#include <kripto/object/block.h>
 
 #include <kripto/block/twofish.h>
 
 struct kripto_block
 {
-	const kripto_block_desc *desc;
+	struct kripto_block_object obj;
 	unsigned int rounds;
 	size_t size;
 	uint32_t s0[256];
@@ -1189,7 +1190,7 @@ static kripto_block *twofish_create
 	s = malloc(sizeof(struct kripto_block) + (TWOFISH_K_LEN(r) << 2));
 	if(!s) return 0;
 
-	s->desc = kripto_block_twofish;
+	s->obj.desc = kripto_block_twofish;
 	s->size = sizeof(kripto_block) + (TWOFISH_K_LEN(r) << 2);
 	s->rounds = r;
 	s->k = (uint32_t *)((uint8_t *)s + sizeof(struct kripto_block));

@@ -22,6 +22,7 @@
 struct kripto_stream
 {
 	const kripto_stream_desc *desc;
+	unsigned int multof;
 };
 
 kripto_stream *kripto_stream_create

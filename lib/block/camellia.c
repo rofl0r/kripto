@@ -24,12 +24,13 @@
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>
+#include <kripto/object/block.h>
 
 #include <kripto/block/camellia.h>
 
 struct kripto_block
 {
-	const kripto_block_desc *desc;
+	struct kripto_block_object obj;
 	unsigned int rounds;
 	uint64_t kw[4];
 	uint64_t kl[6];
@@ -682,7 +683,7 @@ static kripto_block *camellia_create
 	s = malloc(sizeof(kripto_block));
 	if(!s) return 0;
 
-	s->desc = kripto_block_camellia;
+	s->obj.desc = kripto_block_camellia;
 
 	camellia_recreate(s, 0, key, key_len);
 

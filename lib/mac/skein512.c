@@ -25,12 +25,13 @@
 #include <kripto/block/threefish512.h>
 #include <kripto/mac.h>
 #include <kripto/desc/mac.h>
+#include <kripto/object/mac.h>
 
 #include <kripto/mac/skein512.h>
 
 struct kripto_mac
 {
-	const kripto_mac_desc *mac;
+	struct kripto_mac_object obj;
 	kripto_block *block;
 	unsigned int r;
 	unsigned int i;
@@ -203,7 +204,7 @@ static kripto_mac *skein512_create
 	s = malloc(sizeof(kripto_mac));
 	if(!s) return 0;
 
-	s->mac = kripto_mac_skein512;
+	s->obj.desc = kripto_mac_skein512;
 
 	s->block = kripto_block_create(kripto_block_threefish512, r, "", 1);
 	if(!s->block)

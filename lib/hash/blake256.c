@@ -24,12 +24,13 @@
 #include <kripto/memwipe.h>
 #include <kripto/hash.h>
 #include <kripto/desc/hash.h>
+#include <kripto/object/hash.h>
 
 #include <kripto/hash/blake256.h>
 
 struct kripto_hash
 {
-	const kripto_hash_desc *hash;
+	struct kripto_hash_object obj;
 	unsigned int r;
 	uint32_t h[8];
 	/* uint32_t s[4]; */
@@ -274,7 +275,7 @@ static kripto_hash *blake256_create(unsigned int r, size_t len)
 	s = malloc(sizeof(kripto_hash));
 	if(!s) return 0;
 
-	s->hash = kripto_hash_blake256;
+	s->obj.desc = kripto_hash_blake256;
 
 	(void)blake256_recreate(s, r, len);
 

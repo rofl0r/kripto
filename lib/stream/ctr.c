@@ -21,12 +21,13 @@
 #include <kripto/block.h>
 #include <kripto/stream.h>
 #include <kripto/desc/stream.h>
+#include <kripto/object/stream.h>
 
 #include <kripto/stream/ctr.h>
 
 struct kripto_stream
 {
-	const kripto_stream_desc *desc;
+	struct kripto_stream_object obj;
 	kripto_block *block;
 	uint8_t *x;
 	uint8_t *buf;
@@ -115,7 +116,7 @@ static kripto_stream *ctr_create
 	s = malloc(sizeof(kripto_stream) + (desc->maxiv << 1));
 	if(!s) return 0;
 
-	s->desc = desc;
+	s->obj.desc = desc;
 
 	s->used = s->blocksize = desc->maxiv;
 

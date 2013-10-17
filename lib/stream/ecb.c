@@ -21,12 +21,13 @@
 #include <kripto/block.h>
 #include <kripto/stream.h>
 #include <kripto/desc/stream.h>
+#include <kripto/object/stream.h>
 
 #include <kripto/stream/ecb.h>
 
 struct kripto_stream
 {
-	const kripto_stream_desc *desc;
+	struct kripto_stream_object obj;
 	kripto_block *block;
 	unsigned int blocksize;
 };
@@ -92,7 +93,7 @@ static kripto_stream *ecb_create
 	s = malloc(sizeof(kripto_stream));
 	if(!s) return 0;
 
-	s->desc = desc;
+	s->obj.desc = desc;
 
 	s->blocksize = desc->multof;
 

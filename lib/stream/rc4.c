@@ -21,13 +21,14 @@
 #include <kripto/memwipe.h>
 #include <kripto/stream.h>
 #include <kripto/desc/stream.h>
+#include <kripto/object/stream.h>
 
 #include <kripto/stream/rc4.h>
 #include <kripto/stream/rc4i.h>
 
 struct kripto_stream
 {
-	const kripto_stream_desc *desc;
+	struct kripto_stream_object obj;
 	uint8_t p[256];
 	uint8_t i;
 	uint8_t j;
@@ -207,7 +208,7 @@ static kripto_stream *rc4i_create
 	s = malloc(sizeof(kripto_stream));
 	if(!s) return 0;
 
-	s->desc = kripto_stream_rc4i;
+	s->obj.desc = kripto_stream_rc4i;
 	(void)rc4i_recreate(s, r, key, key_len, iv, iv_len);
 
 	return s;
@@ -229,7 +230,7 @@ static kripto_stream *rc4_create
 	s = rc4i_create(desc, 256, key, key_len, iv, iv_len);
 	if(!s) return 0;
 
-	s->desc = kripto_stream_rc4;
+	s->obj.desc = kripto_stream_rc4;
 
 	s->i = s->j = 0;
 

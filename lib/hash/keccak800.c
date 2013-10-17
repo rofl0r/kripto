@@ -24,12 +24,13 @@
 #include <kripto/memwipe.h>
 #include <kripto/hash.h>
 #include <kripto/desc/hash.h>
+#include <kripto/object/hash.h>
 
 #include <kripto/hash/keccak800.h>
 
 struct kripto_hash
 {
-	const kripto_hash_desc *hash;
+	struct kripto_hash_object obj;
 	unsigned int r;
 	unsigned int rate;
 	unsigned int i;
@@ -353,7 +354,7 @@ static kripto_hash *keccak800_create(unsigned int r, size_t len)
 	s = malloc(sizeof(struct kripto_hash));
 	if(!s) return 0;
 
-	s->hash = kripto_hash_keccak800;
+	s->obj.desc = kripto_hash_keccak800;
 
 	(void)keccak800_recreate(s, r, len);
 
