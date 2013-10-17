@@ -140,6 +140,7 @@ static kripto_authstream *eax_create
 	if(!s) goto err1;
 
 	s->obj.desc = desc;
+	s->obj.multof = 1;
 	s->iv = (uint8_t *)s + sizeof(kripto_authstream);
 	s->len = len;
 
@@ -262,7 +263,6 @@ kripto_authstream_desc *kripto_authstream_eax(const kripto_block_desc *block)
 	s->desc.header = &eax_header;
 	s->desc.tag = &eax_tag;
 	s->desc.destroy = &eax_destroy;
-	s->desc.multof = 1;
 	s->desc.maxkey = kripto_block_maxkey(block);
 	s->desc.maxiv = kripto_block_size(block);
 	s->desc.maxtag = s->desc.maxiv;

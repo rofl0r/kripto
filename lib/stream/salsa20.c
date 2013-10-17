@@ -290,6 +290,7 @@ static kripto_stream *salsa20_create
 	if(!s) return 0;
 
 	s->obj.desc = kripto_stream_salsa20;
+	s->obj.multof = 1;
 
 	(void)salsa20_recreate(s, r, key, key_len, iv, iv_len);
 
@@ -310,7 +311,6 @@ static const struct kripto_stream_desc salsa20 =
 	&salsa20_crypt,
 	&salsa20_prng,
 	&salsa20_destroy,
-	1,
 	32, /* max key */
 	24 /* max iv */
 };

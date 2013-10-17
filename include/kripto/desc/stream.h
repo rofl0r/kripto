@@ -47,7 +47,6 @@ struct kripto_stream_desc
 
 	void (*destroy)(kripto_stream *);
 
-	unsigned int multof;
 	unsigned int maxkey;
 	unsigned int maxiv;
 };

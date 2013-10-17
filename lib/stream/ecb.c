@@ -93,9 +93,10 @@ static kripto_stream *ecb_create
 	s = malloc(sizeof(kripto_stream));
 	if(!s) return 0;
 
-	s->obj.desc = desc;
+	s->blocksize = kripto_block_size(EXT(desc)->block);
 
-	s->blocksize = desc->multof;
+	s->obj.desc = desc;
+	s->obj.multof = s->blocksize;
 
 	/* block cipher */
 	s->block = kripto_block_create(EXT(desc)->block, rounds, key, key_len);
@@ -149,7 +150,6 @@ kripto_stream_desc *kripto_stream_ecb(const kripto_block_desc *block)
 	s->desc.decrypt = &ecb_decrypt;
 	s->desc.prng = 0;
 	s->desc.destroy = &ecb_destroy;
-	s->desc.multof = kripto_block_size(block);
 	s->desc.maxkey = kripto_block_maxkey(block);
 	s->desc.maxiv = 0;
 

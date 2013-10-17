@@ -60,9 +60,9 @@ extern void kripto_authstream_tag
 
 extern void kripto_authstream_destroy(kripto_authstream *s);
 
-extern const kripto_authstream_desc *kripto_authstream_getdesc(const kripto_authstream *s);
+extern unsigned int kripto_authstream_multof(const kripto_authstream *s);
 
-extern unsigned int kripto_authstream_multof(const kripto_authstream_desc *desc);
+extern const kripto_authstream_desc *kripto_authstream_getdesc(const kripto_authstream *s);
 
 extern unsigned int kripto_authstream_maxkey(const kripto_authstream_desc *desc);
 

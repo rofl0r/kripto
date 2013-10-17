@@ -125,20 +125,20 @@ void kripto_stream_destroy(kripto_stream *s)
 	s->desc->destroy(s);
 }
 
+unsigned int kripto_stream_multof(const kripto_stream *s)
+{
+	assert(s);
+	assert(s->multof);
+
+	return s->multof;
+}
+
 const kripto_stream_desc *kripto_stream_getdesc(const kripto_stream *s)
 {
 	assert(s);
 	assert(s->desc);
 
 	return s->desc;
-}
-
-unsigned int kripto_stream_multof(const kripto_stream_desc *desc)
-{
-	assert(desc);
-	assert(desc->multof);
-
-	return desc->multof;
 }
 
 unsigned int kripto_stream_maxkey(const kripto_stream_desc *desc)

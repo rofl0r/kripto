@@ -112,6 +112,7 @@ static kripto_stream *keccak1600_create
 	if(!s) return 0;
 
 	s->obj.desc = kripto_stream_keccak1600;
+	s->obj.multof = 1;
 
 	s->hash = kripto_hash_create(kripto_hash_keccak1600, r, key_len);
 	if(!s->hash)
@@ -134,7 +135,6 @@ static const kripto_stream_desc keccak1600 =
 	&keccak_crypt,
 	&keccak_prng,
 	&keccak_destroy,
-	1,
 	99, /* max key */
 	UINT_MAX /* max iv */
 };
@@ -160,6 +160,7 @@ static kripto_stream *keccak800_create
 	if(!s) return 0;
 
 	s->obj.desc = kripto_stream_keccak800;
+	s->obj.multof = 1;
 
 	s->hash = kripto_hash_create(kripto_hash_keccak800, r, key_len);
 	if(!s->hash)
@@ -182,7 +183,6 @@ static const kripto_stream_desc keccak800 =
 	&keccak_crypt,
 	&keccak_prng,
 	&keccak_destroy,
-	1,
 	49, /* max key */
 	UINT_MAX /* max iv */
 };

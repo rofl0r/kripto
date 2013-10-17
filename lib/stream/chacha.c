@@ -272,6 +272,7 @@ static kripto_stream *chacha_create
 	if(!s) return 0;
 
 	s->obj.desc = kripto_stream_chacha;
+	s->obj.multof = 1;
 
 	(void)chacha_recreate(s, r, key, key_len, iv, iv_len);
 
@@ -292,7 +293,6 @@ static const struct kripto_stream_desc chacha =
 	&chacha_crypt,
 	&chacha_prng,
 	&chacha_destroy,
-	1,
 	32, /* max key */
 	24 /* max iv */
 };

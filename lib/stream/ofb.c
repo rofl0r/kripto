@@ -108,6 +108,7 @@ static kripto_stream *ofb_create
 	if(!s) return 0;
 
 	s->obj.desc = desc;
+	s->obj.multof = 1;
 
 	s->used = s->blocksize = desc->maxiv;
 
@@ -172,7 +173,6 @@ kripto_stream_desc *kripto_stream_ofb(const kripto_block_desc *block)
 	s->desc.decrypt = &ofb_crypt;
 	s->desc.prng = &ofb_prng;
 	s->desc.destroy = &ofb_destroy;
-	s->desc.multof = 1;
 	s->desc.maxkey = kripto_block_maxkey(block);
 	s->desc.maxiv = kripto_block_size(block);
 

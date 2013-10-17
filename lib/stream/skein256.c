@@ -252,6 +252,7 @@ static kripto_stream *skein256_create
 	if(!s) return 0;
 
 	s->obj.desc = kripto_stream_skein256;
+	s->obj.multof = 1;
 
 	s->block = kripto_block_create(kripto_block_threefish256, r, "", 1);
 	if(!s->block)
@@ -280,7 +281,6 @@ static const kripto_stream_desc skein256 =
 	&skein256_crypt,
 	&skein256_prng,
 	&skein256_destroy,
-	1,
 	UINT_MAX, /* max key */
 	UINT_MAX /* max iv */
 };

@@ -209,6 +209,8 @@ static kripto_stream *rc4i_create
 	if(!s) return 0;
 
 	s->obj.desc = kripto_stream_rc4i;
+	s->obj.multof = 1;
+
 	(void)rc4i_recreate(s, r, key, key_len, iv, iv_len);
 
 	return s;
@@ -255,7 +257,6 @@ static const struct kripto_stream_desc rc4_desc =
 	&rc4_crypt,
 	&rc4_prng,
 	&rc4_destroy,
-	1,
 	256, /* max key */
 	0 /* max iv */
 };
@@ -271,7 +272,6 @@ static const struct kripto_stream_desc rc4i =
 	&rc4_crypt,
 	&rc4_prng,
 	&rc4_destroy,
-	1,
 	256, /* max key */
 	256 /* max iv */
 };

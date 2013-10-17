@@ -143,20 +143,20 @@ void kripto_authstream_destroy(kripto_authstream *s)
 	s->desc->destroy(s);
 }
 
+unsigned int kripto_authstream_multof(const kripto_authstream *s)
+{
+	assert(s);
+	assert(s->multof);
+
+	return s->multof;
+}
+
 const kripto_authstream_desc *kripto_authstream_getdesc(const kripto_authstream *s)
 {
 	assert(s);
 	assert(s->desc);
 
 	return s->desc;
-}
-
-unsigned int kripto_authstream_multof(const kripto_authstream_desc *desc)
-{
-	assert(desc);
-	assert(desc->multof);
-
-	return desc->multof;
 }
 
 unsigned int kripto_authstream_maxkey(const kripto_authstream_desc *desc)
