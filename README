@@ -113,8 +113,8 @@ MAC's:
  - HMAC
  - OMAC (CMAC1)
  - CMAC2*?
- - Keccak1600*
- - Keccak800*
+ - Keccak1600
+ - Keccak800
  - Skein256
  - Skein512
  - Skein1024
