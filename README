@@ -70,8 +70,8 @@ Stream ciphers:
  - Salsa20 (XSalsa20)
  - ChaCha (XChaCha)
  - RC4
- - Keccak1600*
- - Keccak800*
+ - Keccak1600
+ - Keccak800
  - Skein256
  - Skein512
  - Skein1024
