@@ -81,7 +81,7 @@ void kripto_stream_encrypt
 	assert(s);
 	assert(s->desc);
 	assert(s->desc->encrypt);
-	assert(len % kripto_stream_multof(s->desc) == 0);
+	assert(len % kripto_stream_multof(s) == 0);
 
 	s->desc->encrypt(s, pt, ct, len);
 }
@@ -97,7 +97,7 @@ void kripto_stream_decrypt
 	assert(s);
 	assert(s->desc);
 	assert(s->desc->decrypt);
-	assert(len % kripto_stream_multof(s->desc) == 0);
+	assert(len % kripto_stream_multof(s) == 0);
 
 	s->desc->decrypt(s, ct, pt, len);
 }
