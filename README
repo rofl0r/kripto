@@ -80,6 +80,7 @@ Stream ciphers:
  - SOSEMANUK*
  - Rabbit*
  - HC-256*
+ - HC-128*?
  - MUGI*?
  - Py (RCR)*?
  - Trivium*?
@@ -87,7 +88,7 @@ Stream ciphers:
 Hash functions:
  - SHA2
  - SHA1
- - Keccak1600 (SHA3)
+ - Keccak1600
  - Keccak800
  - Skein256
  - Skein512
@@ -128,8 +129,8 @@ MAC's:
 Authenticated stream ciphers:
  - Phelix*?
  - Helix*?
- - Keccak1600*
- - Keccak800*
+ - Keccak1600
+ - Keccak800
 
 MISC
  - PKCS7
