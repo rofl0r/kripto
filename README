@@ -29,14 +29,16 @@ Block ciphers:
  - 3way*?
  - BaseKing*?
  - XTEA
- - Skipjack*
+ - Skipjack*?
  - Speck128
  - Speck64
+ - Speck32
  - Simon128
  - Simon64
+ - Simon32
  - DES*
  - 3DES*
- - IDEA*
+ - IDEA*?
  - RC5
  - RC2*?
  - CAST5*?
@@ -61,6 +63,7 @@ Modes:
 Authenticated modes:
  - EAX
  - GCM*
+ - EAX2*
  - CCM*?
  - CWC*?
  - OCB*
@@ -98,7 +101,7 @@ Hash functions:
  - BLAKE2s
  - BLAKE2b
  - WHIRPOOL
- - Tiger*
+ - Tiger*?
  - MD5
  - RIPEMD*?
  - BMW*?
