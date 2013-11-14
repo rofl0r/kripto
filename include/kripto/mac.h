@@ -56,4 +56,6 @@ extern const kripto_mac_desc *kripto_mac_getdesc(const kripto_mac *s);
 
 extern unsigned int kripto_mac_maxtag(const kripto_mac_desc *desc);
 
+extern unsigned int kripto_mac_maxkey(const kripto_mac_desc *desc);
+
 #endif

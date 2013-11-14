@@ -232,7 +232,8 @@ static const kripto_mac_desc skein512 =
 	&skein512_input,
 	&skein512_tag,
 	&skein512_destroy,
-	64 /* max tag */
+	64, /* max tag */
+	UINT_MAX /* max key */
 };
 
 const kripto_mac_desc *const kripto_mac_skein512 = &skein512;

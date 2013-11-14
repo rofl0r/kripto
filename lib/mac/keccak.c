@@ -138,7 +138,8 @@ static const kripto_mac_desc keccak1600 =
 	&keccak_input,
 	&keccak_tag,
 	&keccak_destroy,
-	99 /* max tag */
+	99, /* max tag */
+	UINT_MAX /* max key */
 };
 
 const kripto_mac_desc *const kripto_mac_keccak1600 = &keccak1600;
@@ -150,7 +151,8 @@ static const kripto_mac_desc keccak800 =
 	&keccak_input,
 	&keccak_tag,
 	&keccak_destroy,
-	49 /* max tag */
+	49, /* max tag */
+	UINT_MAX /* max key */
 };
 
 const kripto_mac_desc *const kripto_mac_keccak800 = &keccak800;

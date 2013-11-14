@@ -61,12 +61,12 @@ Modes:
  - LRW*?
 
 Authenticated modes:
+ - EAX2
  - EAX
  - GCM*
- - EAX2*
+ - OCB*
  - CCM*?
  - CWC*?
- - OCB*
  - IAPM*?
 
 Stream ciphers:

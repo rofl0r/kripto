@@ -508,6 +508,7 @@ kripto_mac_desc *kripto_mac_omac(const kripto_block_desc *block)
 	s->desc.tag = &omac_tag;
 	s->desc.destroy = &omac_destroy;
 	s->desc.maxtag = kripto_block_size(block);
+	s->desc.maxkey = kripto_block_maxkey(block);
 
 	assert(s->desc.maxtag <= 255);
 

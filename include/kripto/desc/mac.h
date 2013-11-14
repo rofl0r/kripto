@@ -30,6 +30,7 @@ struct kripto_mac_desc
 	void (*destroy)(kripto_mac *);
 
 	unsigned int maxtag;
+	unsigned int maxkey;
 };
 
 #endif

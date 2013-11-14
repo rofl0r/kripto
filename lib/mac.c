@@ -128,3 +128,10 @@ unsigned int kripto_mac_maxtag(const kripto_mac_desc *desc)
 
 	return desc->maxtag;
 }
+
+unsigned int kripto_mac_maxkey(const kripto_mac_desc *desc)
+{
+	assert(desc);
+
+	return desc->maxkey;
+}

@@ -15,6 +15,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <limits.h>
 
 #include <kripto/memwipe.h>
 #include <kripto/hash.h>
@@ -189,6 +190,7 @@ kripto_mac_desc *kripto_mac_hmac(const kripto_hash_desc *hash)
 	s->desc.tag = &hmac_tag;
 	s->desc.destroy = &hmac_destroy;
 	s->desc.maxtag = kripto_hash_maxout(hash);
+	s->desc.maxkey = UINT_MAX;
 
 	return (kripto_mac_desc *)s;
 }
