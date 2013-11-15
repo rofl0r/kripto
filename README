@@ -36,8 +36,7 @@ Block ciphers:
  - Simon128
  - Simon64
  - Simon32
- - DES*
- - 3DES*
+ - DES (TDES)
  - IDEA*?
  - RC5
  - RC2*?
