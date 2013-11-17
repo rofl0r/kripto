@@ -29,7 +29,7 @@ Block ciphers:
  - 3way*?
  - BaseKing*?
  - XTEA
- - Skipjack*?
+ - Skipjack
  - Speck128
  - Speck64
  - Speck32
