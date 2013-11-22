@@ -15,7 +15,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <limits.h>
-#include <assert.h>
 
 #include <kripto/cast.h>
 #include <kripto/memwipe.h>
@@ -106,7 +105,7 @@ static void improved_setup
 	s->i = s->j; /* original RC4: s->i = s->j = 0; */
 }
 
-static uint8_t rc4(kripto_stream *s)
+static inline uint8_t rc4(kripto_stream *s)
 {
 	uint8_t t;
 
@@ -157,12 +156,14 @@ static kripto_stream *rc4i_recreate
 	unsigned int iv_len
 )
 {
-	unsigned int rounds = r;
+	unsigned int i;
 
-	assert(key_len + iv_len <= 256);
-	if(!rounds) rounds = 512;
+	if(!r) r = 512;
 
 	improved_setup(s, key, key_len, iv, iv_len, r);
+
+	/* drop */
+	for(i = 0; i < r; i++) (void)rc4(s);
 
 	return s;
 }
@@ -178,8 +179,6 @@ static kripto_stream *rc4_recreate
 )
 {
 	unsigned int i;
-
-	assert(key_len + iv_len <= 256);
 
 	improved_setup(s, key, key_len, iv, iv_len, 256);
 
@@ -227,17 +226,16 @@ static kripto_stream *rc4_create
 )
 {
 	kripto_stream *s;
-	unsigned int i;
 
-	s = rc4i_create(desc, 256, key, key_len, iv, iv_len);
+	(void)desc;
+
+	s = malloc(sizeof(kripto_stream));
 	if(!s) return 0;
 
 	s->obj.desc = kripto_stream_rc4;
+	s->obj.multof = 1;
 
-	s->i = s->j = 0;
-
-	/* drop ? */
-	for(i = 0; i < r; i++) (void)rc4(s);
+	(void)rc4_recreate(s, r, key, key_len, iv, iv_len);
 
 	return s;
 }
