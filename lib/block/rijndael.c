@@ -35,7 +35,6 @@
 #include <kripto/object/block.h>
 
 #include <kripto/block/rijndael128.h>
-#include <kripto/block/aes.h>
 #include <kripto/block/rijndael256.h>
 
 struct kripto_block
@@ -957,14 +956,12 @@ static const kripto_block_desc rijndael128 =
 	&rijndael128_encrypt,
 	&rijndael128_decrypt,
 	&rijndael_destroy,
+	"Rijndael128",
 	16, /* block size */
 	32 /* max key */
 };
 
 const kripto_block_desc *const kripto_block_rijndael128 = &rijndael128;
-
-const kripto_block_desc *const kripto_block_aes = &rijndael128;
-
 
 /* rijndael256 */
 
@@ -1185,6 +1182,7 @@ static const kripto_block_desc rijndael256 =
 	&rijndael256_encrypt,
 	&rijndael256_decrypt,
 	&rijndael_destroy,
+	"Rijndael256",
 	32, /* block size */
 	32 /* max key */
 };

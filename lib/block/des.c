@@ -28,6 +28,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <kripto/cast.h>
 #include <kripto/loadstore.h>
@@ -47,7 +48,7 @@ struct kripto_block
 	uint32_t dk[3][32];
 };
 
-static const uint16_t bytebit[8] =
+static const uint8_t bytebit[8] =
 {
 	0200, 0100, 0040, 0020, 0010, 0004, 0002, 0001
 };
@@ -102,13 +103,14 @@ static void des_key
 	uint8_t pcr[56];
 	uint32_t kn[32];
 
-	len = (len << 3) - len;
+	memcpy(pcr, key, len);
+	memset(pcr + len, 0, 8 - len);
 
-	for(j = 0; j < len; j++)
+	for(j = 0; j < 56; j++)
 	{
 		l = pc1[j];
 		m = l & 7;
-		pc1m[j] = (key[l >> 3] & bytebit[m]) ? 1 : 0;
+		pc1m[j] = (pcr[l >> 3] & bytebit[m]) ? 1 : 0;
 	}
 
 	for(i = 0; i < 16; i++)
@@ -184,11 +186,11 @@ static void des_setup
 		s->tdes = -1;
 
 		des_key(key, 8, 0, s->ek[0]);
-		des_key(key + 8, len - 16, -1, s->ek[1]);
+		des_key(key + 8, len - 8, -1, s->ek[1]);
 		des_key(key, 8, 0, s->ek[2]);
 
 		des_key(key, 8, -1, s->dk[2]);
-		des_key(key + 8, len - 16, 0, s->dk[1]);
+		des_key(key + 8, len - 8, 0, s->dk[1]);
 		des_key(key, 8, -1, s->dk[0]);
 	}
 	else /* one key */
@@ -533,6 +535,7 @@ static const kripto_block_desc des =
 	&des_encrypt,
 	&des_decrypt,
 	&des_destroy,
+	"DES",
 	8, /* block size */
 	24 /* max key */
 };

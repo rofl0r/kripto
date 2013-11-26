@@ -728,6 +728,7 @@ static const kripto_block_desc aria =
 	&aria_encrypt,
 	&aria_decrypt,
 	&aria_destroy,
+	"ARIA",
 	16, /* block size */
 	32 /* max key */
 };

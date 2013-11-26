@@ -494,6 +494,7 @@ static const kripto_block_desc seed =
 	&seed_encrypt,
 	&seed_decrypt,
 	&seed_destroy,
+	"SEED",
 	16, /* block size */
 	16 /* max key */
 };

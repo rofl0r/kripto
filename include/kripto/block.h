@@ -45,6 +45,8 @@ extern void kripto_block_destroy(kripto_block *s);
 
 extern const kripto_block_desc *kripto_block_getdesc(const kripto_block *s);
 
+extern const char *kripto_block_name(const kripto_block_desc *desc);
+
 extern unsigned int kripto_block_size(const kripto_block_desc *desc);
 
 extern unsigned int kripto_block_maxkey(const kripto_block_desc *desc);

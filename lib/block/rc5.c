@@ -107,11 +107,12 @@ static void rc5_decrypt(const kripto_block *s, const void *ct, void *pt)
 	a = LOAD32L(CU8(ct));
 	b = LOAD32L(CU8(ct) + 4);
 
-	while(--i)
+	while(i)
 	{
-		b = ROR32(b - s->k[i], a & 31) ^ a;
-		--i;
+		b = ROR32(b - s->k[i + 1], a & 31) ^ a;
 		a = ROR32(a - s->k[i], b & 31) ^ b;
+
+		i -= 2;
 	}
 
 	b -= s->k[1];
@@ -183,6 +184,7 @@ static const kripto_block_desc rc5 =
 	&rc5_encrypt,
 	&rc5_decrypt,
 	&rc5_destroy,
+	"RC5",
 	8, /* block size */
 	255 /* max key */
 };

@@ -34,16 +34,16 @@ struct kripto_block
 	uint64_t *k;
 };
 
-#define R(A, B, K)				\
-{								\
-	A = (ROR64(A, 8) + B) ^ K;	\
-	B = ROL64(B, 3) ^ A;		\
+#define R(A, B, K)					\
+{									\
+	A = (ROR64(A, 8) + B) ^ (K);	\
+	B = ROL64(B, 3) ^ A;			\
 }
 
-#define IR(A, B, K)				\
-{								\
-	B = ROR64(B ^ A, 3);		\
-	A = ROL64((A ^ K) - B, 8);	\
+#define IR(A, B, K)					\
+{									\
+	B = ROR64(B ^ A, 3);			\
+	A = ROL64((A ^ (K)) - B, 8);	\
 }
 
 static void speck128_encrypt
@@ -99,7 +99,9 @@ static void speck128_setup
 	unsigned int m;
 	uint64_t k[4] = {0, 0, 0, 0};
 
-	m = ((len + 7) >> 3) - 1;
+	if(len > 24) m = 3;
+	else if(len > 16) m = 2;
+	else m = 1;
 
 	for(i = 0; i < len; i++)
 		k[m - (i >> 3)] |= (uint64_t)key[i] << (56 - ((i & 7) << 3));
@@ -177,6 +179,7 @@ static const kripto_block_desc speck128 =
 	&speck128_encrypt,
 	&speck128_decrypt,
 	&speck128_destroy,
+	"Speck128",
 	16, /* block size */
 	32 /* max key */
 };

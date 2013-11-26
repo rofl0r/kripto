@@ -730,6 +730,7 @@ static const kripto_block_desc serpent =
 	&serpent_encrypt,
 	&serpent_decrypt,
 	&serpent_destroy,
+	"Serpent",
 	16, /* block size */
 	32 /* max key */
 };

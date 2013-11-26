@@ -793,6 +793,7 @@ static const kripto_block_desc anubis =
 	&anubis_encrypt,
 	&anubis_decrypt,
 	&anubis_destroy,
+	"Anubis",
 	16, /* block size */
 	40 /* max key */
 };

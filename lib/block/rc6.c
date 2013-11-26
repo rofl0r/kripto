@@ -220,6 +220,7 @@ static const kripto_block_desc rc6 =
 	&rc6_encrypt,
 	&rc6_decrypt,
 	&rc6_destroy,
+	"RC6",
 	16, /* block size */
 	255 /* max key */
 };

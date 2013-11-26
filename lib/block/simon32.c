@@ -189,6 +189,7 @@ static const kripto_block_desc simon32 =
 	&simon32_encrypt,
 	&simon32_decrypt,
 	&simon32_destroy,
+	"Simon32",
 	4, /* block size */
 	8 /* max key */
 };

@@ -34,16 +34,16 @@ struct kripto_block
 	uint16_t *k;
 };
 
-#define R(A, B, K)				\
-{								\
-	A = (ROR16(A, 7) + B) ^ K;	\
-	B = ROL16(B, 2) ^ A;		\
+#define R(A, B, K)					\
+{									\
+	A = (ROR16(A, 7) + B) ^ (K);	\
+	B = ROL16(B, 2) ^ A;			\
 }
 
-#define IR(A, B, K)				\
-{								\
-	B = ROR16(B ^ A, 2);		\
-	A = ROL16((A ^ K) - B, 7);	\
+#define IR(A, B, K)					\
+{									\
+	B = ROR16(B ^ A, 2);			\
+	A = ROL16((A ^ (K)) - B, 7);	\
 }
 
 static void speck32_encrypt
@@ -96,19 +96,16 @@ static void speck32_setup
 )
 {
 	unsigned int i;
-	unsigned int m;
 	uint16_t k[4] = {0, 0, 0, 0};
 
-	m = ((len + 1) >> 1) - 1;
-
 	for(i = 0; i < len; i++)
-		k[m - (i >> 1)] |= (uint16_t)key[i] << (8 - ((i & 1) << 3));
+		k[3 - (i >> 1)] |= (uint16_t)key[i] << (8 - ((i & 1) << 3));
 
 	s->k[0] = k[0];
 
 	for(i = 0; i < s->rounds - 1;)
 	{
-		R(k[(i % m) + 1], k[0], i);
+		R(k[(i % 3) + 1], k[0], i);
 		s->k[++i] = k[0];
 	}
 
@@ -177,6 +174,7 @@ static const kripto_block_desc speck32 =
 	&speck32_encrypt,
 	&speck32_decrypt,
 	&speck32_destroy,
+	"Speck32",
 	4, /* block size */
 	8 /* max key */
 };

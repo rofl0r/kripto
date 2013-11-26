@@ -256,7 +256,7 @@ static kripto_block *skipjack_recreate
 
 	memcpy(s->k, key, key_len);
 
-	if(key_len < 10) memset(s->k, 0, 10 - key_len);
+	if(key_len < 10) memset(s->k + key_len, 0, 10 - key_len);
 
 	return s;
 }
@@ -294,6 +294,7 @@ static const kripto_block_desc skipjack =
 	&skipjack_encrypt,
 	&skipjack_decrypt,
 	&skipjack_destroy,
+	"Skipjack",
 	8, /* block size */
 	10 /* max key */
 };

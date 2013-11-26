@@ -541,6 +541,7 @@ static const kripto_block_desc blowfish =
 	&blowfish_encrypt,
 	&blowfish_decrypt,
 	&blowfish_destroy,
+	"Blowfish",
 	8, /* block size */
 	56 /* max key */
 };

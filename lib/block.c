@@ -126,6 +126,13 @@ const kripto_block_desc *kripto_block_getdesc(const kripto_block *s)
 	return s->desc;
 }
 
+const char *kripto_block_name(const kripto_block_desc *desc)
+{
+	assert(desc);
+
+	return desc->name;
+}
+
 unsigned int kripto_block_size(const kripto_block_desc *desc)
 {
 	assert(desc);
