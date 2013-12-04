@@ -321,13 +321,13 @@ static void keccak1600_input
 	/* input */
 	for(i = 0; i < len; i++)
 	{
-		s->s[s->i++] ^= CU8(in)[i];
-
 		if(s->i == s->rate)
 		{
 			keccak1600_F(s);
 			s->i = 0;
 		}
+
+		s->s[s->i++] ^= CU8(in)[i];
 	}
 }
 
@@ -419,5 +419,3 @@ static const kripto_hash_desc keccak1600 =
 };
 
 const kripto_hash_desc *const kripto_hash_keccak1600 = &keccak1600;
-
-const kripto_hash_desc *const kripto_hash_sha3 = &keccak1600;

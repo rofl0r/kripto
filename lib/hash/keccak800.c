@@ -307,13 +307,13 @@ static void keccak800_input
 	/* input */
 	for(i = 0; i < len; i++)
 	{
-		s->s[s->i++] ^= CU8(in)[i];
-
 		if(s->i == s->rate)
 		{
 			keccak800_F(s);
 			s->i = 0;
 		}
+
+		s->s[s->i++] ^= CU8(in)[i];
 	}
 }
 
