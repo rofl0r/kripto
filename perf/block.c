@@ -15,7 +15,6 @@
 /* gcc -Wall -Wextra -std=c99 -pedantic perf/block.c -Iinclude lib/libkripto.a -O2 */
 
 #include <stdint.h>
-#include <time.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -48,13 +47,7 @@
 #include <kripto/block/twofish.h>
 #include <kripto/block/xtea.h>
 
-#ifndef CPU
-#define CPU 2000
-#endif
-
-#ifndef ITER
-#define ITER 1000000
-#endif
+#include "perf.h"
 
 #ifndef KEYSTEP
 #define KEYSTEP 1
@@ -72,7 +65,6 @@ static void die(const char *str)
 int main(void)
 {
 	kripto_block *s;
-	unsigned int i;
 	unsigned int n;
 	unsigned int cipher;
 	unsigned int maxkey;
@@ -84,7 +76,7 @@ int main(void)
 		0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
 		0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F
 	};
-	clock_t c;
+	uint64_t cycles;
 	const kripto_block_desc *ciphers[27] =
 	{
 		kripto_block_anubis,
@@ -118,6 +110,8 @@ int main(void)
 
 	memset(t, 0, MAXBLOCK);
 
+	perf_init();
+
 	for(cipher = 0; cipher < 27; cipher++)
 	{
 		if(!ciphers[cipher]) continue;
@@ -131,41 +125,35 @@ int main(void)
 			if(!s) die("kripto_block_create()");
 
 			/* setup */
-			c = clock();
-			for(i = 0; i < ITER; i++)
-			{
-				s = kripto_block_recreate(s, 0, k, n);
-				if(!s) die("kripto_block_recreate()");
-			}
-			c = clock() - c;
+			PERF_START
+			s = kripto_block_recreate(s, 0, k, n);
+			if(!s) die("kripto_block_recreate()");
+			PERF_STOP
 
-			printf("%s %u-bit setup: %.1f cycles\n",
-				kripto_block_name(ciphers[cipher]), n * 8,
-				(float)c / (float)ITER * CPU);
+			printf("%s %u-bit setup: %lu cycles\n",
+				kripto_block_name(ciphers[cipher]), n * 8, cycles);
 
 			/* encrypt */
-			c = clock();
-			for(i = 0; i < ITER; i++)
-				kripto_block_encrypt(s, t, t);
-			c = clock() - c;
+			PERF_START
+			kripto_block_encrypt(s, t, t);
+			PERF_STOP
 
-			printf("%s %u-bit encrypt: %.1fcb, %.1fMB/s\n",
+			printf("%s %u-bit encrypt: %.1f cpb\n",
 				kripto_block_name(ciphers[cipher]), n * 8,
-				(float)c / (float)(ITER * kripto_block_size(ciphers[cipher])) * CPU,
-				(float)(ITER * kripto_block_size(ciphers[cipher])) / ((float)c / (float)CLOCKS_PER_SEC) / 1000000.0);
+				cycles / (float)kripto_block_size(ciphers[cipher]));
 
 			/* decrypt */
-			c = clock();
-			for(i = 0; i < ITER; i++)
-				kripto_block_decrypt(s, t, t);
-			c = clock() - c;
+			PERF_START
+			kripto_block_decrypt(s, t, t);
+			PERF_STOP
 
-			printf("%s %u-bit decrypt: %.1fcb, %.1fMB/s\n",
+			printf("%s %u-bit decrypt: %.1f cpb\n",
 				kripto_block_name(ciphers[cipher]), n * 8,
-				(float)c / (float)(ITER * kripto_block_size(ciphers[cipher])) * CPU,
-				(float)(ITER * kripto_block_size(ciphers[cipher])) / ((float)c / (float)CLOCKS_PER_SEC) / 1000000.0);
+				cycles / (float)kripto_block_size(ciphers[cipher]));
 
 			kripto_block_destroy(s);
+
+			perf_rest();
 
 			putchar('\n');
 		}
