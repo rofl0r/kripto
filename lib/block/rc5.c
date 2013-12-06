@@ -1,15 +1,14 @@
 /*
- * Copyright (C) 2011, 2013 Gregor Pintar <grpintar@gmail.com>
+ * Written in 2013 by Gregor Pintar <grpintar@gmail.com>
  *
- * Permission is granted to deal in this work without any restriction,
- * including unlimited rights to use, publicly perform, publish,
- * reproduce, relicence, modify, merge, and/or distribute in any form,
- * for any purpose, with or without fee, and by any means.
+ * To the extent possible under law, the author(s) have dedicated
+ * all copyright and related and neighboring rights to this software
+ * to the public domain worldwide.
+ * 
+ * This software is distributed without any warranty.
  *
- * This work is provided "AS IS" and WITHOUT WARRANTY of any kind,
- * to the utmost extent permitted by applicable law. In no event
- * shall a licensor, author or contributor be held liable for any
- * issues arising in any way out of dealing in the work.
+ * You should have received a copy of the CC0 Public Domain Dedication.
+ * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  */
 
 #include <stdint.h>
