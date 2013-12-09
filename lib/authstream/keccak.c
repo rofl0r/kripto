@@ -46,6 +46,7 @@ static void keccak_encrypt
 )
 {
 	size_t i;
+	uint8_t t;
 
 	for(i = 0; i < len; i++)
 	{
@@ -55,9 +56,10 @@ static void keccak_encrypt
 			s->i = 0;
 		}
 
-		U8(ct)[i] = CU8(pt)[i] ^ s->buf[s->i++];
+		t = CU8(pt)[i];
+		U8(ct)[i] = t ^ s->buf[s->i++];
 
-		kripto_hash_input(s->hash, U8(ct) + i, 1);
+		kripto_hash_input(s->hash, &t/*U8(ct) + i*/, 1);
 	}
 }
 
@@ -81,15 +83,24 @@ static void keccak_decrypt
 
 		s->buf[s->i] ^= CU8(ct)[i];
 
-		kripto_hash_input(s->hash, CU8(ct) + i, 1);
+		kripto_hash_input(s->hash, s->buf + s->i/*CU8(ct) + i*/, 1);
 
 		U8(pt)[i] = s->buf[s->i];
 	}
 }
 
+static void keccak_header
+(
+	kripto_authstream *s,
+	const void *header,
+	size_t len
+)
+{
+	kripto_hash_input(s->hash, header, len);
+}
+
 static void keccak_tag(kripto_authstream *s, void *tag, unsigned int len)
 {
-	//memcpy(tag, s->buf + s->i, s->rate - s->i);
 	kripto_hash_output(s->hash, tag, len);
 }
 
@@ -174,7 +185,7 @@ static const kripto_authstream_desc keccak1600 =
 	&keccak1600_recreate,
 	&keccak_encrypt,
 	&keccak_decrypt,
-	0, // header
+	&keccak_header,
 	&keccak_tag,
 	&keccak_destroy,
 	UINT_MAX, /* max key */
@@ -258,7 +269,7 @@ static const kripto_authstream_desc keccak800 =
 	&keccak800_recreate,
 	&keccak_encrypt,
 	&keccak_decrypt,
-	0, // header
+	&keccak_header,
 	&keccak_tag,
 	&keccak_destroy,
 	UINT_MAX, /* max key */

@@ -32,6 +32,7 @@ int main(void)
 	unsigned int i;
 
 	// 369e24e2f1153d9482b1d697a8f22fdac4e66e908fe9fe4ca9fa9700c8623d64
+	// 369e24e2f1157351d47f531b1f1809b872db51041f95e6640c5d9a4725f99002
 
 	/* create */
 	s = kripto_authstream_create(kripto_authstream_keccak1600, 0, pt, 16, pt, 16, 97);
