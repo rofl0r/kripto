@@ -18,19 +18,4 @@
 #define VU32(X) ((volatile uint32_t *)(X))
 #define VU64(X) ((volatile uint64_t *)(X))
 
-#define S8(X) ((int8_t *)(X))
-#define S16(X) ((int16_t *)(X))
-#define S32(X) ((int32_t *)(X))
-#define S64(X) ((int64_t *)(X))
-
-#define CS8(X) ((const int8_t *)(X))
-#define CS16(X) ((const int16_t *)(X))
-#define CS32(X) ((const int32_t *)(X))
-#define CS64(X) ((const int64_t *)(X))
-
-#define VS8(X) ((volatile int8_t *)(X))
-#define VS16(X) ((volatile int16_t *)(X))
-#define VS32(X) ((volatile int32_t *)(X))
-#define VS64(X) ((volatile int64_t *)(X))
-
 #endif

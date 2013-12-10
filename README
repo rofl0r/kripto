@@ -40,12 +40,10 @@ Block ciphers:
  - IDEA*?
  - RC5
  - RC2*?
- - CAST5*?
- - CAST6*?
+ - CAST5
  - SAFER
  - SAFER+*?
  - SAFER++*?
- - MARS*?
 
 Modes:
  - CTR
@@ -100,7 +98,7 @@ Hash functions:
  - BLAKE2s
  - BLAKE2b
  - WHIRPOOL
- - Tiger*?
+ - Tiger*
  - MD5
  - RIPEMD*?
  - BMW*?
@@ -116,6 +114,8 @@ MAC's:
  - HMAC
  - OMAC (CMAC1)
  - CMAC2*?
+ - XCBC*
+ - CBC*?
  - Keccak1600
  - Keccak800
  - Skein256
@@ -126,7 +126,6 @@ MAC's:
  - PMAC*?
  - SipHash*?
  - Poly1305*?
- - CBC-MAC*?
 
 Authenticated stream ciphers:
  - Phelix*?
