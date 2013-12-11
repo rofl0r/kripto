@@ -25,9 +25,6 @@ Block ciphers:
  - SEED
  - Blowfish
  - GOST
- - PRESENT*?
- - 3way*?
- - BaseKing*?
  - XTEA
  - Skipjack
  - Speck128
@@ -39,11 +36,14 @@ Block ciphers:
  - DES (TDES)
  - IDEA
  - RC5
- - RC2*?
+ - RC2
  - CAST5
  - SAFER
  - SAFER+*?
  - SAFER++*?
+ - PRESENT*?
+ - 3way*?
+ - BaseKing*?
 
 Modes:
  - CTR

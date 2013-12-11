@@ -22,9 +22,12 @@
 #include <kripto/block/aria.h>
 #include <kripto/block/blowfish.h>
 #include <kripto/block/camellia.h>
+#include <kripto/block/cast5.h>
 #include <kripto/block/des.h>
 #include <kripto/block/gost.h>
+#include <kripto/block/idea.h>
 #include <kripto/block/noekeon.h>
+#include <kripto/block/rc2.h>
 #include <kripto/block/rc5.h>
 #include <kripto/block/rc6.h>
 #include <kripto/block/rijndael128.h>
@@ -76,15 +79,18 @@ int main(void)
 		0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F
 	};
 	uint64_t cycles;
-	const kripto_block_desc *ciphers[27] =
+	const kripto_block_desc *ciphers[30] =
 	{
 		kripto_block_anubis,
 		kripto_block_aria,
 		kripto_block_blowfish,
 		kripto_block_camellia,
+		kripto_block_cast5,
 		kripto_block_des,
 		kripto_block_gost,
+		kripto_block_idea,
 		kripto_block_noekeon,
+		kripto_block_rc2,
 		kripto_block_rc5,
 		kripto_block_rc6,
 		kripto_block_rijndael128,
@@ -111,7 +117,7 @@ int main(void)
 
 	perf_init();
 
-	for(cipher = 0; cipher < 27; cipher++)
+	for(cipher = 0; cipher < 30; cipher++)
 	{
 		if(!ciphers[cipher]) continue;
 
