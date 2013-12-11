@@ -585,7 +585,7 @@ static const uint32_t s8[256] =
    
 static inline uint32_t F1(uint32_t x, uint32_t km, uint8_t kr)
 {
-	x += km;
+	x = km + x;
 	x = ROL32(x, kr);
 
 	return ((S1(x >> 24) ^ S2(x >> 16)) - S3(x >> 8)) + S4(x);
@@ -593,7 +593,7 @@ static inline uint32_t F1(uint32_t x, uint32_t km, uint8_t kr)
    
 static inline uint32_t F2(uint32_t x, uint32_t km, uint8_t kr)
 {
-	x ^= km;
+	x = km ^ x;
 	x = ROL32(x, kr);
 
 	return ((S1(x >> 24) - S2(x >> 16)) + S3(x >> 8)) ^ S4(x);
@@ -601,7 +601,7 @@ static inline uint32_t F2(uint32_t x, uint32_t km, uint8_t kr)
 
 static inline uint32_t F3(uint32_t x, uint32_t km, uint8_t kr)
 {
-	x -= km;
+	x = km - x;
 	x = ROL32(x, kr);
 
 	return ((S1(x >> 24) + S2(x >> 16)) ^ S3(x >> 8)) - S4(x);
