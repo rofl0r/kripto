@@ -17,7 +17,7 @@ CFLAGS="lib/libkripto.a -std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wm
 #cc test/block/rijndael256.c $CFLAGS -o t
 #./t
 
-cc test/block/cast5.c $CFLAGS -o t
+cc test/block/idea.c $CFLAGS -o t
 ./t
 
 #cc test/block/xtea.c $CFLAGS -o t
