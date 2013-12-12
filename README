@@ -25,6 +25,7 @@ Block ciphers:
  - SEED
  - Blowfish
  - GOST
+ - TEA
  - XTEA
  - Skipjack
  - Speck128

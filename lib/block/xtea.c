@@ -19,7 +19,6 @@
 
 #include <kripto/cast.h>
 #include <kripto/loadstore.h>
-#include <kripto/rotate.h>
 #include <kripto/memwipe.h>
 #include <kripto/block.h>
 #include <kripto/desc/block.h>

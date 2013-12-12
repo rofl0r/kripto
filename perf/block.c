@@ -43,6 +43,7 @@
 #include <kripto/block/speck32.h>
 #include <kripto/block/speck64.h>
 #include <kripto/block/speck128.h>
+#include <kripto/block/tea.h>
 #include <kripto/block/threefish256.h>
 #include <kripto/block/threefish512.h>
 #include <kripto/block/threefish1024.h>
@@ -79,7 +80,7 @@ int main(void)
 		0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F
 	};
 	uint64_t cycles;
-	const kripto_block_desc *ciphers[30] =
+	const kripto_block_desc *ciphers[31] =
 	{
 		kripto_block_anubis,
 		kripto_block_aria,
@@ -106,6 +107,7 @@ int main(void)
 		kripto_block_speck32,
 		kripto_block_speck64,
 		kripto_block_speck128,
+		kripto_block_tea,
 		kripto_block_threefish256,
 		kripto_block_threefish512,
 		kripto_block_threefish1024,
@@ -117,7 +119,7 @@ int main(void)
 
 	perf_init();
 
-	for(cipher = 0; cipher < 30; cipher++)
+	for(cipher = 0; cipher < 31; cipher++)
 	{
 		if(!ciphers[cipher]) continue;
 
