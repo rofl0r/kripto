@@ -11,7 +11,8 @@
  * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  */
 
-/* gcc -Wall -Wextra -std=c99 -pedantic perf/block.c -Iinclude lib/libkripto.a -O2 */
+/* gcc -Wall -Wextra -std=c99 -pedantic perf/block.c -Iinclude lib/libkripto.a -O2 -DPERF_UNIX -D_GNU_SOURCE */
+/* gcc -Wall -Wextra -std=c99 -pedantic perf/block.c -Iinclude lib/libkripto.a -O2 -DPERF_WINDOWS /lib/w32api/libpowrprof.a */
 
 #include <stdint.h>
 #include <stdio.h>
@@ -79,7 +80,7 @@ int main(void)
 		0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
 		0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F
 	};
-	uint64_t cycles;
+	perf_int cycles;
 	const kripto_block_desc *ciphers[31] =
 	{
 		kripto_block_anubis,
@@ -161,6 +162,7 @@ int main(void)
 			kripto_block_destroy(s);
 
 			perf_rest();
+			fflush(stdout);
 
 			putchar('\n');
 		}
