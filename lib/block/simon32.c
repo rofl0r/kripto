@@ -33,7 +33,7 @@ struct kripto_block
 	uint16_t *k;
 };
 
-#define F(X) ((ROL16(X, 1) & ROL16(X, 8)) ^ ROL16(X, 2))
+#define F(X) ((ROL16_01(X) & ROL16_08(X)) ^ ROL16_02(X))
 
 static void simon32_encrypt
 (
@@ -118,8 +118,8 @@ static void simon32_setup
 
 	for(i = 4; i < s->rounds; i++)
 	{
-		t = ROR16(s->k[i - 1], 3) ^ s->k[i - 3];
-		t ^= ROR16(t, 1) ^ ~s->k[i - 4] ^ 3;
+		t = ROR16_03(s->k[i - 1]) ^ s->k[i - 3];
+		t ^= ROR16_01(t) ^ ~s->k[i - 4] ^ 3;
 		s->k[i] = t ^ ((0x19C3522FB386A45F >> ((i - 4) % 62)) & 1);
 	}
 

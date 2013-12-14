@@ -54,7 +54,7 @@
 #include "perf.h"
 
 #ifndef KEYSTEP
-#define KEYSTEP 1
+#define KEYSTEP 4
 #endif
 
 #define MAXBLOCK 255

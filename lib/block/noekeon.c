@@ -45,12 +45,12 @@ static const uint8_t rc[34] =
 #define THETA(X0, X1, X2, X3, K0, K1, K2, K3)	\
 {												\
 	T = X0 ^ X2;								\
-	T ^= ROL32(T, 8) ^ ROR32(T, 8);				\
+	T ^= ROL32_08(T) ^ ROR32_08(T);				\
 	X1 ^= T;									\
 	X3 ^= T;									\
 	X0 ^= K0; X1 ^= K1; X2 ^= K2; X3 ^= K3;		\
 	T = X1 ^ X3;								\
-	T ^= ROL32(T, 8) ^ ROR32(T, 8);				\
+	T ^= ROL32_08(T) ^ ROR32_08(T);				\
 	X0 ^= T;									\
 	X2 ^= T;									\
 }
@@ -67,16 +67,16 @@ static const uint8_t rc[34] =
 
 #define PI1(X1, X2, X3)	\
 {						\
-	X1 = ROL32(X1, 1);	\
-	X2 = ROL32(X2, 5);	\
-	X3 = ROL32(X3, 2);	\
+	X1 = ROL32_01(X1);	\
+	X2 = ROL32_05(X2);	\
+	X3 = ROL32_02(X3);	\
 }
 
 #define PI2(X1, X2, X3)	\
 {						\
-	X1 = ROR32(X1, 1);	\
-	X2 = ROR32(X2, 5);	\
-	X3 = ROR32(X3, 2);	\
+	X1 = ROR32_01(X1);	\
+	X2 = ROR32_05(X2);	\
+	X3 = ROR32_02(X3);	\
 }
 
 static void noekeon_encrypt

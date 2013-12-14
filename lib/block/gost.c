@@ -198,7 +198,7 @@ static uint32_t F(uint32_t x)
 		| S32[(uint8_t)(x >> 8)] << 8
 		| S10[(uint8_t)x];
 
-	return ROL32(x, 11);
+	return ROL32_11(x);
 }
 
 static void gost_encrypt

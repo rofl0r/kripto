@@ -33,7 +33,7 @@ struct kripto_block
 	uint64_t *k;
 };
 
-#define F(X) ((ROL64(X, 1) & ROL64(X, 8)) ^ ROL64(X, 2))
+#define F(X) ((ROL64_01(X) & ROL64_08(X)) ^ ROL64_02(X))
 
 static void simon128_encrypt
 (
@@ -129,9 +129,9 @@ static void simon128_setup
 
 	for(i = m; i < s->rounds; i++)
 	{
-		t = ROR64(s->k[i - 1], 3);
+		t = ROR64_03(s->k[i - 1]);
 		if(m == 4) t ^= s->k[i - 3];
-		t ^= ROR64(t, 1) ^ ~s->k[i - m] ^ 3;
+		t ^= ROR64_01(t) ^ ~s->k[i - m] ^ 3;
 		s->k[i] = t ^ ((z[m - 2] >> ((i - m) % 62)) & 1);
 	}
 

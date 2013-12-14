@@ -99,9 +99,9 @@ static void rc6_encrypt(const kripto_block *s, const void *pt, void *ct)
 		m0 = ROL32(b * ((b << 1) | 1), 5);
 		m1 = ROL32(d * ((d << 1) | 1), 5);
 
-		t = ROL32(a ^ m0, m1 & 31) + s->k[i++];
+		t = ROL32(a ^ m0, m1) + s->k[i++];
 		a = b;
-		b = ROL32(c ^ m1, m0 & 31) + s->k[i++];
+		b = ROL32(c ^ m1, m0) + s->k[i++];
 		c = d;
 		d = t;
 	}
@@ -141,9 +141,9 @@ static void rc6_decrypt(const kripto_block *s, const void *ct, void *pt)
 
 		t = d;
 		d = c;
-		c = ROR32(b - s->k[i + 1], m0 & 31) ^ m1;
+		c = ROR32(b - s->k[i + 1], m0) ^ m1;
 		b = a;
-		a = ROR32(t - s->k[i], m1 & 31) ^ m0;
+		a = ROR32(t - s->k[i], m1) ^ m0;
 
 		i -= 2;
 	}

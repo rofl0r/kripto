@@ -28,12 +28,10 @@
 struct kripto_block
 {
 	struct kripto_block_object obj;
-	unsigned int rounds;
+	unsigned int r;
 	size_t size;
 	uint32_t *k;
 };
-
-#define RC5_K_LEN(r) (((r) << 1) + 2)
 
 static void rc5_setup
 (
@@ -45,10 +43,10 @@ static void rc5_setup
 	unsigned int i;
 	unsigned int j;
 	unsigned int k;
-	const unsigned int ls = (key_len + 3) >> 2;
 	uint32_t a;
 	uint32_t b;
 	uint32_t x[64];
+	const unsigned int ls = (key_len + 3) >> 2;
 
 	for(i = 0; i < ls; i++) x[i] = 0;
 
@@ -56,20 +54,19 @@ static void rc5_setup
 		x[j >> 2] = (x[j >> 2] << 8) | key[j];
 
 	*s->k = 0xB7E15163;
-	for(i = 1; i < RC5_K_LEN(s->rounds); i++)
-		s->k[i] = s->k[i-1] + 0x9E3779B9;
+	for(i = 1; i < ((s->r + 1) << 1); i++)
+		s->k[i] = s->k[i - 1] + 0x9E3779B9;
 
 	a = b = i = j = k = 0;
-	while(k < RC5_K_LEN(s->rounds) * 3)
+	while(k < (s->r + 1) * 6)
 	{
-		a = s->k[i] = ROL32(s->k[i] + a + b, 3);
+		a = s->k[i] = ROL32_03(s->k[i] + a + b);
 		b = x[j] = ROL32(x[j] + a + b, a + b);
-		if(++i == RC5_K_LEN(s->rounds)) i = 0;
+		if(++i == ((s->r + 1) << 1)) i = 0;
 		if(++j == ls) j = 0;
 		k++;
 	}
 
-	/* wipe */
 	kripto_memwipe(x, ls << 2);
 	kripto_memwipe(&a, sizeof(uint32_t));
 	kripto_memwipe(&b, sizeof(uint32_t));
@@ -87,10 +84,10 @@ static void rc5_encrypt(const kripto_block *s, const void *pt, void *ct)
 	a += s->k[0];
 	b += s->k[1];
 
-	while(i < s->rounds << 1)
+	while(i <= s->r << 1)
 	{
-		a = ROL32(a ^ b, b & 31) + s->k[i++];
-		b = ROL32(b ^ a, a & 31) + s->k[i++];
+		a ^= b; a = ROL32(a, b) + s->k[i++];
+		b ^= a; b = ROL32(b, a) + s->k[i++];
 	}
 
 	STORE32L(a, U8(ct));
@@ -101,17 +98,15 @@ static void rc5_decrypt(const kripto_block *s, const void *ct, void *pt)
 {
 	uint32_t a;
 	uint32_t b;
-	unsigned int i = s->rounds << 1;
+	unsigned int i = (s->r + 1) << 1;
 
 	a = LOAD32L(CU8(ct));
 	b = LOAD32L(CU8(ct) + 4);
 
-	while(i)
+	while(i > 2)
 	{
-		b = ROR32(b - s->k[i + 1], a & 31) ^ a;
-		a = ROR32(a - s->k[i], b & 31) ^ b;
-
-		i -= 2;
+		b -= s->k[--i]; b = ROR32(b, a) ^ a;
+		a -= s->k[--i]; a = ROR32(a, b) ^ b;
 	}
 
 	b -= s->k[1];
@@ -132,12 +127,12 @@ static kripto_block *rc5_create
 
 	if(!r) r = 12;
 
-	s = malloc(sizeof(kripto_block) + (RC5_K_LEN(r) << 2));
+	s = malloc(sizeof(kripto_block) + ((r + 1) << 3));
 	if(!s) return 0;
 
 	s->obj.desc = kripto_block_rc5;
-	s->size = sizeof(kripto_block) + (RC5_K_LEN(r) << 2);
-	s->rounds = r;
+	s->size = sizeof(kripto_block) + ((r + 1) << 3);
+	s->r = r;
 	s->k = (uint32_t *)((uint8_t *)s + sizeof(kripto_block));
 
 	rc5_setup(s, key, key_len);
@@ -161,14 +156,14 @@ static kripto_block *rc5_recreate
 {
 	if(!r) r = 12;
 
-	if(sizeof(kripto_block) + (RC5_K_LEN(r) << 2) > s->size)
+	if(sizeof(kripto_block) + ((r + 1) << 3) > s->size)
 	{
 		rc5_destroy(s);
 		s = rc5_create(r, key, key_len);
 	}
 	else
 	{
-		s->rounds = r;
+		s->r = r;
 		rc5_setup(s, key, key_len);
 	}
 

@@ -35,14 +35,14 @@ struct kripto_block
 
 #define R(A, B, K)					\
 {									\
-	A = (ROR64(A, 8) + B) ^ (K);	\
-	B = ROL64(B, 3) ^ A;			\
+	A = (ROR64_08(A) + B) ^ (K);	\
+	B = ROL64_03(B) ^ A;			\
 }
 
 #define IR(A, B, K)					\
 {									\
-	B = ROR64(B ^ A, 3);			\
-	A = ROL64((A ^ (K)) - B, 8);	\
+	B = ROR64_03(B ^ A);			\
+	A = ROL64_08((A ^ (K)) - B);	\
 }
 
 static void speck128_encrypt

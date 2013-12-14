@@ -127,22 +127,22 @@ static void keccak800_F(kripto_hash *s)
 		c3 = a3 ^ a8 ^ a13 ^ a18 ^ a23;
 		c4 = a4 ^ a9 ^ a14 ^ a19 ^ a24;
 
-		d0 = ROL32(c1, 1) ^ c4;
-		d1 = ROL32(c2, 1) ^ c0;
-		d2 = ROL32(c3, 1) ^ c1;
-		d3 = ROL32(c4, 1) ^ c2;
-		d4 = ROL32(c0, 1) ^ c3;
+		d0 = ROL32_01(c1) ^ c4;
+		d1 = ROL32_01(c2) ^ c0;
+		d2 = ROL32_01(c3) ^ c1;
+		d3 = ROL32_01(c4) ^ c2;
+		d4 = ROL32_01(c0) ^ c3;
 
 		a0 ^= d0;
 		c0 = a0;
 		a6 ^= d1;
-		c1 = ROL32(a6, 12);
+		c1 = ROL32_12(a6);
 		a12 ^= d2;
-		c2 = ROL32(a12, 11);
+		c2 = ROL32_11(a12);
 		a18 ^= d3;
-		c3 = ROL32(a18, 21);
+		c3 = ROL32_21(a18);
 		a24 ^= d4;
-		c4 = ROL32(a24, 14);
+		c4 = ROL32_14(a24);
 
 		b0 = c0 ^ ((~c1) & c2) ^ rc[i];
 		b1 = c1 ^ ((~c2) & c3);
@@ -151,15 +151,15 @@ static void keccak800_F(kripto_hash *s)
 		b4 = c4 ^ ((~c0) & c1);
 
 		a3 ^= d3;
-		c0 = ROL32(a3, 28);
+		c0 = ROL32_28(a3);
 		a9 ^= d4;
-		c1 = ROL32(a9, 20);
+		c1 = ROL32_20(a9);
 		a10 ^= d0;
-		c2 = ROL32(a10, 3);
+		c2 = ROL32_03(a10);
 		a16 ^= d1;
-		c3 = ROL32(a16, 13);
+		c3 = ROL32_13(a16);
 		a22 ^= d2;
-		c4 = ROL32(a22, 29);
+		c4 = ROL32_29(a22);
 
 		b5 = c0 ^ ((~c1) & c2);
 		b6 = c1 ^ ((~c2) & c3);
@@ -168,15 +168,15 @@ static void keccak800_F(kripto_hash *s)
 		b9 = c4 ^ ((~c0) & c1);
 
 		a1 ^= d1;
-		c0 = ROL32(a1, 1);
+		c0 = ROL32_01(a1);
 		a7 ^= d2;
-		c1 = ROL32(a7, 6);
+		c1 = ROL32_06(a7);
 		a13 ^= d3;
-		c2 = ROL32(a13, 25);
+		c2 = ROL32_25(a13);
 		a19 ^= d4;
-		c3 = ROL32(a19, 8);
+		c3 = ROL32_08(a19);
 		a20 ^= d0;
-		c4 = ROL32(a20, 18);
+		c4 = ROL32_18(a20);
 
 		b10 = c0 ^ ((~c1) & c2);
 		b11 = c1 ^ ((~c2) & c3);
@@ -185,15 +185,15 @@ static void keccak800_F(kripto_hash *s)
 		b14 = c4 ^ ((~c0) & c1);
 
 		a4 ^= d4;
-		c0 = ROL32(a4, 27);
+		c0 = ROL32_27(a4);
 		a5 ^= d0;
-		c1 = ROL32(a5, 4);
+		c1 = ROL32_04(a5);
 		a11 ^= d1;
-		c2 = ROL32(a11, 10);
+		c2 = ROL32_10(a11);
 		a17 ^= d2;
-		c3 = ROL32(a17, 15);
+		c3 = ROL32_15(a17);
 		a23 ^= d3;
-		c4 = ROL32(a23, 24);
+		c4 = ROL32_24(a23);
 
 		b15 = c0 ^ ((~c1) & c2);
 		b16 = c1 ^ ((~c2) & c3);
@@ -202,15 +202,15 @@ static void keccak800_F(kripto_hash *s)
 		b19 = c4 ^ ((~c0) & c1);
 
 		a2 ^= d2;
-		c0 = ROL32(a2, 30);
+		c0 = ROL32_30(a2);
 		a8 ^= d3;
-		c1 = ROL32(a8, 23);
+		c1 = ROL32_23(a8);
 		a14 ^= d4;
-		c2 = ROL32(a14, 7);
+		c2 = ROL32_07(a14);
 		a15 ^= d0;
-		c3 = ROL32(a15, 9);
+		c3 = ROL32_09(a15);
 		a21 ^= d1;
-		c4 = ROL32(a21, 2);
+		c4 = ROL32_02(a21);
 
 		b20 = c0 ^ ((~c1) & c2);
 		b21 = c1 ^ ((~c2) & c3);

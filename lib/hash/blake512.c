@@ -109,14 +109,14 @@ static kripto_hash *blake512_recreate
 #define G(A, B, C, D, M, S0, S1)				\
 {												\
 	A += B + ((M)[(S0)] ^ k[(S1)]);				\
-	D = ROR64(D ^ A, 32);						\
+	D = ROR64_32(D ^ A);						\
 	C += D;										\
-	B = ROR64(B ^ C, 25);						\
+	B = ROR64_25(B ^ C);						\
 												\
 	A += B + ((M)[(S1)] ^ k[(S0)]);				\
-	D = ROR64(D ^ A, 16);						\
+	D = ROR64_16(D ^ A);						\
 	C += D;										\
-	B = ROR64(B ^ C, 11);						\
+	B = ROR64_11(B ^ C);						\
 }
 
 static void blake512_process(kripto_hash *s, const uint8_t *data)

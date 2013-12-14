@@ -105,14 +105,14 @@ static kripto_hash *blake256_recreate
 #define G(A, B, C, D, M, S0, S1)				\
 {												\
 	A += B + ((M)[(S0)] ^ k[(S1)]);				\
-	D = ROR32(D ^ A, 16);						\
+	D = ROR32_16(D ^ A);						\
 	C += D;										\
-	B = ROR32(B ^ C, 12);						\
+	B = ROR32_12(B ^ C);						\
 												\
 	A += B + ((M)[(S1)] ^ k[(S0)]);				\
-	D = ROR32(D ^ A, 8);						\
+	D = ROR32_08(D ^ A);						\
 	C += D;										\
-	B = ROR32(B ^ C, 7);						\
+	B = ROR32_07(B ^ C);						\
 }
 
 static void blake256_process(kripto_hash *s, const uint8_t *data)

@@ -35,10 +35,10 @@ struct kripto_stream
 
 #define QR(A, B, C, D)		\
 {							\
-	B ^= ROL32(A + D,  7);	\
-	C ^= ROL32(B + A,  9);	\
-	D ^= ROL32(C + B, 13);	\
-	A ^= ROL32(D + C, 18);	\
+	B ^= ROL32_07(A + D);	\
+	C ^= ROL32_09(B + A);	\
+	D ^= ROL32_13(C + B);	\
+	A ^= ROL32_18(D + C);	\
 }
 
 static void salsa20_core

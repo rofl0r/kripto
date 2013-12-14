@@ -272,7 +272,7 @@ static void safer_setup
 
 	for(i = 0; i < 8; i++)
 	{
-		ka[8] ^= ka[i] = ROL8(key[i], 5);
+		ka[8] ^= ka[i] = ROL8_5(key[i]);
 		kb[8] ^= kb[i] = *k++ = key2[i];
 	}
 
@@ -280,8 +280,8 @@ static void safer_setup
 	{
 		for(j = 0; j <= 8; j++)
 		{
-			ka[j] = ROL8(ka[j], 6);
-			kb[j] = ROL8(kb[j], 6);
+			ka[j] = ROL8_6(ka[j]);
+			kb[j] = ROL8_6(kb[j]);
 		}
 
 		for(j = 0; j < 8; j++)

@@ -66,17 +66,17 @@ static void threefish256_encrypt
 
 	while(r <= s->rounds >> 2)
 	{
-		x0 += x1; x1 = ROL64(x1, 14); x1 ^= x0;
-		x2 += x3; x3 = ROL64(x3, 16); x3 ^= x2;
+		x0 += x1; x1 = ROL64_14(x1); x1 ^= x0;
+		x2 += x3; x3 = ROL64_16(x3); x3 ^= x2;
 
-		x0 += x3; x3 = ROL64(x3, 52); x3 ^= x0;
-		x2 += x1; x1 = ROL64(x1, 57); x1 ^= x2;
+		x0 += x3; x3 = ROL64_52(x3); x3 ^= x0;
+		x2 += x1; x1 = ROL64_57(x1); x1 ^= x2;
 
-		x0 += x1; x1 = ROL64(x1, 23); x1 ^= x0;
-		x2 += x3; x3 = ROL64(x3, 40); x3 ^= x2;
+		x0 += x1; x1 = ROL64_23(x1); x1 ^= x0;
+		x2 += x3; x3 = ROL64_40(x3); x3 ^= x2;
 
-		x0 += x3; x3 = ROL64(x3, 5); x3 ^= x0;
-		x2 += x1; x1 = ROL64(x1, 37); x1 ^= x2;
+		x0 += x3; x3 = ROL64_05(x3); x3 ^= x0;
+		x2 += x1; x1 = ROL64_37(x1); x1 ^= x2;
 
 		x0 += s->k[r % 5];
 		x1 += s->k[(r + 1) % 5] + s->t[r % 3];
@@ -84,17 +84,17 @@ static void threefish256_encrypt
 		x3 += s->k[(r + 3) % 5] + r;
 		r++;
 
-		x0 += x1; x1 = ROL64(x1, 25); x1 ^= x0;
-		x2 += x3; x3 = ROL64(x3, 33); x3 ^= x2;
+		x0 += x1; x1 = ROL64_25(x1); x1 ^= x0;
+		x2 += x3; x3 = ROL64_33(x3); x3 ^= x2;
 
-		x0 += x3; x3 = ROL64(x3, 46); x3 ^= x0;
-		x2 += x1; x1 = ROL64(x1, 12); x1 ^= x2;
+		x0 += x3; x3 = ROL64_46(x3); x3 ^= x0;
+		x2 += x1; x1 = ROL64_12(x1); x1 ^= x2;
 
-		x0 += x1; x1 = ROL64(x1, 58); x1 ^= x0;
-		x2 += x3; x3 = ROL64(x3, 22); x3 ^= x2;
+		x0 += x1; x1 = ROL64_58(x1); x1 ^= x0;
+		x2 += x3; x3 = ROL64_22(x3); x3 ^= x2;
 
-		x0 += x3; x3 = ROL64(x3, 32); x3 ^= x0;
-		x2 += x1; x1 = ROL64(x1, 32); x1 ^= x2;
+		x0 += x3; x3 = ROL64_32(x3); x3 ^= x0;
+		x2 += x1; x1 = ROL64_32(x1); x1 ^= x2;
 
 		x0 += s->k[r % 5];
 		x1 += s->k[(r + 1) % 5] + s->t[r % 3];
@@ -130,17 +130,17 @@ static void threefish256_decrypt
 		x3 -= s->k[(r + 3) % 5] + r;
 		r--;
 
-		x1 = ROR64(x1 ^ x2, 32); x2 -= x1;
-		x3 = ROR64(x3 ^ x0, 32); x0 -= x3;
+		x1 = ROR64_32(x1 ^ x2); x2 -= x1;
+		x3 = ROR64_32(x3 ^ x0); x0 -= x3;
 
-		x3 = ROR64(x3 ^ x2, 22); x2 -= x3;
-		x1 = ROR64(x1 ^ x0, 58); x0 -= x1;
+		x3 = ROR64_22(x3 ^ x2); x2 -= x3;
+		x1 = ROR64_58(x1 ^ x0); x0 -= x1;
 
-		x1 = ROR64(x1 ^ x2, 12); x2 -= x1;
-		x3 = ROR64(x3 ^ x0, 46); x0 -= x3;
+		x1 = ROR64_12(x1 ^ x2); x2 -= x1;
+		x3 = ROR64_46(x3 ^ x0); x0 -= x3;
 
-		x3 = ROR64(x3 ^ x2, 33); x2 -= x3;
-		x1 = ROR64(x1 ^ x0, 25); x0 -= x1;
+		x3 = ROR64_33(x3 ^ x2); x2 -= x3;
+		x1 = ROR64_25(x1 ^ x0); x0 -= x1;
 
 		x0 -= s->k[r % 5];
 		x1 -= s->k[(r + 1) % 5] + s->t[r % 3];
@@ -148,17 +148,17 @@ static void threefish256_decrypt
 		x3 -= s->k[(r + 3) % 5] + r;
 		r--;
 
-		x1 = ROR64(x1 ^ x2, 37); x2 -= x1;
-		x3 = ROR64(x3 ^ x0, 5); x0 -= x3;
+		x1 = ROR64_37(x1 ^ x2); x2 -= x1;
+		x3 = ROR64_05(x3 ^ x0); x0 -= x3;
 
-		x3 = ROR64(x3 ^ x2, 40); x2 -= x3;
-		x1 = ROR64(x1 ^ x0, 23); x0 -= x1;
+		x3 = ROR64_40(x3 ^ x2); x2 -= x3;
+		x1 = ROR64_23(x1 ^ x0); x0 -= x1;
 
-		x1 = ROR64(x1 ^ x2, 57); x2 -= x1;
-		x3 = ROR64(x3 ^ x0, 52); x0 -= x3;
+		x1 = ROR64_57(x1 ^ x2); x2 -= x1;
+		x3 = ROR64_52(x3 ^ x0); x0 -= x3;
 
-		x3 = ROR64(x3 ^ x2, 16); x2 -= x3;
-		x1 = ROR64(x1 ^ x0, 14); x0 -= x1;
+		x3 = ROR64_16(x3 ^ x2); x2 -= x3;
+		x1 = ROR64_14(x1 ^ x0); x0 -= x1;
 	}
 
 	x0 -= s->k[0];

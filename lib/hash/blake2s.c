@@ -86,14 +86,14 @@ static kripto_hash *blake2s_recreate
 #define G(A, B, C, D, M0, M1)	\
 {								\
 	A += B + (M0);				\
-	D = ROR32(D ^ A, 16);		\
+	D = ROR32_16(D ^ A);		\
 	C += D;						\
-	B = ROR32(B ^ C, 12);		\
+	B = ROR32_12(B ^ C);		\
 								\
 	A += B + (M1);				\
-	D = ROR32(D ^ A, 8);		\
+	D = ROR32_08(D ^ A);		\
 	C += D;						\
-	B = ROR32(B ^ C, 7);		\
+	B = ROR32_07(B ^ C);		\
 }
 
 static void blake2s_process(kripto_hash *s, const uint8_t *data)

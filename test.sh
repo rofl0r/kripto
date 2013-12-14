@@ -17,8 +17,10 @@ CFLAGS="lib/libkripto.a -std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wm
 #cc test/block/rijndael256.c $CFLAGS -o t
 #./t
 
-cc test/block/idea.c $CFLAGS -o t
+cc test/block/rc5.c $CFLAGS -o t
 ./t
+
+#find test/ -name "*.c" -exec gcc {} $CFLAGS -o t \; -exec t \;
 
 #cc test/block/xtea.c $CFLAGS -o t
 #./t

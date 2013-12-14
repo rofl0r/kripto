@@ -335,7 +335,7 @@ static uint64_t F(const uint64_t x)
 		^ SP4404[(uint8_t)(x >> 32)];
 
 	hi ^= lo;
-	lo = ROR32(lo, 8) ^ hi;
+	lo = ROR32_08(lo) ^ hi;
 
 	return (((uint64_t)hi) << 32) | (uint64_t)lo;
 }
@@ -347,7 +347,7 @@ static uint64_t FL0(const uint64_t x, const uint64_t k)
 
 	hi = (uint32_t)(x >> 32);
 	lo = (uint32_t)x;
-	lo ^= ROL32(hi & (uint32_t)(k >> 32), 1);
+	lo ^= ROL32_01(hi & (uint32_t)(k >> 32));
 	hi ^= lo | (uint32_t)k;
 
 	return (((uint64_t)hi) << 32) | (uint64_t)lo;
@@ -361,7 +361,7 @@ static uint64_t FL1(const uint64_t x, const uint64_t k)
 	hi = (uint32_t)(x >> 32);
 	lo = (uint32_t)x;
 	hi ^= lo | (uint32_t)k;
-	lo ^= ROL32(hi & (uint32_t)(k >> 32), 1);
+	lo ^= ROL32_01(hi & (uint32_t)(k >> 32));
 
 	return (((uint64_t)hi) << 32) | (uint64_t)lo;
 }

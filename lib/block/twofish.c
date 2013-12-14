@@ -1015,10 +1015,10 @@ static void twofish_setup
 		A = h(S, K, key_len, 0);
 
 		S[0] = S[1] = S[2] = S[3] = (x << 1) | 1;
-		B = ROL32(h(S, K, key_len, 1), 8);
+		B = ROL32_08(h(S, K, key_len, 1));
 
 		s->k[x << 1] = A + B;
-		s->k[(x << 1) | 1] = ROL32(A + (B << 1), 9);
+		s->k[(x << 1) | 1] = ROL32_09(A + (B << 1));
 	}
 
 	/* make sboxes */
@@ -1103,13 +1103,13 @@ static void twofish_encrypt
 	{
 		g1 = G1(x1, s);
 		g0 = G0(x0, s) + g1;
-		x2 = ROR32(x2 ^ (g0 + k[0]), 1);
-		x3 = ROL32(x3, 1) ^ (g1 + g0 + k[1]);
+		x2 = ROR32_01(x2 ^ (g0 + k[0]));
+		x3 = ROL32_01(x3) ^ (g1 + g0 + k[1]);
 
 		g1 = G1(x3, s);
 		g0 = G0(x2, s) + g1;
-		x0 = ROR32(x0 ^ (g0 + k[2]), 1);
-		x1 = ROL32(x1, 1) ^ (g1 + g0 + k[3]);
+		x0 = ROR32_01(x0 ^ (g0 + k[2]));
+		x1 = ROL32_01(x1) ^ (g1 + g0 + k[3]);
 
 		k += 4;
 	}
@@ -1153,13 +1153,13 @@ static void twofish_decrypt
 	{
 		g1 = G1(x3, s);
 		g0 = G0(x2, s) + g1;
-		x0 = ROL32(x0, 1) ^ (g0 + k[2]);
-		x1 = ROR32(x1 ^ (g1 + g0 + k[3]), 1);
+		x0 = ROL32_01(x0) ^ (g0 + k[2]);
+		x1 = ROR32_01(x1 ^ (g1 + g0 + k[3]));
 
 		g1 = G1(x1, s);
 		g0 = G0(x0, s) + g1;
-		x2 = ROL32(x2, 1) ^ (g0 + k[0]);
-		x3 = ROR32(x3 ^ (g1 + g0 + k[1]), 1);
+		x2 = ROL32_01(x2) ^ (g0 + k[0]);
+		x3 = ROR32_01(x3 ^ (g1 + g0 + k[1]));
 
 		k -= 4;
 	}

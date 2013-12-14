@@ -118,16 +118,16 @@ static void rc2_encrypt(const kripto_block *s, const void *pt, void *ct)
 	for(i = 0; i < 16; i++)
 	{
 		x0 += (x1 & ~x3) + (x2 & x3) + s->k[i << 2];
-		x0 = ROL16(x0, 1);
+		x0 = ROL16_01(x0);
 
 		x1 += (x2 & ~x0) + (x3 & x0) + s->k[(i << 2) + 1];
-		x1 = ROL16(x1, 2);
+		x1 = ROL16_02(x1);
 
 		x2 += (x3 & ~x1) + (x0 & x1) + s->k[(i << 2) + 2];
-		x2 = ROL16(x2, 3);
+		x2 = ROL16_03(x2);
 
 		x3 += (x0 & ~x2) + (x1 & x2) + s->k[(i << 2) + 3];
-		x3 = ROL16(x3, 5);
+		x3 = ROL16_05(x3);
 
 		if(i == 4 || i == 10)
 		{
@@ -167,16 +167,16 @@ static void rc2_decrypt(const kripto_block *s, const void *ct, void *pt)
 			x0 -= s->k[x3 & 63];
 		}
 
-		x3 = ROR16(x3, 5);
+		x3 = ROR16_05(x3);
 		x3 -= (x0 & ~x2) + (x1 & x2) + s->k[(i << 2) + 3];
 
-		x2 = ROR16(x2, 3);
+		x2 = ROR16_03(x2);
 		x2 -= (x3 & ~x1) + (x0 & x1) + s->k[(i << 2) + 2];
 
-		x1 = ROR16(x1, 2);
+		x1 = ROR16_02(x1);
 		x1 -= (x2 & ~x0) + (x3 & x0) + s->k[(i << 2) + 1];
 
-		x0 = ROR16(x0, 1);
+		x0 = ROR16_01(x0);
 		x0 -= (x1 & ~x3) + (x2 & x3) + s->k[i << 2];
 	}
 

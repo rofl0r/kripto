@@ -422,7 +422,7 @@ static void seed_setup
 			k[1] = (k[1] >> 8) | (t0 << 24);
 		}
 
-		kc = ROL32(kc, 1);
+		kc = ROL32_01(kc);
 	}
 
 	/* wipe */

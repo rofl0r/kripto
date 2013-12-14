@@ -383,15 +383,15 @@ static void des_crypt(uint32_t *block, const uint32_t *k)
 	t = ((r >> 8) ^ l) & 0x00FF00FF;
 	l ^= t;
 	r ^= t << 8;
-	r = ROL32(r, 1);
+	r = ROL32_01(r);
 	t = (l ^ r) & 0xAAAAAAAA;
 	l ^= t;
 	r ^= t;
-	l = ROL32(l, 1);
+	l = ROL32_01(l);
 
 	for(i = 0; i < 8; i++)
 	{
-		t = ROR32(r, 4) ^ *k++;
+		t = ROR32_04(r) ^ *k++;
 		l ^= SP7[t & 63]
 			| SP5[(t >> 8) & 63]
 			| SP3[(t >> 16) & 63]
@@ -402,7 +402,7 @@ static void des_crypt(uint32_t *block, const uint32_t *k)
 			| SP4[(t >> 16) & 63]
 			| SP2[(t >> 24) & 63];
 
-		t = ROR32(l, 4) ^ *k++;
+		t = ROR32_04(l) ^ *k++;
 		r ^= SP7[t & 63]
 			| SP5[(t >> 8) & 63]
 			| SP3[(t >> 16) & 63]
@@ -414,11 +414,11 @@ static void des_crypt(uint32_t *block, const uint32_t *k)
 			| SP2[(t >> 24) & 63];
 	}
 
-	r = ROR32(r, 1);
+	r = ROR32_01(r);
 	t = (l ^ r) & 0xAAAAAAAA;
 	l ^= t;
 	r ^= t;
-	l = ROR32(l, 1);
+	l = ROR32_01(l);
 	t = ((l >> 8) ^ r) & 0x00FF00FF;
 	r ^= t;
 	l ^= t << 8;

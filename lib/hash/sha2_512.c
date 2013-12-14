@@ -41,11 +41,11 @@ struct kripto_hash
 #define CH(X0, X1, X2) (X2 ^ (X0 & (X1 ^ X2)))
 #define MAJ(X0, X1, X2) ((X0 & X1) | (X2 & (X0 | X1)))
 
-#define S0(X) (ROR64(X, 1) ^ ROR64(X, 8) ^ ((X) >> 7))
-#define S1(X) (ROR64(X, 19) ^ ROR64(X, 61) ^ ((X) >> 6))
+#define S0(X) (ROR64_01(X) ^ ROR64_08(X) ^ ((X) >> 7))
+#define S1(X) (ROR64_19(X) ^ ROR64_61(X) ^ ((X) >> 6))
 
-#define E0(X) (ROR64(X, 28) ^ ROR64(X, 34) ^ ROR64(X, 39))
-#define E1(X) (ROR64(X, 14) ^ ROR64(X, 18) ^ ROR64(X, 41))
+#define E0(X) (ROR64_28(X) ^ ROR64_34(X) ^ ROR64_39(X))
+#define E1(X) (ROR64_14(X) ^ ROR64_18(X) ^ ROR64_41(X))
 
 static const uint64_t k[160] =
 {

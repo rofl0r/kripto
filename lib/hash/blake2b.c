@@ -88,14 +88,14 @@ static kripto_hash *blake2b_recreate
 #define G(A, B, C, D, M0, M1)	\
 {								\
 	A += B + (M0);				\
-	D = ROR64(D ^ A, 32);		\
+	D = ROR64_32(D ^ A);		\
 	C += D;						\
-	B = ROR64(B ^ C, 24);		\
+	B = ROR64_24(B ^ C);		\
 								\
 	A += B + (M1);				\
-	D = ROR64(D ^ A, 16);		\
+	D = ROR64_16(D ^ A);		\
 	C += D;						\
-	B = ROR64(B ^ C, 63);		\
+	B = ROR64_63(B ^ C);		\
 }
 
 static void blake2b_process(kripto_hash *s, const uint8_t *data)

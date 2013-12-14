@@ -35,14 +35,14 @@ struct kripto_block
 
 #define R(A, B, K)					\
 {									\
-	A = (ROR16(A, 7) + B) ^ (K);	\
-	B = ROL16(B, 2) ^ A;			\
+	A = (ROR16_07(A) + B) ^ (K);	\
+	B = ROL16_02(B) ^ A;			\
 }
 
 #define IR(A, B, K)					\
 {									\
-	B = ROR16(B ^ A, 2);			\
-	A = ROL16((A ^ (K)) - B, 7);	\
+	B = ROR16_02(B ^ A);			\
+	A = ROL16_07((A ^ (K)) - B);	\
 }
 
 static void speck32_encrypt

@@ -43,26 +43,26 @@ struct kripto_hash
 
 #define G0(A, B, C, D, E, W)							\
 {														\
-	E += ROL32(A, 5) + F0(B, C, D) + W + 0x5A827999;	\
-	B = ROL32(B, 30);									\
+	E += ROL32_05(A) + F0(B, C, D) + W + 0x5A827999;	\
+	B = ROL32_30(B);									\
 }
 
 #define G1(A, B, C, D, E, W)							\
 {														\
-	E += ROL32(A, 5) + F1(B, C, D) + W + 0x6ED9EBA1;	\
-	B = ROL32(B, 30);									\
+	E += ROL32_05(A) + F1(B, C, D) + W + 0x6ED9EBA1;	\
+	B = ROL32_30(B);									\
 }
 
 #define G2(A, B, C, D, E, W)							\
 {														\
-	E += ROL32(A, 5) + F2(B, C, D) + W + 0x8F1BBCDC;	\
-	B = ROL32(B, 30);									\
+	E += ROL32_05(A) + F2(B, C, D) + W + 0x8F1BBCDC;	\
+	B = ROL32_30(B);									\
 }
 
 #define G3(A, B, C, D, E, W)							\
 {														\
-	E += ROL32(A, 5) + F1(B, C, D) + W + 0xCA62C1D6;	\
-	B = ROL32(B, 30);									\
+	E += ROL32_05(A) + F1(B, C, D) + W + 0xCA62C1D6;	\
+	B = ROL32_30(B);									\
 }
 
 static kripto_hash *sha1_recreate
@@ -113,7 +113,7 @@ static void sha1_process(kripto_hash *s, const uint8_t *data)
 	w[15] = LOAD32B(data + 60);
 
 	for(i = 16; i < 80; i++)
-		w[i] = ROL32(w[i - 3] ^ w[i - 8] ^ w[i - 14] ^ w[i - 16], 1);
+		w[i] = ROL32_01(w[i - 3] ^ w[i - 8] ^ w[i - 14] ^ w[i - 16]);
 
 	for(i = 0; i < 20;)
 	{

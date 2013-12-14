@@ -407,30 +407,30 @@ struct kripto_block
 
 #define LT(A, B, C, D)	\
 {						\
-	A = ROL32(A, 13);	\
-	C = ROL32(C, 3);	\
+	A = ROL32_13(A);	\
+	C = ROL32_03(C);	\
 	D ^= C ^ (A << 3);	\
 	B ^= A ^ C;			\
-	D = ROL32(D, 7);	\
-	B = ROL32(B, 1);	\
+	D = ROL32_07(D);	\
+	B = ROL32_01(B);	\
 	A ^= B ^ D;			\
 	C ^= D ^ (B << 7);	\
-	A = ROL32(A, 5);	\
-	C = ROL32(C, 22);	\
+	A = ROL32_05(A);	\
+	C = ROL32_22(C);	\
 }
 
 #define ILT(A, B, C, D)	\
 {						\
-	C = ROR32(C, 22);	\
-	A = ROR32(A, 5);	\
+	C = ROR32_22(C);	\
+	A = ROR32_05(A);	\
 	C ^= D ^ (B << 7);	\
 	A ^= B ^ D;			\
-	D = ROR32(D, 7);	\
-	B = ROR32(B, 1);	\
+	D = ROR32_07(D);	\
+	B = ROR32_01(B);	\
 	D ^= C ^ (A << 3);	\
 	B ^= A ^ C;			\
-	C = ROR32(C, 3);	\
-	A = ROR32(A, 13);	\
+	C = ROR32_03(C);	\
+	A = ROR32_13(A);	\
 }
 
 #define K(A, B, C, D, K)	\
@@ -612,7 +612,7 @@ static void serpent_setup
 			^ 0x9E3779B9
 			^ (i - 8);
 
-		s->k[i - 8] = s->k[i] = ROL32(s->k[i], 11);
+		s->k[i - 8] = s->k[i] = ROL32_11(s->k[i]);
 	}
 
 	for(i = 8; i < (s->rounds + 1) << 2; i++)
@@ -624,7 +624,7 @@ static void serpent_setup
 			^ 0x9E3779B9
 			^ i;
 
-		s->k[i] = ROL32(s->k[i], 11);
+		s->k[i] = ROL32_11(s->k[i]);
 	}
 
 	for(i = 0; i < s->rounds << 2;)

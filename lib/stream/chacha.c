@@ -35,10 +35,10 @@ struct kripto_stream
 
 #define QR(A, B, C, D)				\
 {									\
-	A += B; D = ROL32(D ^ A, 16);	\
-	C += D; B = ROL32(B ^ C, 12);	\
-	A += B; D = ROL32(D ^ A,  8);	\
-	C += D; B = ROL32(B ^ C,  7);	\
+	A += B; D = ROL32_16(D ^ A);	\
+	C += D; B = ROL32_12(B ^ C);	\
+	A += B; D = ROL32_08(D ^ A);	\
+	C += D; B = ROL32_07(B ^ C);	\
 }
 
 static void chacha_core

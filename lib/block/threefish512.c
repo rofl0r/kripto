@@ -70,25 +70,25 @@ static void threefish512_encrypt
 
 	while(r <= s->rounds >> 2)
 	{
-		x0 += x1; x1 = ROL64(x1, 46); x1 ^= x0;
-		x2 += x3; x3 = ROL64(x3, 36); x3 ^= x2;
-		x4 += x5; x5 = ROL64(x5, 19); x5 ^= x4;
-		x6 += x7; x7 = ROL64(x7, 37); x7 ^= x6;
+		x0 += x1; x1 = ROL64_46(x1); x1 ^= x0;
+		x2 += x3; x3 = ROL64_36(x3); x3 ^= x2;
+		x4 += x5; x5 = ROL64_19(x5); x5 ^= x4;
+		x6 += x7; x7 = ROL64_37(x7); x7 ^= x6;
 
-		x2 += x1; x1 = ROL64(x1, 33); x1 ^= x2;
-		x4 += x7; x7 = ROL64(x7, 27); x7 ^= x4;
-		x6 += x5; x5 = ROL64(x5, 14); x5 ^= x6;
-		x0 += x3; x3 = ROL64(x3, 42); x3 ^= x0;
+		x2 += x1; x1 = ROL64_33(x1); x1 ^= x2;
+		x4 += x7; x7 = ROL64_27(x7); x7 ^= x4;
+		x6 += x5; x5 = ROL64_14(x5); x5 ^= x6;
+		x0 += x3; x3 = ROL64_42(x3); x3 ^= x0;
 
-		x4 += x1; x1 = ROL64(x1, 17); x1 ^= x4;
-		x6 += x3; x3 = ROL64(x3, 49); x3 ^= x6;
-		x0 += x5; x5 = ROL64(x5, 36); x5 ^= x0;
-		x2 += x7; x7 = ROL64(x7, 39); x7 ^= x2;
+		x4 += x1; x1 = ROL64_17(x1); x1 ^= x4;
+		x6 += x3; x3 = ROL64_49(x3); x3 ^= x6;
+		x0 += x5; x5 = ROL64_36(x5); x5 ^= x0;
+		x2 += x7; x7 = ROL64_39(x7); x7 ^= x2;
 		
-		x6 += x1; x1 = ROL64(x1, 44); x1 ^= x6;
-		x0 += x7; x7 = ROL64(x7, 9); x7 ^= x0;
-		x2 += x5; x5 = ROL64(x5, 54); x5 ^= x2;
-		x4 += x3; x3 = ROL64(x3, 56); x3 ^= x4;
+		x6 += x1; x1 = ROL64_44(x1); x1 ^= x6;
+		x0 += x7; x7 = ROL64_09(x7); x7 ^= x0;
+		x2 += x5; x5 = ROL64_54(x5); x5 ^= x2;
+		x4 += x3; x3 = ROL64_56(x3); x3 ^= x4;
 
 		x0 += s->k[r % 9];
 		x1 += s->k[(r + 1) % 9];
@@ -100,25 +100,25 @@ static void threefish512_encrypt
 		x7 += s->k[(r + 7) % 9] + r;
 		r++;
 
-		x0 += x1; x1 = ROL64(x1, 39); x1 ^= x0;
-		x2 += x3; x3 = ROL64(x3, 30); x3 ^= x2;
-		x4 += x5; x5 = ROL64(x5, 34); x5 ^= x4;
-		x6 += x7; x7 = ROL64(x7, 24); x7 ^= x6;
+		x0 += x1; x1 = ROL64_39(x1); x1 ^= x0;
+		x2 += x3; x3 = ROL64_30(x3); x3 ^= x2;
+		x4 += x5; x5 = ROL64_34(x5); x5 ^= x4;
+		x6 += x7; x7 = ROL64_24(x7); x7 ^= x6;
 
-		x2 += x1; x1 = ROL64(x1, 13); x1 ^= x2;
-		x4 += x7; x7 = ROL64(x7, 50); x7 ^= x4;
-		x6 += x5; x5 = ROL64(x5, 10); x5 ^= x6;
-		x0 += x3; x3 = ROL64(x3, 17); x3 ^= x0;
+		x2 += x1; x1 = ROL64_13(x1); x1 ^= x2;
+		x4 += x7; x7 = ROL64_50(x7); x7 ^= x4;
+		x6 += x5; x5 = ROL64_10(x5); x5 ^= x6;
+		x0 += x3; x3 = ROL64_17(x3); x3 ^= x0;
 
-		x4 += x1; x1 = ROL64(x1, 25); x1 ^= x4;
-		x6 += x3; x3 = ROL64(x3, 29); x3 ^= x6;
-		x0 += x5; x5 = ROL64(x5, 39); x5 ^= x0;
-		x2 += x7; x7 = ROL64(x7, 43); x7 ^= x2;
+		x4 += x1; x1 = ROL64_25(x1); x1 ^= x4;
+		x6 += x3; x3 = ROL64_29(x3); x3 ^= x6;
+		x0 += x5; x5 = ROL64_39(x5); x5 ^= x0;
+		x2 += x7; x7 = ROL64_43(x7); x7 ^= x2;
 		
-		x6 += x1; x1 = ROL64(x1, 8); x1 ^= x6;
-		x0 += x7; x7 = ROL64(x7, 35); x7 ^= x0;
-		x2 += x5; x5 = ROL64(x5, 56); x5 ^= x2;
-		x4 += x3; x3 = ROL64(x3, 22); x3 ^= x4;
+		x6 += x1; x1 = ROL64_08(x1); x1 ^= x6;
+		x0 += x7; x7 = ROL64_35(x7); x7 ^= x0;
+		x2 += x5; x5 = ROL64_56(x5); x5 ^= x2;
+		x4 += x3; x3 = ROL64_22(x3); x3 ^= x4;
 
 		x0 += s->k[r % 9];
 		x1 += s->k[(r + 1) % 9];
@@ -170,25 +170,25 @@ static void threefish512_decrypt
 		x7 -= s->k[(r + 7) % 9] + r;
 		r--;
 
-		x3 = ROR64(x3 ^ x4, 22); x4 -= x3;
-		x5 = ROR64(x5 ^ x2, 56); x2 -= x5;
-		x7 = ROR64(x7 ^ x0, 35); x0 -= x7;
-		x1 = ROR64(x1 ^ x6, 8); x6 -= x1;
-
-		x7 = ROR64(x7 ^ x2, 43); x2 -= x7;
-		x5 = ROR64(x5 ^ x0, 39); x0 -= x5;
-		x3 = ROR64(x3 ^ x6, 29); x6 -= x3;
-		x1 = ROR64(x1 ^ x4, 25); x4 -= x1;
-
-		x3 = ROR64(x3 ^ x0, 17); x0 -= x3;
-		x5 = ROR64(x5 ^ x6, 10); x6 -= x5;
-		x7 = ROR64(x7 ^ x4, 50); x4 -= x7;
-		x1 = ROR64(x1 ^ x2, 13); x2 -= x1;
-
-		x7 = ROR64(x7 ^ x6, 24); x6 -= x7;
-		x5 = ROR64(x5 ^ x4, 34); x4 -= x5;
-		x3 = ROR64(x3 ^ x2, 30); x2 -= x3;
-		x1 = ROR64(x1 ^ x0, 39); x0 -= x1;
+		x3 = ROR64_22(x3 ^ x4); x4 -= x3;
+		x5 = ROR64_56(x5 ^ x2); x2 -= x5;
+		x7 = ROR64_35(x7 ^ x0); x0 -= x7;
+		x1 = ROR64_08(x1 ^ x6); x6 -= x1;
+                             
+		x7 = ROR64_43(x7 ^ x2); x2 -= x7;
+		x5 = ROR64_39(x5 ^ x0); x0 -= x5;
+		x3 = ROR64_29(x3 ^ x6); x6 -= x3;
+		x1 = ROR64_25(x1 ^ x4); x4 -= x1;
+                             
+		x3 = ROR64_17(x3 ^ x0); x0 -= x3;
+		x5 = ROR64_10(x5 ^ x6); x6 -= x5;
+		x7 = ROR64_50(x7 ^ x4); x4 -= x7;
+		x1 = ROR64_13(x1 ^ x2); x2 -= x1;
+                             
+		x7 = ROR64_24(x7 ^ x6); x6 -= x7;
+		x5 = ROR64_34(x5 ^ x4); x4 -= x5;
+		x3 = ROR64_30(x3 ^ x2); x2 -= x3;
+		x1 = ROR64_39(x1 ^ x0); x0 -= x1;
 
 		x0 -= s->k[r % 9];
 		x1 -= s->k[(r + 1) % 9];
@@ -200,25 +200,25 @@ static void threefish512_decrypt
 		x7 -= s->k[(r + 7) % 9] + r;
 		r--;
 
-		x3 = ROR64(x3 ^ x4, 56); x4 -= x3;
-		x5 = ROR64(x5 ^ x2, 54); x2 -= x5;
-		x7 = ROR64(x7 ^ x0, 9); x0 -= x7;
-		x1 = ROR64(x1 ^ x6, 44); x6 -= x1;
+		x3 = ROR64_56(x3 ^ x4); x4 -= x3;
+		x5 = ROR64_54(x5 ^ x2); x2 -= x5;
+		x7 = ROR64_09(x7 ^ x0); x0 -= x7;
+		x1 = ROR64_44(x1 ^ x6); x6 -= x1;
 
-		x7 = ROR64(x7 ^ x2, 39); x2 -= x7;
-		x5 = ROR64(x5 ^ x0, 36); x0 -= x5;
-		x3 = ROR64(x3 ^ x6, 49); x6 -= x3;
-		x1 = ROR64(x1 ^ x4, 17); x4 -= x1;
+		x7 = ROR64_39(x7 ^ x2); x2 -= x7;
+		x5 = ROR64_36(x5 ^ x0); x0 -= x5;
+		x3 = ROR64_49(x3 ^ x6); x6 -= x3;
+		x1 = ROR64_17(x1 ^ x4); x4 -= x1;
 
-		x3 = ROR64(x3 ^ x0, 42); x0 -= x3;
-		x5 = ROR64(x5 ^ x6, 14); x6 -= x5;
-		x7 = ROR64(x7 ^ x4, 27); x4 -= x7;
-		x1 = ROR64(x1 ^ x2, 33); x2 -= x1;
+		x3 = ROR64_42(x3 ^ x0); x0 -= x3;
+		x5 = ROR64_14(x5 ^ x6); x6 -= x5;
+		x7 = ROR64_27(x7 ^ x4); x4 -= x7;
+		x1 = ROR64_33(x1 ^ x2); x2 -= x1;
 
-		x7 = ROR64(x7 ^ x6, 37); x6 -= x7;
-		x5 = ROR64(x5 ^ x4, 19); x4 -= x5;
-		x3 = ROR64(x3 ^ x2, 36); x2 -= x3;
-		x1 = ROR64(x1 ^ x0, 46); x0 -= x1;
+		x7 = ROR64_37(x7 ^ x6); x6 -= x7;
+		x5 = ROR64_19(x5 ^ x4); x4 -= x5;
+		x3 = ROR64_36(x3 ^ x2); x2 -= x3;
+		x1 = ROR64_46(x1 ^ x0); x0 -= x1;
 	}
 
 	x0 -= s->k[0];
