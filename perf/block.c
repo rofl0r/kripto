@@ -19,6 +19,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <kripto/block/3way.h>
 #include <kripto/block/anubis.h>
 #include <kripto/block/aria.h>
 #include <kripto/block/blowfish.h>
@@ -85,8 +86,9 @@ int main(void)
 	{
 		const char *name;
 		const kripto_block_desc *desc;
-	} ciphers[31] =
+	} ciphers[32] =
 	{
+		{"3-Way", kripto_block_3way},
 		{"Anubis", kripto_block_anubis},
 		{"ARIA", kripto_block_aria},
 		{"Blowfish", kripto_block_blowfish},
@@ -124,7 +126,7 @@ int main(void)
 
 	perf_init();
 
-	for(cipher = 0; cipher < 31; cipher++)
+	for(cipher = 0; cipher < 32; cipher++)
 	{
 		if(!ciphers[cipher].desc) continue;
 

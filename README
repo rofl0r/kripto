@@ -21,6 +21,7 @@ Block ciphers:
  - Threefish512
  - Threefish1024
  - Noekeon
+ - 3-Way
  - Anubis
  - SEED
  - Blowfish
@@ -43,7 +44,6 @@ Block ciphers:
  - SAFER+*?
  - SAFER++*?
  - PRESENT*?
- - 3way*?
  - BaseKing*?
 
 Modes:
