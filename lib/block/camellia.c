@@ -703,7 +703,6 @@ static const kripto_block_desc camellia =
 	&camellia_encrypt,
 	&camellia_decrypt,
 	&camellia_destroy,
-	"Camellia",
 	16, /* block size */
 	32 /* max key */
 };

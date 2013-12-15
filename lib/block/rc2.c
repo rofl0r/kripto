@@ -217,7 +217,6 @@ static const kripto_block_desc rc2 =
 	&rc2_encrypt,
 	&rc2_decrypt,
 	&rc2_destroy,
-	"RC2",
 	8, /* block size */
 	128 /* max key */
 };

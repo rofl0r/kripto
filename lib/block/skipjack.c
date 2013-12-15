@@ -293,7 +293,6 @@ static const kripto_block_desc skipjack =
 	&skipjack_encrypt,
 	&skipjack_decrypt,
 	&skipjack_destroy,
-	"Skipjack",
 	8, /* block size */
 	10 /* max key */
 };

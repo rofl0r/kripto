@@ -164,7 +164,6 @@ static const kripto_block_desc xtea =
 	&xtea_encrypt,
 	&xtea_decrypt,
 	&xtea_destroy,
-	"XTEA",
 	8, /* block size */
 	16 /* max key */
 };

@@ -429,7 +429,6 @@ static const kripto_block_desc safer =
 	&safer_encrypt,
 	&safer_decrypt,
 	&safer_destroy,
-	"SAFER",
 	8, /* block size */
 	16 /* max key */
 };
@@ -442,7 +441,6 @@ static const kripto_block_desc safer_sk =
 	&safer_encrypt,
 	&safer_decrypt,
 	&safer_destroy,
-	"SAFER-SK",
 	8, /* block size */
 	16 /* max key */
 };

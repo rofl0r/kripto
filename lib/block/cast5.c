@@ -819,7 +819,6 @@ static const kripto_block_desc cast5 =
 	&cast5_encrypt,
 	&cast5_decrypt,
 	&cast5_destroy,
-	"CAST5",
 	8, /* block size */
 	16 /* max key */
 };

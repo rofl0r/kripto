@@ -117,7 +117,6 @@ static const kripto_block_desc tea =
 	&tea_encrypt,
 	&tea_decrypt,
 	&tea_destroy,
-	"TEA",
 	8, /* block size */
 	16 /* max key */
 };

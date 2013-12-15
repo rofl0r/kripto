@@ -178,7 +178,6 @@ static const kripto_block_desc rc5 =
 	&rc5_encrypt,
 	&rc5_decrypt,
 	&rc5_destroy,
-	"RC5",
 	8, /* block size */
 	255 /* max key */
 };

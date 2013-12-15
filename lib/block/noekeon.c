@@ -225,7 +225,6 @@ static const kripto_block_desc noekeon =
 	&noekeon_encrypt,
 	&noekeon_decrypt,
 	&noekeon_destroy,
-	"Noekeon",
 	16, /* block size */
 	16 /* max key */
 };

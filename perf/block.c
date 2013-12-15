@@ -81,39 +81,43 @@ int main(void)
 		0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F
 	};
 	perf_int cycles;
-	const kripto_block_desc *ciphers[31] =
+	struct
 	{
-		kripto_block_anubis,
-		kripto_block_aria,
-		kripto_block_blowfish,
-		kripto_block_camellia,
-		kripto_block_cast5,
-		kripto_block_des,
-		kripto_block_gost,
-		kripto_block_idea,
-		kripto_block_noekeon,
-		kripto_block_rc2,
-		kripto_block_rc5,
-		kripto_block_rc6,
-		kripto_block_rijndael128,
-		kripto_block_rijndael256,
-		kripto_block_safer,
-		kripto_block_safer_sk,
-		kripto_block_seed,
-		kripto_block_serpent,
-		kripto_block_simon32,
-		kripto_block_simon64,
-		kripto_block_simon128,
-		kripto_block_skipjack,
-		kripto_block_speck32,
-		kripto_block_speck64,
-		kripto_block_speck128,
-		kripto_block_tea,
-		kripto_block_threefish256,
-		kripto_block_threefish512,
-		kripto_block_threefish1024,
-		kripto_block_twofish,
-		kripto_block_xtea
+		const char *name;
+		const kripto_block_desc *desc;
+	} ciphers[31] =
+	{
+		{"Anubis", kripto_block_anubis},
+		{"ARIA", kripto_block_aria},
+		{"Blowfish", kripto_block_blowfish},
+		{"Camellia", kripto_block_camellia},
+		{"CAST5", kripto_block_cast5},
+		{"DES", kripto_block_des},
+		{"GOST", kripto_block_gost},
+		{"IDEA", kripto_block_idea},
+		{"Noekeon", kripto_block_noekeon},
+		{"RC2", kripto_block_rc2},
+		{"RC5", kripto_block_rc5},
+		{"RC6", kripto_block_rc6},
+		{"Rijndael-128", kripto_block_rijndael128},
+		{"Rijndael-256", kripto_block_rijndael256},
+		{"SAFER", kripto_block_safer},
+		{"SAFER-SK", kripto_block_safer_sk},
+		{"SEED", kripto_block_seed},
+		{"Serpent", kripto_block_serpent},
+		{"Simon32", kripto_block_simon32},
+		{"Simon64", kripto_block_simon64},
+		{"Simon128", kripto_block_simon128},
+		{"Skipjack", kripto_block_skipjack},
+		{"Speck32", kripto_block_speck32},
+		{"Speck64", kripto_block_speck64},
+		{"Speck128", kripto_block_speck128},
+		{"TEA", kripto_block_tea},
+		{"Threefish-256", kripto_block_threefish256},
+		{"Threefish-512", kripto_block_threefish512},
+		{"Threefish-1024", kripto_block_threefish1024},
+		{"Twofish", kripto_block_twofish},
+		{"XTEA", kripto_block_xtea}
 	};
 
 	memset(t, 0, MAXBLOCK);
@@ -122,14 +126,14 @@ int main(void)
 
 	for(cipher = 0; cipher < 31; cipher++)
 	{
-		if(!ciphers[cipher]) continue;
+		if(!ciphers[cipher].desc) continue;
 
-		maxkey = kripto_block_maxkey(ciphers[cipher]);
+		maxkey = kripto_block_maxkey(ciphers[cipher].desc);
 		if(maxkey > MAXKEY) maxkey = MAXKEY;
 
 		for(n = KEYSTEP; n <= maxkey; n += KEYSTEP)
 		{
-			s = kripto_block_create(ciphers[cipher], 0, k, n);
+			s = kripto_block_create(ciphers[cipher].desc, 0, k, n);
 			if(!s) die("kripto_block_create()");
 
 			/* setup */
@@ -139,7 +143,7 @@ int main(void)
 			PERF_STOP
 
 			printf("%s %u-bit setup: %lu cycles\n",
-				kripto_block_name(ciphers[cipher]), n * 8, cycles);
+				ciphers[cipher].name, n * 8, cycles);
 
 			/* encrypt */
 			PERF_START
@@ -147,8 +151,8 @@ int main(void)
 			PERF_STOP
 
 			printf("%s %u-bit encrypt: %.1f cpb\n",
-				kripto_block_name(ciphers[cipher]), n * 8,
-				cycles / (float)kripto_block_size(ciphers[cipher]));
+				ciphers[cipher].name, n * 8,
+				cycles / (float)kripto_block_size(ciphers[cipher].desc));
 
 			/* decrypt */
 			PERF_START
@@ -156,8 +160,8 @@ int main(void)
 			PERF_STOP
 
 			printf("%s %u-bit decrypt: %.1f cpb\n",
-				kripto_block_name(ciphers[cipher]), n * 8,
-				cycles / (float)kripto_block_size(ciphers[cipher]));
+				ciphers[cipher].name, n * 8,
+				cycles / (float)kripto_block_size(ciphers[cipher].desc));
 
 			kripto_block_destroy(s);
 

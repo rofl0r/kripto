@@ -234,7 +234,6 @@ static const kripto_block_desc idea =
 	&idea_encrypt,
 	&idea_decrypt,
 	&idea_destroy,
-	"IDEA",
 	8, /* block size */
 	16 /* max key */
 };

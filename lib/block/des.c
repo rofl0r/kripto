@@ -534,7 +534,6 @@ static const kripto_block_desc des =
 	&des_encrypt,
 	&des_decrypt,
 	&des_destroy,
-	"DES",
 	8, /* block size */
 	24 /* max key */
 };

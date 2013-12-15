@@ -1237,7 +1237,6 @@ static const kripto_block_desc twofish =
 	&twofish_encrypt,
 	&twofish_decrypt,
 	&twofish_destroy,
-	"Twofish",
 	16, /* block size */
 	32 /* max key */
 };

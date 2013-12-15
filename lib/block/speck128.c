@@ -178,7 +178,6 @@ static const kripto_block_desc speck128 =
 	&speck128_encrypt,
 	&speck128_decrypt,
 	&speck128_destroy,
-	"Speck128",
 	16, /* block size */
 	32 /* max key */
 };

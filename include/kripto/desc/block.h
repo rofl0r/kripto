@@ -33,7 +33,6 @@ struct kripto_block_desc
 
 	void (*destroy)(kripto_block *);
 
-	const char *name;
 	unsigned int blocksize;
 	unsigned int maxkey;
 };

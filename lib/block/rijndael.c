@@ -955,7 +955,6 @@ static const kripto_block_desc rijndael128 =
 	&rijndael128_encrypt,
 	&rijndael128_decrypt,
 	&rijndael_destroy,
-	"Rijndael128",
 	16, /* block size */
 	32 /* max key */
 };
@@ -1181,7 +1180,6 @@ static const kripto_block_desc rijndael256 =
 	&rijndael256_encrypt,
 	&rijndael256_decrypt,
 	&rijndael_destroy,
-	"Rijndael256",
 	32, /* block size */
 	32 /* max key */
 };

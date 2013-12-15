@@ -342,7 +342,6 @@ static const kripto_block_desc gost =
 	&gost_encrypt,
 	&gost_decrypt,
 	&gost_destroy,
-	"GOST",
 	8, /* block size */
 	32 /* max key */
 };

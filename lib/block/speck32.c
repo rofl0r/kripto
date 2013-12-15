@@ -173,7 +173,6 @@ static const kripto_block_desc speck32 =
 	&speck32_encrypt,
 	&speck32_decrypt,
 	&speck32_destroy,
-	"Speck32",
 	4, /* block size */
 	8 /* max key */
 };
