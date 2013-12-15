@@ -99,7 +99,7 @@ Hash functions:
  - BLAKE2s
  - BLAKE2b
  - WHIRPOOL
- - Tiger*
+ - Tiger
  - MD5
  - RIPEMD*?
  - BMW*?
