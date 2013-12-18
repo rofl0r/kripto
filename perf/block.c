@@ -31,6 +31,7 @@
 #include <kripto/block/noekeon.h>
 #include <kripto/block/rc2.h>
 #include <kripto/block/rc5.h>
+#include <kripto/block/rc5_64.h>
 #include <kripto/block/rc6.h>
 #include <kripto/block/rijndael128.h>
 #include <kripto/block/rijndael256.h>
@@ -86,7 +87,7 @@ int main(void)
 	{
 		const char *name;
 		const kripto_block_desc *desc;
-	} ciphers[32] =
+	} ciphers[33] =
 	{
 		{"3-Way", kripto_block_3way},
 		{"Anubis", kripto_block_anubis},
@@ -100,6 +101,7 @@ int main(void)
 		{"Noekeon", kripto_block_noekeon},
 		{"RC2", kripto_block_rc2},
 		{"RC5", kripto_block_rc5},
+		{"RC5/64", kripto_block_rc5_64},
 		{"RC6", kripto_block_rc6},
 		{"Rijndael-128", kripto_block_rijndael128},
 		{"Rijndael-256", kripto_block_rijndael256},
@@ -126,7 +128,7 @@ int main(void)
 
 	perf_init();
 
-	for(cipher = 0; cipher < 32; cipher++)
+	for(cipher = 0; cipher < 33; cipher++)
 	{
 		if(!ciphers[cipher].desc) continue;
 
