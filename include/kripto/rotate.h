@@ -1,3 +1,16 @@
+/*
+ * Written in 2013 by Gregor Pintar <grpintar@gmail.com>
+ *
+ * To the extent possible under law, the author(s) have dedicated
+ * all copyright and related and neighboring rights to this software
+ * to the public domain worldwide.
+ * 
+ * This software is distributed without any warranty.
+ *
+ * You should have received a copy of the CC0 Public Domain Dedication.
+ * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
+ */
+
 #ifndef KRIPTO_ROTATE_H
 #define KRIPTO_ROTATE_H
 
@@ -132,7 +145,7 @@ static inline uint32_t ROR32(uint32_t x, unsigned int r)
 static inline uint64_t ROL64(uint64_t x, unsigned int r)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -153,7 +166,7 @@ static inline uint64_t ROL64(uint64_t x, unsigned int r)
 static inline uint64_t ROR64(uint64_t x, unsigned int r)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1290,7 +1303,7 @@ static inline uint32_t ROL32_31(uint32_t x)
 static inline uint64_t ROL64_01(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1310,7 +1323,7 @@ static inline uint64_t ROL64_01(uint64_t x)
 static inline uint64_t ROL64_02(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1330,7 +1343,7 @@ static inline uint64_t ROL64_02(uint64_t x)
 static inline uint64_t ROL64_03(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1350,7 +1363,7 @@ static inline uint64_t ROL64_03(uint64_t x)
 static inline uint64_t ROL64_04(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1370,7 +1383,7 @@ static inline uint64_t ROL64_04(uint64_t x)
 static inline uint64_t ROL64_05(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1390,7 +1403,7 @@ static inline uint64_t ROL64_05(uint64_t x)
 static inline uint64_t ROL64_06(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1410,7 +1423,7 @@ static inline uint64_t ROL64_06(uint64_t x)
 static inline uint64_t ROL64_07(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1430,7 +1443,7 @@ static inline uint64_t ROL64_07(uint64_t x)
 static inline uint64_t ROL64_08(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1450,7 +1463,7 @@ static inline uint64_t ROL64_08(uint64_t x)
 static inline uint64_t ROL64_09(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1470,7 +1483,7 @@ static inline uint64_t ROL64_09(uint64_t x)
 static inline uint64_t ROL64_10(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1490,7 +1503,7 @@ static inline uint64_t ROL64_10(uint64_t x)
 static inline uint64_t ROL64_11(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1510,7 +1523,7 @@ static inline uint64_t ROL64_11(uint64_t x)
 static inline uint64_t ROL64_12(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1530,7 +1543,7 @@ static inline uint64_t ROL64_12(uint64_t x)
 static inline uint64_t ROL64_13(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1550,7 +1563,7 @@ static inline uint64_t ROL64_13(uint64_t x)
 static inline uint64_t ROL64_14(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1570,7 +1583,7 @@ static inline uint64_t ROL64_14(uint64_t x)
 static inline uint64_t ROL64_15(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1590,7 +1603,7 @@ static inline uint64_t ROL64_15(uint64_t x)
 static inline uint64_t ROL64_16(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1610,7 +1623,7 @@ static inline uint64_t ROL64_16(uint64_t x)
 static inline uint64_t ROL64_17(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1630,7 +1643,7 @@ static inline uint64_t ROL64_17(uint64_t x)
 static inline uint64_t ROL64_18(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1650,7 +1663,7 @@ static inline uint64_t ROL64_18(uint64_t x)
 static inline uint64_t ROL64_19(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1670,7 +1683,7 @@ static inline uint64_t ROL64_19(uint64_t x)
 static inline uint64_t ROL64_20(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1690,7 +1703,7 @@ static inline uint64_t ROL64_20(uint64_t x)
 static inline uint64_t ROL64_21(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1710,7 +1723,7 @@ static inline uint64_t ROL64_21(uint64_t x)
 static inline uint64_t ROL64_22(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1730,7 +1743,7 @@ static inline uint64_t ROL64_22(uint64_t x)
 static inline uint64_t ROL64_23(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1750,7 +1763,7 @@ static inline uint64_t ROL64_23(uint64_t x)
 static inline uint64_t ROL64_24(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1770,7 +1783,7 @@ static inline uint64_t ROL64_24(uint64_t x)
 static inline uint64_t ROL64_25(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1790,7 +1803,7 @@ static inline uint64_t ROL64_25(uint64_t x)
 static inline uint64_t ROL64_26(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1810,7 +1823,7 @@ static inline uint64_t ROL64_26(uint64_t x)
 static inline uint64_t ROL64_27(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1830,7 +1843,7 @@ static inline uint64_t ROL64_27(uint64_t x)
 static inline uint64_t ROL64_28(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1850,7 +1863,7 @@ static inline uint64_t ROL64_28(uint64_t x)
 static inline uint64_t ROL64_29(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1870,7 +1883,7 @@ static inline uint64_t ROL64_29(uint64_t x)
 static inline uint64_t ROL64_30(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1890,7 +1903,7 @@ static inline uint64_t ROL64_30(uint64_t x)
 static inline uint64_t ROL64_31(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1910,7 +1923,7 @@ static inline uint64_t ROL64_31(uint64_t x)
 static inline uint64_t ROL64_32(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1930,7 +1943,7 @@ static inline uint64_t ROL64_32(uint64_t x)
 static inline uint64_t ROL64_33(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1950,7 +1963,7 @@ static inline uint64_t ROL64_33(uint64_t x)
 static inline uint64_t ROL64_34(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1970,7 +1983,7 @@ static inline uint64_t ROL64_34(uint64_t x)
 static inline uint64_t ROL64_35(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -1990,7 +2003,7 @@ static inline uint64_t ROL64_35(uint64_t x)
 static inline uint64_t ROL64_36(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2010,7 +2023,7 @@ static inline uint64_t ROL64_36(uint64_t x)
 static inline uint64_t ROL64_37(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2030,7 +2043,7 @@ static inline uint64_t ROL64_37(uint64_t x)
 static inline uint64_t ROL64_38(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2050,7 +2063,7 @@ static inline uint64_t ROL64_38(uint64_t x)
 static inline uint64_t ROL64_39(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2070,7 +2083,7 @@ static inline uint64_t ROL64_39(uint64_t x)
 static inline uint64_t ROL64_40(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2090,7 +2103,7 @@ static inline uint64_t ROL64_40(uint64_t x)
 static inline uint64_t ROL64_41(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2110,7 +2123,7 @@ static inline uint64_t ROL64_41(uint64_t x)
 static inline uint64_t ROL64_42(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2130,7 +2143,7 @@ static inline uint64_t ROL64_42(uint64_t x)
 static inline uint64_t ROL64_43(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2150,7 +2163,7 @@ static inline uint64_t ROL64_43(uint64_t x)
 static inline uint64_t ROL64_44(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2170,7 +2183,7 @@ static inline uint64_t ROL64_44(uint64_t x)
 static inline uint64_t ROL64_45(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2190,7 +2203,7 @@ static inline uint64_t ROL64_45(uint64_t x)
 static inline uint64_t ROL64_46(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2210,7 +2223,7 @@ static inline uint64_t ROL64_46(uint64_t x)
 static inline uint64_t ROL64_47(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2230,7 +2243,7 @@ static inline uint64_t ROL64_47(uint64_t x)
 static inline uint64_t ROL64_48(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2250,7 +2263,7 @@ static inline uint64_t ROL64_48(uint64_t x)
 static inline uint64_t ROL64_49(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2270,7 +2283,7 @@ static inline uint64_t ROL64_49(uint64_t x)
 static inline uint64_t ROL64_50(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2290,7 +2303,7 @@ static inline uint64_t ROL64_50(uint64_t x)
 static inline uint64_t ROL64_51(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2310,7 +2323,7 @@ static inline uint64_t ROL64_51(uint64_t x)
 static inline uint64_t ROL64_52(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2330,7 +2343,7 @@ static inline uint64_t ROL64_52(uint64_t x)
 static inline uint64_t ROL64_53(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2350,7 +2363,7 @@ static inline uint64_t ROL64_53(uint64_t x)
 static inline uint64_t ROL64_54(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2370,7 +2383,7 @@ static inline uint64_t ROL64_54(uint64_t x)
 static inline uint64_t ROL64_55(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2390,7 +2403,7 @@ static inline uint64_t ROL64_55(uint64_t x)
 static inline uint64_t ROL64_56(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2410,7 +2423,7 @@ static inline uint64_t ROL64_56(uint64_t x)
 static inline uint64_t ROL64_57(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2430,7 +2443,7 @@ static inline uint64_t ROL64_57(uint64_t x)
 static inline uint64_t ROL64_58(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2450,7 +2463,7 @@ static inline uint64_t ROL64_58(uint64_t x)
 static inline uint64_t ROL64_59(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2470,7 +2483,7 @@ static inline uint64_t ROL64_59(uint64_t x)
 static inline uint64_t ROL64_60(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2490,7 +2503,7 @@ static inline uint64_t ROL64_60(uint64_t x)
 static inline uint64_t ROL64_61(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2510,7 +2523,7 @@ static inline uint64_t ROL64_61(uint64_t x)
 static inline uint64_t ROL64_62(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(
@@ -2530,7 +2543,7 @@ static inline uint64_t ROL64_62(uint64_t x)
 static inline uint64_t ROL64_63(uint64_t x)
 {
 #if (defined(__GNUC__) || defined(__clang__)) \
-&& (defined(__i386__) || defined(__x86_64__))
+&& defined(__x86_64__)
 
 	__asm__
 	(

@@ -38,6 +38,7 @@ Block ciphers:
  - DES (TDES)
  - IDEA
  - RC5
+ - RC5/64
  - RC2
  - CAST5
  - SAFER
@@ -99,6 +100,7 @@ Hash functions:
  - BLAKE2s
  - BLAKE2b
  - WHIRPOOL
+ - Grostl*
  - Tiger
  - MD5
  - RIPEMD*?
@@ -106,7 +108,6 @@ Hash functions:
  - CubeHash*?
  - HAVAL*?
  - JH*?
- - Grostl*?
  - MD6*?
  - Fugue*?
  - Luffa*?
