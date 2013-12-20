@@ -23,6 +23,7 @@ Block ciphers:
  - Noekeon
  - 3-Way
  - Anubis
+ - KHAZAD
  - SEED
  - Blowfish
  - GOST
@@ -101,13 +102,13 @@ Hash functions:
  - BLAKE2b
  - WHIRPOOL
  - Grostl*
+ - JH*
  - Tiger
  - MD5
  - RIPEMD*?
  - BMW*?
  - CubeHash*?
  - HAVAL*?
- - JH*?
  - MD6*?
  - Fugue*?
  - Luffa*?

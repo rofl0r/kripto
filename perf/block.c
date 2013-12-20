@@ -28,6 +28,7 @@
 #include <kripto/block/des.h>
 #include <kripto/block/gost.h>
 #include <kripto/block/idea.h>
+#include <kripto/block/khazad.h>
 #include <kripto/block/noekeon.h>
 #include <kripto/block/rc2.h>
 #include <kripto/block/rc5.h>
@@ -87,7 +88,7 @@ int main(void)
 	{
 		const char *name;
 		const kripto_block_desc *desc;
-	} ciphers[33] =
+	} ciphers[34] =
 	{
 		{"3-Way", kripto_block_3way},
 		{"Anubis", kripto_block_anubis},
@@ -98,6 +99,7 @@ int main(void)
 		{"DES", kripto_block_des},
 		{"GOST", kripto_block_gost},
 		{"IDEA", kripto_block_idea},
+		{"KHAZAD", kripto_block_khazad},
 		{"Noekeon", kripto_block_noekeon},
 		{"RC2", kripto_block_rc2},
 		{"RC5", kripto_block_rc5},
@@ -128,7 +130,7 @@ int main(void)
 
 	perf_init();
 
-	for(cipher = 0; cipher < 33; cipher++)
+	for(cipher = 0; cipher < 34; cipher++)
 	{
 		if(!ciphers[cipher].desc) continue;
 
