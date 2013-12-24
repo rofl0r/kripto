@@ -117,7 +117,7 @@ MAC's:
  - HMAC
  - OMAC (CMAC1)
  - CMAC2*?
- - XCBC*
+ - XCBC
  - CBC*?
  - Keccak1600
  - Keccak800
