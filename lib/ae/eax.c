@@ -22,15 +22,15 @@
 #include <kripto/stream/ctr.h>
 #include <kripto/mac.h>
 #include <kripto/mac/omac.h>
-#include <kripto/authstream.h>
-#include <kripto/desc/authstream.h>
-#include <kripto/object/authstream.h>
+#include <kripto/ae.h>
+#include <kripto/desc/ae.h>
+#include <kripto/object/ae.h>
 
-#include <kripto/authstream/eax.h>
+#include <kripto/ae/eax.h>
 
-struct kripto_authstream
+struct kripto_ae
 {
-	struct kripto_authstream_object obj;
+	struct kripto_ae_object obj;
 	kripto_stream_desc *ctr_desc;
 	kripto_mac_desc *omac_desc;
 	kripto_stream *ctr;
@@ -42,7 +42,7 @@ struct kripto_authstream
 
 static void eax_encrypt
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	const void *pt,
 	void *ct,
 	size_t len
@@ -54,7 +54,7 @@ static void eax_encrypt
 
 static void eax_decrypt
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	const void *ct,
 	void *pt,
 	size_t len
@@ -66,7 +66,7 @@ static void eax_decrypt
 
 static void eax_header
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	const void *header,
 	size_t len
 )
@@ -76,7 +76,7 @@ static void eax_header
 
 static void eax_tag
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	void *tag,
 	unsigned int len
 )
@@ -92,7 +92,7 @@ static void eax_tag
 		U8(tag)[i] ^= s->iv[i];
 }
 
-static void eax_destroy(kripto_authstream *s)
+static void eax_destroy(kripto_ae *s)
 {
 	kripto_stream_destroy(s->ctr);
 	kripto_mac_destroy(s->omac);
@@ -108,15 +108,15 @@ static void eax_destroy(kripto_authstream *s)
 
 struct ext
 {
-	kripto_authstream_desc desc;
+	kripto_ae_desc desc;
 	const kripto_block_desc *block;
 };
 
 #define EXT(X) ((const struct ext *)(X))
 
-static kripto_authstream *eax_create
+static kripto_ae *eax_create
 (
-	const kripto_authstream_desc *desc,
+	const kripto_ae_desc *desc,
 	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
@@ -125,7 +125,7 @@ static kripto_authstream *eax_create
 	unsigned int tag_len
 )
 {
-	kripto_authstream *s;
+	kripto_ae *s;
 	uint8_t *buf;
 	unsigned int len;
 
@@ -135,12 +135,12 @@ static kripto_authstream *eax_create
 	buf = malloc(len);
 	if(!buf) goto err0;
 
-	s = malloc(sizeof(kripto_authstream) + len);
+	s = malloc(sizeof(kripto_ae) + len);
 	if(!s) goto err1;
 
 	s->obj.desc = desc;
 	s->obj.multof = 1;
-	s->iv = (uint8_t *)s + sizeof(kripto_authstream);
+	s->iv = (uint8_t *)s + sizeof(kripto_ae);
 	s->len = len;
 
 	/* create CTR descriptor */
@@ -189,9 +189,9 @@ err1: free(buf);
 err0: return 0;
 }
 
-static kripto_authstream *eax_recreate
+static kripto_ae *eax_recreate
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
@@ -246,7 +246,7 @@ err0:
 	return 0;
 }
 
-kripto_authstream_desc *kripto_authstream_eax(const kripto_block_desc *block)
+kripto_ae_desc *kripto_ae_eax(const kripto_block_desc *block)
 {
 	struct ext *s;
 
@@ -266,5 +266,5 @@ kripto_authstream_desc *kripto_authstream_eax(const kripto_block_desc *block)
 	s->desc.maxiv = kripto_block_size(block);
 	s->desc.maxtag = s->desc.maxiv;
 
-	return (kripto_authstream_desc *)s;
+	return (kripto_ae_desc *)s;
 }

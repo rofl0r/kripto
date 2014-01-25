@@ -17,13 +17,13 @@
 
 #include <kripto/block.h>
 #include <kripto/block/rijndael128.h>
-#include <kripto/authstream.h>
-#include <kripto/authstream/eax.h>
+#include <kripto/ae.h>
+#include <kripto/ae/eax.h>
 
 int main(void)
 {
-	kripto_authstream_desc *desc;
-	kripto_authstream *s;
+	kripto_ae_desc *desc;
+	kripto_ae *s;
 	unsigned int i;
 	uint8_t t[32];
 	const uint8_t pt[32] =
@@ -46,16 +46,16 @@ int main(void)
 		0x1D, 0x7A, 0xE7, 0xE4, 0x5B, 0x92, 0xC5, 0x87
 	};
 
-	puts("kripto_authstream_eax (rijndael)");
+	puts("kripto_ae_eax (rijndael)");
 
-	desc = kripto_authstream_eax(kripto_block_rijndael128);
+	desc = kripto_ae_eax(kripto_block_rijndael128);
 
 	/* create */
-	s = kripto_authstream_create(desc, 0, pt, 16, pt, 16, 16);
+	s = kripto_ae_create(desc, 0, pt, 16, pt, 16, 16);
 	if(!s) puts("error");
 
 	/* encrypt */
-	kripto_authstream_encrypt(s, pt, t, 32);
+	kripto_ae_encrypt(s, pt, t, 32);
 	for(i = 0; i < 32; i++) if(t[i] != ct[i])
 	{
 		puts("encrypt: FAIL");
@@ -64,8 +64,8 @@ int main(void)
 	if(i == 32) puts("encrypt: OK");
 
 	/* tag */
-	kripto_authstream_header(s, pt, 16);
-	kripto_authstream_tag(s, t, 16);
+	kripto_ae_header(s, pt, 16);
+	kripto_ae_tag(s, t, 16);
 	for(i = 0; i < 16; i++) if(t[i] != tag[i])
 	{
 		puts("tag: FAIL");
@@ -74,11 +74,11 @@ int main(void)
 	if(i == 16) puts("tag: OK");
 
 	/* recreate */
-	s = kripto_authstream_recreate(s, 0, pt, 16, pt, 16, 16);
+	s = kripto_ae_recreate(s, 0, pt, 16, pt, 16, 16);
 	if(!s) puts("error");
 
 	/* decrypt */
-	kripto_authstream_decrypt(s, ct, t, 32);
+	kripto_ae_decrypt(s, ct, t, 32);
 	for(i = 0; i < 32; i++) if(t[i] != pt[i])
 	{
 		puts("decrypt: FAIL");
@@ -87,8 +87,8 @@ int main(void)
 	if(i == 32) puts("decrypt: OK");
 
 	/* tag */
-	kripto_authstream_header(s, pt, 16);
-	kripto_authstream_tag(s, t, 16);
+	kripto_ae_header(s, pt, 16);
+	kripto_ae_tag(s, t, 16);
 	for(i = 0; i < 16; i++) if(t[i] != tag[i])
 	{
 		puts("tag: FAIL");
@@ -96,7 +96,7 @@ int main(void)
 	}
 	if(i == 16) puts("tag: OK");
 
-	kripto_authstream_destroy(s);
+	kripto_ae_destroy(s);
 	free(desc);
 
 	return 0;

@@ -19,15 +19,15 @@
 #include <kripto/memwipe.h>
 #include <kripto/stream.h>
 #include <kripto/mac.h>
-#include <kripto/authstream.h>
-#include <kripto/desc/authstream.h>
-#include <kripto/object/authstream.h>
+#include <kripto/ae.h>
+#include <kripto/desc/ae.h>
+#include <kripto/object/ae.h>
 
-#include <kripto/authstream/eax2.h>
+#include <kripto/ae/eax2.h>
 
-struct kripto_authstream
+struct kripto_ae
 {
-	struct kripto_authstream_object obj;
+	struct kripto_ae_object obj;
 	kripto_stream *stream;
 	kripto_mac *mac;
 	kripto_mac *header;
@@ -37,7 +37,7 @@ struct kripto_authstream
 
 static void eax2_encrypt
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	const void *pt,
 	void *ct,
 	size_t len
@@ -49,7 +49,7 @@ static void eax2_encrypt
 
 static void eax2_decrypt
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	const void *ct,
 	void *pt,
 	size_t len
@@ -61,7 +61,7 @@ static void eax2_decrypt
 
 static void eax2_header
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	const void *header,
 	size_t len
 )
@@ -71,7 +71,7 @@ static void eax2_header
 
 static void eax2_tag
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	void *tag,
 	unsigned int len
 )
@@ -87,7 +87,7 @@ static void eax2_tag
 		U8(tag)[i] ^= s->iv[i];
 }
 
-static void eax2_destroy(kripto_authstream *s)
+static void eax2_destroy(kripto_ae *s)
 {
 	kripto_stream_destroy(s->stream);
 	kripto_mac_destroy(s->mac);
@@ -100,16 +100,16 @@ static void eax2_destroy(kripto_authstream *s)
 
 struct ext
 {
-	kripto_authstream_desc desc;
+	kripto_ae_desc desc;
 	const kripto_stream_desc *stream;
 	const kripto_mac_desc *mac;
 };
 
 #define EXT(X) ((const struct ext *)(X))
 
-static kripto_authstream *eax2_create
+static kripto_ae *eax2_create
 (
-	const kripto_authstream_desc *desc,
+	const kripto_ae_desc *desc,
 	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
@@ -118,7 +118,7 @@ static kripto_authstream *eax2_create
 	unsigned int tag_len
 )
 {
-	kripto_authstream *s;
+	kripto_ae *s;
 	uint8_t *buf;
 	unsigned int mac_key; /* K1 */
 	unsigned int stream_key; /* K2 */
@@ -126,11 +126,11 @@ static kripto_authstream *eax2_create
 	buf = malloc(tag_len);
 	if(!buf) goto err0;
 
-	s = malloc(sizeof(kripto_authstream) + tag_len);
+	s = malloc(sizeof(kripto_ae) + tag_len);
 	if(!s) goto err1;
 
 	s->obj.desc = desc;
-	s->iv = (uint8_t *)s + sizeof(kripto_authstream);
+	s->iv = (uint8_t *)s + sizeof(kripto_ae);
 	s->len = tag_len;
 
 	/* split key */
@@ -182,9 +182,9 @@ err1: free(buf);
 err0: return 0;
 }
 
-static kripto_authstream *eax2_recreate
+static kripto_ae *eax2_recreate
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	unsigned int rounds,
 	const void *key,
 	unsigned int key_len,
@@ -196,7 +196,7 @@ static kripto_authstream *eax2_recreate
 	uint8_t *buf;
 	unsigned int mac_key; /* K1 */
 	unsigned int stream_key; /* K2 */
-	const kripto_authstream_desc *desc;
+	const kripto_ae_desc *desc;
 
 	if(tag_len > s->len)
 	{
@@ -263,7 +263,7 @@ err0:
 	return 0;
 }
 
-kripto_authstream_desc *kripto_authstream_eax2
+kripto_ae_desc *kripto_ae_eax2
 (
 	const kripto_stream_desc *stream,
 	const kripto_mac_desc *mac
@@ -288,5 +288,5 @@ kripto_authstream_desc *kripto_authstream_eax2
 	s->desc.maxiv = kripto_stream_maxiv(stream);
 	s->desc.maxtag = kripto_mac_maxtag(mac);
 
-	return (kripto_authstream_desc *)s;
+	return (kripto_ae_desc *)s;
 }

@@ -20,16 +20,16 @@
 #include <kripto/hash.h>
 #include <kripto/hash/keccak1600.h>
 #include <kripto/hash/keccak800.h>
-#include <kripto/authstream.h>
-#include <kripto/desc/authstream.h>
-#include <kripto/object/authstream.h>
+#include <kripto/ae.h>
+#include <kripto/desc/ae.h>
+#include <kripto/object/ae.h>
 
-#include <kripto/authstream/keccak1600.h>
-#include <kripto/authstream/keccak800.h>
+#include <kripto/ae/keccak1600.h>
+#include <kripto/ae/keccak800.h>
 
-struct kripto_authstream
+struct kripto_ae
 {
-	struct kripto_authstream_object obj;
+	struct kripto_ae_object obj;
 	kripto_hash *hash;
 	unsigned int size;
 	uint8_t *buf;
@@ -39,7 +39,7 @@ struct kripto_authstream
 
 static void keccak_encrypt
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	const void *pt,
 	void *ct,
 	size_t len
@@ -65,7 +65,7 @@ static void keccak_encrypt
 
 static void keccak_decrypt
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	const void *ct,
 	void *pt,
 	size_t len
@@ -91,7 +91,7 @@ static void keccak_decrypt
 
 static void keccak_header
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	const void *header,
 	size_t len
 )
@@ -99,12 +99,12 @@ static void keccak_header
 	kripto_hash_input(s->hash, header, len);
 }
 
-static void keccak_tag(kripto_authstream *s, void *tag, unsigned int len)
+static void keccak_tag(kripto_ae *s, void *tag, unsigned int len)
 {
 	kripto_hash_output(s->hash, tag, len);
 }
 
-static void keccak_destroy(kripto_authstream *s)
+static void keccak_destroy(kripto_ae *s)
 {
 	kripto_hash_destroy(s->hash);
 	kripto_memwipe(s, s->size);
@@ -112,9 +112,9 @@ static void keccak_destroy(kripto_authstream *s)
 }
 
 /* 1600 */
-static kripto_authstream *keccak1600_create
+static kripto_ae *keccak1600_create
 (
-	const kripto_authstream_desc *desc,
+	const kripto_ae_desc *desc,
 	unsigned int r,
 	const void *key,
 	unsigned int key_len,
@@ -123,19 +123,19 @@ static kripto_authstream *keccak1600_create
 	unsigned int tag_len
 )
 {
-	kripto_authstream *s;
+	kripto_ae *s;
 
 	(void)desc;
 
-	s = malloc(sizeof(kripto_authstream) + 200 - (tag_len << 1));
+	s = malloc(sizeof(kripto_ae) + 200 - (tag_len << 1));
 	if(!s) return 0;
 
-	s->obj.desc = kripto_authstream_keccak1600;
+	s->obj.desc = kripto_ae_keccak1600;
 	s->obj.multof = 1;
 
 	s->i = s->rate = 200 - (tag_len << 1);
-	s->size = sizeof(kripto_authstream) + s->rate;
-	s->buf = U8(s) + sizeof(kripto_authstream);
+	s->size = sizeof(kripto_ae) + s->rate;
+	s->buf = U8(s) + sizeof(kripto_ae);
 
 	s->hash = kripto_hash_create(kripto_hash_keccak1600, r, tag_len);
 	if(!s->hash)
@@ -150,9 +150,9 @@ static kripto_authstream *keccak1600_create
 	return s;
 }
 
-static kripto_authstream *keccak1600_recreate
+static kripto_ae *keccak1600_recreate
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	unsigned int r,
 	const void *key,
 	unsigned int key_len,
@@ -161,7 +161,7 @@ static kripto_authstream *keccak1600_recreate
 	unsigned int tag_len
 )
 {
-	if(sizeof(kripto_authstream) + 200 - (tag_len << 1) > s->size)
+	if(sizeof(kripto_ae) + 200 - (tag_len << 1) > s->size)
 	{
 		keccak_destroy(s);
 		s = keccak1600_create(s->obj.desc, r, key, key_len, iv, iv_len, tag_len);
@@ -179,7 +179,7 @@ static kripto_authstream *keccak1600_recreate
 	return s;
 }
 
-static const kripto_authstream_desc keccak1600 =
+static const kripto_ae_desc keccak1600 =
 {
 	&keccak1600_create,
 	&keccak1600_recreate,
@@ -193,12 +193,12 @@ static const kripto_authstream_desc keccak1600 =
 	99 /* max tag */
 };
 
-const kripto_authstream_desc *const kripto_authstream_keccak1600 = &keccak1600;
+const kripto_ae_desc *const kripto_ae_keccak1600 = &keccak1600;
 
 /* 800 */
-static kripto_authstream *keccak800_create
+static kripto_ae *keccak800_create
 (
-	const kripto_authstream_desc *desc,
+	const kripto_ae_desc *desc,
 	unsigned int r,
 	const void *key,
 	unsigned int key_len,
@@ -207,19 +207,19 @@ static kripto_authstream *keccak800_create
 	unsigned int tag_len
 )
 {
-	kripto_authstream *s;
+	kripto_ae *s;
 
 	(void)desc;
 
-	s = malloc(sizeof(kripto_authstream) + 100 - (tag_len << 1));
+	s = malloc(sizeof(kripto_ae) + 100 - (tag_len << 1));
 	if(!s) return 0;
 
-	s->obj.desc = kripto_authstream_keccak800;
+	s->obj.desc = kripto_ae_keccak800;
 	s->obj.multof = 1;
 
 	s->i = s->rate = 100 - (tag_len << 1);
-	s->size = sizeof(kripto_authstream) + s->rate;
-	s->buf = U8(s) + sizeof(kripto_authstream);
+	s->size = sizeof(kripto_ae) + s->rate;
+	s->buf = U8(s) + sizeof(kripto_ae);
 
 	s->hash = kripto_hash_create(kripto_hash_keccak800, r, tag_len);
 	if(!s->hash)
@@ -234,9 +234,9 @@ static kripto_authstream *keccak800_create
 	return s;
 }
 
-static kripto_authstream *keccak800_recreate
+static kripto_ae *keccak800_recreate
 (
-	kripto_authstream *s,
+	kripto_ae *s,
 	unsigned int r,
 	const void *key,
 	unsigned int key_len,
@@ -245,7 +245,7 @@ static kripto_authstream *keccak800_recreate
 	unsigned int tag_len
 )
 {
-	if(sizeof(kripto_authstream) + 100 - (tag_len << 1) > s->size)
+	if(sizeof(kripto_ae) + 100 - (tag_len << 1) > s->size)
 	{
 		keccak_destroy(s);
 		s = keccak800_create(s->obj.desc, r, key, key_len, iv, iv_len, tag_len);
@@ -263,7 +263,7 @@ static kripto_authstream *keccak800_recreate
 	return s;
 }
 
-static const kripto_authstream_desc keccak800 =
+static const kripto_ae_desc keccak800 =
 {
 	&keccak800_create,
 	&keccak800_recreate,
@@ -277,4 +277,4 @@ static const kripto_authstream_desc keccak800 =
 	49 /* max tag */
 };
 
-const kripto_authstream_desc *const kripto_authstream_keccak800 = &keccak800;
+const kripto_ae_desc *const kripto_ae_keccak800 = &keccak800;

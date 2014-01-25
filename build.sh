@@ -83,18 +83,18 @@ cd ../mac
 $PREFIX$CC -c *.c $CFLAGS
 cd ../stream
 $PREFIX$CC -c *.c $CFLAGS
-cd ../authstream
+cd ../ae
 $PREFIX$CC -c *.c $CFLAGS
 cd ../
 
 # build static
 #$PREFIX$AR rcs libkripto.a $OBJ
-$PREFIX$AR rcs libkripto.a *.o block/*.o hash/*.o mac/*.o stream/*.o authstream/*.o
+$PREFIX$AR rcs libkripto.a *.o block/*.o hash/*.o mac/*.o stream/*.o ae/*.o
 
 # build shared
 if [ ! -z $shared ]; then
 	#$PREFIX$CC -shared $LDFLAGS -Wl,-soname,libkripto.so.0 -o libkripto.so.0.1.0 $OBJ -lc
-	$PREFIX$CC -shared $LDFLAGS -Wl,-soname,libkripto.so.0 -o libkripto.so.0.1.0 *.o block/*.o hash/*.o mac/*.o stream/*.o authstream/*.o -lc
+	$PREFIX$CC -shared $LDFLAGS -Wl,-soname,libkripto.so.0 -o libkripto.so.0.1.0 *.o block/*.o hash/*.o mac/*.o stream/*.o ae/*.o -lc
 
 	# strip
 	#if [ -z $debug ]; then
@@ -103,4 +103,4 @@ if [ ! -z $shared ]; then
 fi
 
 # clean
-rm -f *.o block/*.o hash/*.o mac/*.o stream/*.o authstream/*.o
+rm -f *.o block/*.o hash/*.o mac/*.o stream/*.o ae/*.o

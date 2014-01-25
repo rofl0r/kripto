@@ -15,12 +15,12 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <kripto/authstream.h>
-#include <kripto/authstream/keccak1600.h>
+#include <kripto/ae.h>
+#include <kripto/ae/keccak1600.h>
 
 int main(void)
 {
-	kripto_authstream *s;
+	kripto_ae *s;
 	uint8_t t[32];
 	const uint8_t pt[32] =
 	{
@@ -35,13 +35,13 @@ int main(void)
 	// 369e24e2f1157351d47f531b1f1809b872db51041f95e6640c5d9a4725f99002
 
 	/* create */
-	s = kripto_authstream_create(kripto_authstream_keccak1600, 0, pt, 16, pt, 16, 97);
+	s = kripto_ae_create(kripto_ae_keccak1600, 0, pt, 16, pt, 16, 97);
 	if(!s) perror("error");
 
 	/* encrypt */
-	//kripto_authstream_encrypt(s, pt, t, 32);
-	kripto_authstream_encrypt(s, pt, t, 3);
-	kripto_authstream_encrypt(s, pt + 3, t + 3, 29);
+	//kripto_ae_encrypt(s, pt, t, 32);
+	kripto_ae_encrypt(s, pt, t, 3);
+	kripto_ae_encrypt(s, pt + 3, t + 3, 29);
 
 	for(i = 0; i < 32; i++) printf("%.2x", pt[i]);
 	putchar('\n');
@@ -50,13 +50,13 @@ int main(void)
 	putchar('\n');
 
 	/* recreate */
-	s = kripto_authstream_recreate(s, 0, pt, 16, pt, 16, 97);
+	s = kripto_ae_recreate(s, 0, pt, 16, pt, 16, 97);
 	if(!s) perror("error");
 
 	/* decrypt */
-	//kripto_authstream_decrypt(s, t, t, 32);
-	kripto_authstream_decrypt(s, t, t, 17);
-	kripto_authstream_decrypt(s, t + 17, t + 17, 15);
+	//kripto_ae_decrypt(s, t, t, 32);
+	kripto_ae_decrypt(s, t, t, 17);
+	kripto_ae_decrypt(s, t + 17, t + 17, 15);
 
 	for(i = 0; i < 32; i++) printf("%.2x", t[i]);
 	putchar('\n');
@@ -64,7 +64,7 @@ int main(void)
 	if(memcmp(t, pt, 32)) puts("FAIL");
 	else puts("OK");
 
-	kripto_authstream_destroy(s);
+	kripto_ae_destroy(s);
 
 	return 0;
 }
