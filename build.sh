@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # Written in 2011 by Gregor Pintar <grpintar@gmail.com>
 #
 # To the extent possible under law, the author(s) have dedicated
