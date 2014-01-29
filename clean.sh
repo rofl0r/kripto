@@ -6,6 +6,6 @@ find . -name '*.so' -type f -exec rm -f {} \;
 find . -name '*.dll' -type f -exec rm -f {} \;
 
 # correct permissions
-find . -type f -exec chmod 0644 {} \;
-find . -type d -exec chmod 0755 {} \;
-find . -name '*.sh' -exec chmod +x {} \;
+find . -type f -exec chmod 644 {} \;
+find . -type d -exec chmod 755 {} \;
+find . -name '*.sh' -exec chmod 755 {} \;
