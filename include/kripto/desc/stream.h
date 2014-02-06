@@ -3,8 +3,6 @@
 
 #include <stddef.h>
 
-#include <kripto/stream.h>
-
 struct kripto_stream_desc
 {
 	kripto_stream *(*create)

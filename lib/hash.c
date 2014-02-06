@@ -13,9 +13,8 @@
 
 #include <assert.h>
 
-#include <kripto/desc/hash.h>
-
 #include <kripto/hash.h>
+#include <kripto/desc/hash.h>
 
 struct kripto_hash
 {

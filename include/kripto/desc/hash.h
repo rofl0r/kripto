@@ -1,8 +1,6 @@
 #ifndef KRIPTO_HASH_DESC_H
 #define KRIPTO_HASH_DESC_H
 
-#include <kripto/hash.h>
-
 struct kripto_hash_desc
 {
 	kripto_hash *(*create)(unsigned int, size_t);

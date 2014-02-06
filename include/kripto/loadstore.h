@@ -14,8 +14,6 @@
 #ifndef KRIPTO_LOADSTORE_H
 #define KRIPTO_LOADSTORE_H
 
-#include <stdint.h>
-
 #if defined(KRIPTO_LITTLE_ENDIAN) || defined(KRIPTO_BIG_ENDIAN)
 #include <string.h>
 #endif

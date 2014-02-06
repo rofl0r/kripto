@@ -13,9 +13,8 @@
 
 #include <assert.h>
 
-#include <kripto/desc/block.h>
-
 #include <kripto/block.h>
+#include <kripto/desc/block.h>
 
 struct kripto_block
 {

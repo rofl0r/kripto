@@ -14,9 +14,8 @@
 #include <assert.h>
 #include <stdint.h>
 
-#include <kripto/desc/stream.h>
-
 #include <kripto/stream.h>
+#include <kripto/desc/stream.h>
 
 struct kripto_stream
 {

@@ -1,8 +1,6 @@
 #ifndef KRIPTO_CAST_H
 #define KRIPTO_CAST_H
 
-#include <stdint.h>
-
 #define U8(X) ((uint8_t *)(X))
 #define U16(X) ((uint16_t *)(X))
 #define U32(X) ((uint32_t *)(X))

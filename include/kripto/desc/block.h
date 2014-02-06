@@ -1,8 +1,6 @@
 #ifndef KRIPTO_BLOCK_DESC_H
 #define KRIPTO_BLOCK_DESC_H
 
-#include <kripto/block.h>
-
 struct kripto_block_desc
 {
 	kripto_block *(*create)

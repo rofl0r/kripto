@@ -1,8 +1,6 @@
 #ifndef KRIPTO_SCRYPT_H
 #define KRIPTO_SCRYPT_H
 
-#include <kripto/mac.h>
-
 extern int kripto_scrypt
 (
 	const kripto_mac_desc *mac,

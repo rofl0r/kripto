@@ -3,8 +3,6 @@
 
 #include <stddef.h>
 
-#include <kripto/ae.h>
-
 struct kripto_ae_desc
 {
 	kripto_ae *(*create)

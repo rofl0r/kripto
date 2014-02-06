@@ -1,8 +1,6 @@
 #ifndef KRIPTO_MAC_DESC_H
 #define KRIPTO_MAC_DESC_H
 
-#include <kripto/mac.h>
-
 struct kripto_mac_desc
 {
 	kripto_mac *(*create)

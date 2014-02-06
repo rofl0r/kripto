@@ -1,8 +1,6 @@
 #ifndef KRIPTO_PBKDF2_H
 #define KRIPTO_PBKDF2_H
 
-#include <kripto/mac.h>
-
 extern int kripto_pbkdf2
 (
 	const kripto_mac_desc *mac,

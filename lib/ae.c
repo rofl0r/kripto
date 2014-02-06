@@ -14,9 +14,8 @@
 #include <assert.h>
 #include <stdint.h>
 
-#include <kripto/desc/ae.h>
-
 #include <kripto/ae.h>
+#include <kripto/desc/ae.h>
 
 struct kripto_ae
 {

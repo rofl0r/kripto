@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <kripto/block.h>
 #include <kripto/block/khazad.h>
 
 int main(void)

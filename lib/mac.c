@@ -13,9 +13,8 @@
 
 #include <assert.h>
 
-#include <kripto/desc/mac.h>
-
 #include <kripto/mac.h>
+#include <kripto/desc/mac.h>
 
 struct kripto_mac
 {
