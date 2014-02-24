@@ -13,6 +13,6 @@
 
 #include <kripto/version.h>
 
-const unsigned int kripto_version_major = 0;
-const unsigned int kripto_version_minor = 1;
-const unsigned int kripto_version_bugfix = 0;
+const unsigned int kripto_version_major = KRIPTO_VERSION_MAJOR;
+const unsigned int kripto_version_minor = KRIPTO_VERSION_MINOR;
+const unsigned int kripto_version_revision = KRIPTO_VERSION_REVISION;
