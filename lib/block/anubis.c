@@ -788,12 +788,13 @@ static const kripto_block_desc anubis =
 {
 	&anubis_create,
 	&anubis_recreate,
-	0,
+	0, /* tweak */
 	&anubis_encrypt,
 	&anubis_decrypt,
 	&anubis_destroy,
 	16, /* block size */
-	40 /* max key */
+	40, /* max key */
+	0, /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_anubis = &anubis;

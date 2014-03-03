@@ -699,12 +699,13 @@ static const kripto_block_desc camellia =
 {
 	&camellia_create,
 	&camellia_recreate,
-	0,
+	0, /* tweak */
 	&camellia_encrypt,
 	&camellia_decrypt,
 	&camellia_destroy,
 	16, /* block size */
-	32 /* max key */
+	32, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_camellia = &camellia;

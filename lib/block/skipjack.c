@@ -289,12 +289,13 @@ static const kripto_block_desc skipjack =
 {
 	&skipjack_create,
 	&skipjack_recreate,
-	0,
+	0, /* tweak */
 	&skipjack_encrypt,
 	&skipjack_decrypt,
 	&skipjack_destroy,
 	8, /* block size */
-	10 /* max key */
+	10, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_skipjack = &skipjack;

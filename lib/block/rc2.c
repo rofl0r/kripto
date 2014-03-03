@@ -213,12 +213,13 @@ static const kripto_block_desc rc2 =
 {
 	&rc2_create,
 	&rc2_recreate,
-	0,
+	0, /* tweak */
 	&rc2_encrypt,
 	&rc2_decrypt,
 	&rc2_destroy,
 	8, /* block size */
-	128 /* max key */
+	128, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_rc2 = &rc2;

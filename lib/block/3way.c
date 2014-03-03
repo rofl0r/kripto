@@ -229,12 +229,13 @@ static const kripto_block_desc threeway =
 {
 	&threeway_create,
 	&threeway_recreate,
-	0,
+	0, /* tweak */
 	&threeway_encrypt,
 	&threeway_decrypt,
 	&threeway_destroy,
 	12, /* block size */
-	12 /* max key */
+	12, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_3way = &threeway;

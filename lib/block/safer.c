@@ -425,24 +425,26 @@ static const kripto_block_desc safer =
 {
 	&safer_create,
 	&safer_recreate,
-	0,
+	0, /* tweak */
 	&safer_encrypt,
 	&safer_decrypt,
 	&safer_destroy,
 	8, /* block size */
-	16 /* max key */
+	16, /* max key */
+	0 /* max tweak */
 };
 
 static const kripto_block_desc safer_sk =
 {
 	&safer_sk_create,
 	&safer_sk_recreate,
-	0,
+	0, /* tweak */
 	&safer_encrypt,
 	&safer_decrypt,
 	&safer_destroy,
 	8, /* block size */
-	16 /* max key */
+	16, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_safer = &safer;

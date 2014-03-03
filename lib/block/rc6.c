@@ -215,12 +215,13 @@ static const kripto_block_desc rc6 =
 {
 	&rc6_create,
 	&rc6_recreate,
-	0,
+	0, /* tweak */
 	&rc6_encrypt,
 	&rc6_decrypt,
 	&rc6_destroy,
 	16, /* block size */
-	255 /* max key */
+	255, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_rc6 = &rc6;

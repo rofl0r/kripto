@@ -160,12 +160,13 @@ static const kripto_block_desc xtea =
 {
 	&xtea_create,
 	&xtea_recreate,
-	0,
+	0, /* tweak */
 	&xtea_encrypt,
 	&xtea_decrypt,
 	&xtea_destroy,
 	8, /* block size */
-	16 /* max key */
+	16, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_xtea = &xtea;

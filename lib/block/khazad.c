@@ -764,12 +764,13 @@ static const kripto_block_desc khazad =
 {
 	&khazad_create,
 	&khazad_recreate,
-	0,
+	0, /* tweak */
 	&khazad_encrypt,
 	&khazad_decrypt,
 	&khazad_destroy,
 	8, /* block size */
-	16 /* max key */
+	16, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_khazad = &khazad;

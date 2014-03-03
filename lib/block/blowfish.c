@@ -536,12 +536,13 @@ static const kripto_block_desc blowfish =
 {
 	&blowfish_create,
 	&blowfish_recreate,
-	0,
+	0, /* tweak */
 	&blowfish_encrypt,
 	&blowfish_decrypt,
 	&blowfish_destroy,
 	8, /* block size */
-	56 /* max key */
+	56, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_blowfish = &blowfish;

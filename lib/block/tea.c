@@ -113,12 +113,13 @@ static const kripto_block_desc tea =
 {
 	&tea_create,
 	&tea_recreate,
-	0,
+	0, /* tweak */
 	&tea_encrypt,
 	&tea_decrypt,
 	&tea_destroy,
 	8, /* block size */
-	16 /* max key */
+	16, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_tea = &tea;

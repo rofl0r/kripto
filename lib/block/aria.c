@@ -723,12 +723,13 @@ static const kripto_block_desc aria =
 {
 	&aria_create,
 	&aria_recreate,
-	0,
+	0, /* tweak */
 	&aria_encrypt,
 	&aria_decrypt,
 	&aria_destroy,
 	16, /* block size */
-	32 /* max key */
+	32, /* max key */
+	0, /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_aria = &aria;

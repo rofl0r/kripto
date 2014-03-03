@@ -338,12 +338,13 @@ static const kripto_block_desc gost =
 {
 	&gost_create,
 	&gost_recreate,
-	0,
+	0, /* tweak */
 	&gost_encrypt,
 	&gost_decrypt,
 	&gost_destroy,
 	8, /* block size */
-	32 /* max key */
+	32, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_gost = &gost;

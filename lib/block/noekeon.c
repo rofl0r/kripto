@@ -221,12 +221,13 @@ static const kripto_block_desc noekeon =
 {
 	&noekeon_create,
 	&noekeon_recreate,
-	0,
+	0, /* tweak */
 	&noekeon_encrypt,
 	&noekeon_decrypt,
 	&noekeon_destroy,
 	16, /* block size */
-	16 /* max key */
+	16, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_noekeon = &noekeon;

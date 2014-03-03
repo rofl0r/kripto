@@ -489,12 +489,13 @@ static const kripto_block_desc seed =
 {
 	&seed_create,
 	&seed_recreate,
-	0,
+	0, /* tweak */
 	&seed_encrypt,
 	&seed_decrypt,
 	&seed_destroy,
 	16, /* block size */
-	16 /* max key */
+	16, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_seed = &seed;

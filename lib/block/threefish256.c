@@ -231,7 +231,8 @@ static const kripto_block_desc threefish256 =
 	&threefish256_decrypt,
 	&threefish256_destroy,
 	32, /* block size */
-	32 /* max key */
+	32, /* max key */
+	16 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_threefish256 = &threefish256;

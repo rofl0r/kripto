@@ -951,12 +951,13 @@ static const kripto_block_desc rijndael128 =
 {
 	&rijndael128_create,
 	&rijndael128_recreate,
-	0,
+	0, /* tweak */
 	&rijndael128_encrypt,
 	&rijndael128_decrypt,
 	&rijndael_destroy,
 	16, /* block size */
-	32 /* max key */
+	32, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_rijndael128 = &rijndael128;
@@ -1176,12 +1177,13 @@ static const kripto_block_desc rijndael256 =
 {
 	&rijndael256_create,
 	&rijndael256_recreate,
-	0,
+	0, /* tweak */
 	&rijndael256_encrypt,
 	&rijndael256_decrypt,
 	&rijndael_destroy,
 	32, /* block size */
-	32 /* max key */
+	32, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_rijndael256 = &rijndael256;

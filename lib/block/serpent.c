@@ -725,12 +725,13 @@ static const kripto_block_desc serpent =
 {
 	&serpent_create,
 	&serpent_recreate,
-	0,
+	0, /* tweak */
 	&serpent_encrypt,
 	&serpent_decrypt,
 	&serpent_destroy,
 	16, /* block size */
-	32 /* max key */
+	32, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_serpent = &serpent;

@@ -174,12 +174,13 @@ static const kripto_block_desc rc5_64 =
 {
 	&rc5_64_create,
 	&rc5_64_recreate,
-	0,
+	0, /* tweak */
 	&rc5_64_encrypt,
 	&rc5_64_decrypt,
 	&rc5_64_destroy,
 	16, /* block size */
-	255 /* max key */
+	255, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_rc5_64 = &rc5_64;

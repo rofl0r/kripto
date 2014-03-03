@@ -174,12 +174,13 @@ static const kripto_block_desc speck128 =
 {
 	&speck128_create,
 	&speck128_recreate,
-	0,
+	0, /* tweak */
 	&speck128_encrypt,
 	&speck128_decrypt,
 	&speck128_destroy,
 	16, /* block size */
-	32 /* max key */
+	32, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_speck128 = &speck128;

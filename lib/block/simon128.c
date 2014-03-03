@@ -212,12 +212,13 @@ static const kripto_block_desc simon128 =
 {
 	&simon128_create,
 	&simon128_recreate,
-	0,
+	0, /* tweak */
 	&simon128_encrypt,
 	&simon128_decrypt,
 	&simon128_destroy,
 	16, /* block size */
-	32 /* max key */
+	32, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_simon128 = &simon128;

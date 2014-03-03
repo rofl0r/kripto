@@ -815,12 +815,13 @@ static const kripto_block_desc cast5 =
 {
 	&cast5_create,
 	&cast5_recreate,
-	0,
+	0, /* tweak */
 	&cast5_encrypt,
 	&cast5_decrypt,
 	&cast5_destroy,
 	8, /* block size */
-	16 /* max key */
+	16, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_cast5 = &cast5;

@@ -1233,12 +1233,13 @@ static const kripto_block_desc twofish =
 {
 	&twofish_create,
 	&twofish_recreate,
-	0,
+	0, /* tweak */
 	&twofish_encrypt,
 	&twofish_decrypt,
 	&twofish_destroy,
 	16, /* block size */
-	32 /* max key */
+	32, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_twofish = &twofish;

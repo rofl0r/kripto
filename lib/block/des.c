@@ -530,12 +530,13 @@ static const kripto_block_desc des =
 {
 	&des_create,
 	&des_recreate,
-	0,
+	0, /* tweak */
 	&des_encrypt,
 	&des_decrypt,
 	&des_destroy,
 	8, /* block size */
-	24 /* max key */
+	24, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_des = &des;

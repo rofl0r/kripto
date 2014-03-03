@@ -33,6 +33,7 @@ struct kripto_block_desc
 
 	unsigned int blocksize;
 	unsigned int maxkey;
+	unsigned int maxtweak;
 };
 
 #endif

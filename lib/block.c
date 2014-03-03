@@ -139,3 +139,10 @@ unsigned int kripto_block_maxkey(const kripto_block_desc *desc)
 
 	return desc->maxkey;
 }
+
+unsigned int kripto_block_maxtweak(const kripto_block_desc *desc)
+{
+	assert(desc);
+
+	return desc->maxtweak;
+}

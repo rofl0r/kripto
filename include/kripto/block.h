@@ -49,4 +49,6 @@ extern unsigned int kripto_block_size(const kripto_block_desc *desc);
 
 extern unsigned int kripto_block_maxkey(const kripto_block_desc *desc);
 
+extern unsigned int kripto_block_maxtweak(const kripto_block_desc *desc);
+
 #endif

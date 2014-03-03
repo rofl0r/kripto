@@ -184,12 +184,13 @@ static const kripto_block_desc simon32 =
 {
 	&simon32_create,
 	&simon32_recreate,
-	0,
+	0, /* tweak */
 	&simon32_encrypt,
 	&simon32_decrypt,
 	&simon32_destroy,
 	4, /* block size */
-	8 /* max key */
+	8, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_simon32 = &simon32;

@@ -230,12 +230,13 @@ static const kripto_block_desc idea =
 {
 	&idea_create,
 	&idea_recreate,
-	0,
+	0, /* tweak */
 	&idea_encrypt,
 	&idea_decrypt,
 	&idea_destroy,
 	8, /* block size */
-	16 /* max key */
+	16, /* max key */
+	0 /* max tweak */
 };
 
 const kripto_block_desc *const kripto_block_idea = &idea;
