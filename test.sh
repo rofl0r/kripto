@@ -31,8 +31,8 @@ CFLAGS="lib/libkripto.a -std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wm
 #cc test/block/serpent.c $CFLAGS -o t
 #./t
 
-#cc test/block/camellia.c $CFLAGS -o t
-#./t
+cc test/block/mars.c $CFLAGS -o t
+./t
 
 #cc test/block/threefish256.c -DVERBOSE $CFLAGS -o t
 #./t
@@ -51,8 +51,8 @@ CFLAGS="lib/libkripto.a -std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wm
 #cc test/hash/blake2b.c $CFLAGS -o t
 #./t
 
-cc test/hash/keccak1600.c test/test.c -DVERBOSE $CFLAGS -o t
-./t
+#cc test/hash/keccak1600.c test/test.c -DVERBOSE $CFLAGS -o t
+#./t
 
 #cc test/stream/chacha.c $CFLAGS -o t
 #./t

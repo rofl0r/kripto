@@ -38,6 +38,7 @@ Block ciphers:
  - Simon32
  - DES (TDES)
  - IDEA
+ - MARS
  - RC5
  - RC5/64
  - RC2
@@ -46,7 +47,6 @@ Block ciphers:
  - SAFER+*?
  - SAFER++*?
  - PRESENT*?
- - BaseKing*?
 
 Modes:
  - CTR
