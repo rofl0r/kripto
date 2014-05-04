@@ -62,7 +62,7 @@ static void rc6_setup
 	a = b = i = j = k = 0;
 	while(k < RC6_K_LEN(s->rounds) * 3)
 	{
-		a = s->k[i] = ROL32(s->k[i] + a + b, 3);
+		a = s->k[i] = ROL32_03(s->k[i] + a + b);
 		b = x[j] = ROL32(x[j] + a + b, a + b);
 		if(++i == RC6_K_LEN(s->rounds)) i = 0;
 		if(++j == ls) j = 0;
@@ -96,8 +96,8 @@ static void rc6_encrypt(const kripto_block *s, const void *pt, void *ct)
 
 	while(i <= (s->rounds << 1))
 	{
-		m0 = ROL32(b * ((b << 1) | 1), 5);
-		m1 = ROL32(d * ((d << 1) | 1), 5);
+		m0 = ROL32_05(b * ((b << 1) | 1));
+		m1 = ROL32_05(d * ((d << 1) | 1));
 
 		t = ROL32(a ^ m0, m1) + s->k[i++];
 		a = b;
@@ -136,8 +136,8 @@ static void rc6_decrypt(const kripto_block *s, const void *ct, void *pt)
 
 	while(i)
 	{
-		m0 = ROL32(a * ((a << 1) | 1), 5);
-		m1 = ROL32(c * ((c << 1) | 1), 5);
+		m0 = ROL32_05(a * ((a << 1) | 1));
+		m1 = ROL32_05(c * ((c << 1) | 1));
 
 		t = d;
 		d = c;

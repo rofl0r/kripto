@@ -454,4 +454,3 @@ static const kripto_block_desc mars =
 };
 
 const kripto_block_desc *const kripto_block_mars = &mars;
-
