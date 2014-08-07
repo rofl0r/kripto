@@ -1,144 +1,163 @@
-THIS SOFTWARE IS NOT READY FOR USE!
+# Kripto
+*Simple and flexible cryptographic library written in ISO C99.*
 
-Simple and flexible cryptographic library written in ISO C99.
+Due to lack of time, lack of interest and technical difficulties project
+is abandoned. Existing code, however will be maintained and tested.
 
-Run build.sh to compile. Makefile is outdated.
+There is no documentation, however API is really simple.
 
-There is no public-key cryptography yet!
+Run build.sh to compile. Makefile doesn't work (outdated).
 
-* not supported (yet)
-? maybe
+### Supported features:
+#### Block ciphers
+* Rijndael128 (AES)
+* Rijndael256
+* Serpent
+* Twofish
+* RC6
+* Camellia
+* ARIA
+* Threefish256
+* Threefish512
+* Threefish1024
+* Noekeon
+* 3-Way
+* Anubis
+* KHAZAD
+* SEED
+* Blowfish
+* GOST
+* TEA
+* XTEA
+* Skipjack
+* Speck128
+* Speck64
+* Speck32
+* Simon128
+* Simon64
+* Simon32
+* DES (TDES)
+* IDEA
+* MARS
+* RC5
+* RC5/64
+* RC2
+* CAST5
+* SAFER
 
-Block ciphers:
- - Rijndael128 (AES)
- - Rijndael256
- - Serpent
- - Twofish
- - RC6
- - Camellia
- - ARIA
- - Threefish256
- - Threefish512
- - Threefish1024
- - Noekeon
- - 3-Way
- - Anubis
- - KHAZAD
- - SEED
- - Blowfish
- - GOST
- - TEA
- - XTEA
- - Skipjack
- - Speck128
- - Speck64
- - Speck32
- - Simon128
- - Simon64
- - Simon32
- - DES (TDES)
- - IDEA
- - MARS
- - RC5
- - RC5/64
- - RC2
- - CAST5
- - SAFER
- - SAFER+*?
- - SAFER++*?
- - PRESENT*?
+#### Block cipher modes
+* CTR
+* CBC
+* CFB
+* OFB
+* ECB
 
-Modes:
- - CTR
- - CBC
- - CFB
- - CFB8*?
- - CFB1*?
- - OFB
- - ECB
- - TBC*?
- - XTS*?
- - LRW*?
+#### Authenticated modes
+* EAX2
+* EAX
 
-Authenticated modes:
- - EAX2
- - EAX
- - GCM*
- - OCB*
- - CCM*?
- - CWC*?
- - IAPM*?
+#### Stream ciphers
+* Salsa20 (XSalsa20)
+* ChaCha (XChaCha)
+* RC4
+* Keccak1600
+* Keccak800
+* Skein256
+* Skein512
+* Skein1024
 
-Stream ciphers:
- - Salsa20 (XSalsa20)
- - ChaCha (XChaCha)
- - RC4
- - Keccak1600
- - Keccak800
- - Skein256
- - Skein512
- - Skein1024
- - SEAL*?
- - Scream*?
- - SOSEMANUK*
- - Rabbit*
- - HC-256*
- - HC-128*?
- - MUGI*?
- - Py (RCR)*?
- - Trivium*?
+#### Hash functions
+* SHA2
+* SHA1
+* Keccak1600
+* Keccak800
+* Skein256
+* Skein512
+* Skein1024
+* BLAKE-256
+* BLAKE-512
+* BLAKE2s
+* BLAKE2b
+* WHIRPOOL
+* Tiger
+* MD5
 
-Hash functions:
- - SHA2
- - SHA1
- - Keccak1600
- - Keccak800
- - Skein256
- - Skein512
- - Skein1024
- - BLAKE-256
- - BLAKE-512
- - BLAKE2s
- - BLAKE2b
- - WHIRPOOL
- - Grostl*
- - JH*
- - Tiger
- - MD5
- - RIPEMD*?
- - BMW*?
- - CubeHash*?
- - HAVAL*?
- - MD6*?
- - Fugue*?
- - Luffa*?
+#### Message authentication codes
+* HMAC
+* OMAC (CMAC1)
+* XCBC
+* Keccak1600
+* Keccak800
+* Skein256
+* Skein512
+* Skein1024
 
-MAC's:
- - HMAC
- - OMAC (CMAC1)
- - CMAC2*?
- - XCBC
- - CBC*?
- - Keccak1600
- - Keccak800
- - Skein256
- - Skein512
- - Skein1024
- - UMAC*?
- - VMAC*?
- - PMAC*?
- - SipHash*?
- - Poly1305*?
+#### Authenticated stream ciphers
+* Keccak1600
+* Keccak800
 
-Authenticated stream ciphers:
- - Phelix*?
- - Helix*?
- - Keccak1600
- - Keccak800
+#### Other
+* PKCS7
+* PBKDF2
+* scrypt
+* random
+* memwipe
 
-MISC
- - PKCS7
- - PBKDF2
- - scrypt
- - random
- - memwipe
+### Candidate features:
+#### Public-key cryptography
+* RSA
+* DSA
+* DH
+* ECC
+* NTRU
+* ElGamal
+* McEliece
+
+#### Block cipher modes
+* CFB8
+* CFB1
+* TBC
+* XTS
+* LRW
+
+#### Authenticated modes
+* GCM
+* OCB
+* CCM
+* CWC
+* IAPM
+
+#### Stream ciphers
+* SOSEMANUK
+* Rabbit
+* HC-256
+* HC-128
+* SEAL
+* Scream
+* MUGI
+* Py (RCR)
+* Trivium
+
+#### Hash functions
+* Grostl
+* JH
+* Fugue
+* Luffa
+* RIPEMD
+* HAVAL
+
+#### Message authentication codes
+* CMAC2
+* CBC variants
+* PMAC
+* UMAC
+* VMAC
+* Poly1305
+
+#### Authenticated stream ciphers
+* CAESAR competition winner/s
+* Phelix
+* Helix
+
+#### Other
+* Password Hashing Competition winner/s
