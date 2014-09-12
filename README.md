@@ -1,8 +1,8 @@
 # Kripto
 *Simple and flexible cryptographic library written in ISO C99.*
 
-Due to lack of time, lack of interest and technical difficulties project
-is abandoned. Existing code, however will be maintained and tested.
+Due to lack of time, lack of interest and technical difficulties
+project is abandoned.
 
 There is no documentation, however API is really simple.
 
